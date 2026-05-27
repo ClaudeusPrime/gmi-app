@@ -1990,9 +1990,9 @@ function renderMinisters() {
       + '</div>'
       // Notes
       + (prof.notes?'<div style="font-size:13px;color:var(--text-muted);font-style:italic;margin-bottom:1rem;padding:8px 12px;background:var(--amber-light);border-radius:8px">'+prof.notes+'</div>':'')
-      // Visits list
+      // Visits + Camps list
       + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">'
-      + '<div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Scheduled visits</div>'
+      + '<div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Full schedule</div>'
       + '<div style="display:flex;gap:4px;flex-wrap:wrap">'
       + '<button onclick="filterMinisterVisits(this,&quot;mr-visits-'+i+'&quot;,&quot;all&quot;)" style="padding:4px 12px;font-size:11px;font-weight:600;border-radius:20px;border:1px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer">All</button>'
       + '<button onclick="filterMinisterVisits(this,&quot;mr-visits-'+i+'&quot;,&quot;2026&quot;)" style="padding:4px 12px;font-size:11px;font-weight:500;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text-muted);cursor:pointer">2026</button>'
@@ -2004,35 +2004,58 @@ function renderMinisters() {
       + '</div>'
       + '<div id="mr-visits-'+i+'">'
       + (function(){
-          var rows=SCHEDULE.filter(function(s){return [s.m1,s.m2,s.m3,s.m4].indexOf(m.name)>=0;})
-            .sort(function(a,b){return a.fri.localeCompare(b.fri);});
-          if(!rows.length) return '<div style="font-size:12px;color:var(--text-muted);margin-bottom:1rem">No visits scheduled.</div>';
           var allWk=WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+          var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+          // Assembly visits
+          var visitRows = SCHEDULE.filter(function(s){return [s.m1,s.m2,s.m3,s.m4].indexOf(m.name)>=0;})
+            .map(function(s){
+              var wk=null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===s.fri){wk=allWk[w];break;}}
+              var asm=null; for(var ai=0;ai<ASSEMBLIES.length;ai++){if(ASSEMBLIES[ai].name===s.assembly){asm=ASSEMBLIES[ai];break;}}
+              return {sort:s.fri, year:s.fri.substring(0,4), type:'visit',
+                date: wk?wk.label:s.fri, name:s.assembly, region:asm?asm.region:'',
+                cancelled:s.cancelled, visited:s.visited};
+            });
+
+          // Camps
+          var campRows = (typeof getCampsForMinister==='function' ? getCampsForMinister(m.name, 2026).concat(getCampsForMinister(m.name, 2027)) : [])
+            .map(function(c){
+              var sd=new Date(c.start+'T12:00:00'); var ed=new Date(c.end+'T12:00:00');
+              var dateLabel=months[sd.getMonth()]+' '+sd.getDate()+'\u2013'+months[ed.getMonth()]+' '+ed.getDate();
+              return {sort:c.start, year:c.start.substring(0,4), type:'camp',
+                date:dateLabel, name:c.name, region:'', cancelled:false, visited:false};
+            });
+
+          var allRows = visitRows.concat(campRows).sort(function(a,b){return a.sort.localeCompare(b.sort);});
+
+          if(!allRows.length) return '<div style="font-size:12px;color:var(--text-muted);margin-bottom:1rem">No schedule yet.</div>';
+
           var html='<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:1rem">'
             +'<thead><tr>'
             +'<th style="text-align:left;padding:5px 10px;background:var(--white);border-bottom:2px solid var(--border);color:var(--text-muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Year</th>'
-            +'<th style="text-align:left;padding:5px 10px;background:var(--white);border-bottom:2px solid var(--border);color:var(--text-muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Weekend</th>'
-            +'<th style="text-align:left;padding:5px 10px;background:var(--white);border-bottom:2px solid var(--border);color:var(--text-muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Assembly</th>'
-            +'<th style="text-align:left;padding:5px 10px;background:var(--white);border-bottom:2px solid var(--border);color:var(--text-muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Status</th>'
+            +'<th style="text-align:left;padding:5px 10px;background:var(--white);border-bottom:2px solid var(--border);color:var(--text-muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Date</th>'
+            +'<th style="text-align:left;padding:5px 10px;background:var(--white);border-bottom:2px solid var(--border);color:var(--text-muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Commitment</th>'
+            +'<th style="text-align:left;padding:5px 10px;background:var(--white);border-bottom:2px solid var(--border);color:var(--text-muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Type</th>'
             +'</tr></thead><tbody>';
-          for(var r=0;r<rows.length;r++){
-            var row=rows[r];
-            var wk=null;for(var w=0;w<allWk.length;w++){if(allWk[w].fri===row.fri){wk=allWk[w];break;}}
-            var year=row.fri.substring(0,4);
-            var asm=null;for(var ai=0;ai<ASSEMBLIES.length;ai++){if(ASSEMBLIES[ai].name===row.assembly){asm=ASSEMBLIES[ai];break;}}
-            var statusBadge=row.cancelled
-              ?'<span class="badge badge-cancelled" style="font-size:10px">Cancelled</span>'
-              :row.visited
-                ?'<span class="badge badge-visited" style="font-size:10px">Visited</span>'
-                :'<span class="badge badge-upcoming" style="font-size:10px">Upcoming</span>';
-            var rowBg=r%2===0?'background:var(--gray)':'background:var(--white)';
+
+          for(var r=0;r<allRows.length;r++){
+            var row=allRows[r];
+            var isCamp = row.type==='camp';
+            var rowBg = isCamp ? 'background:#F8F0FF' : (r%2===0?'background:var(--gray)':'background:var(--white)');
             if(row.visited) rowBg='background:var(--green-light)';
             if(row.cancelled) rowBg='background:var(--white);opacity:0.5';
-            html+='<tr style="'+rowBg+'" data-year="'+year+'">'
-              +'<td style="padding:6px 10px;border-bottom:1px solid var(--border);font-weight:500;color:var(--text-muted)">'+year+'</td>'
-              +'<td style="padding:6px 10px;border-bottom:1px solid var(--border);white-space:nowrap">'+(wk?wk.label:row.fri)+'</td>'
-              +'<td style="padding:6px 10px;border-bottom:1px solid var(--border);font-weight:500;color:var(--navy-dark)">'+row.assembly+'</td>'
-              +'<td style="padding:6px 10px;border-bottom:1px solid var(--border)">'+statusBadge+'</td>'
+            var typeBadge = isCamp
+              ? '<span class="badge badge-camp" style="font-size:10px">⛺ Camp</span>'
+              : (row.cancelled
+                  ? '<span class="badge badge-cancelled" style="font-size:10px">Cancelled</span>'
+                  : row.visited
+                    ? '<span class="badge badge-visited" style="font-size:10px">Visited</span>'
+                    : '<span class="badge badge-upcoming" style="font-size:10px">Visit</span>');
+            html+='<tr style="'+rowBg+'" data-year="'+row.year+'">'
+              +'<td style="padding:6px 10px;border-bottom:1px solid var(--border);font-weight:500;color:var(--text-muted)">'+row.year+'</td>'
+              +'<td style="padding:6px 10px;border-bottom:1px solid var(--border);white-space:nowrap">'+row.date+'</td>'
+              +'<td style="padding:6px 10px;border-bottom:1px solid var(--border);font-weight:500;color:'+(isCamp?'#5B1A8B':'var(--navy-dark)')+'">'+row.name+'</td>'
+              +'<td style="padding:6px 10px;border-bottom:1px solid var(--border)">'+typeBadge+'</td>'
               +'</tr>';
           }
           html+='</tbody></table>';
@@ -2145,7 +2168,7 @@ function renderMinisters() {
       // Action buttons
       + '<div style="display:flex;gap:8px;flex-wrap:wrap">'
       + '<button class="btn btn-sm btn-primary" onclick="editMinister('+realIdx+')">Edit profile</button>'
-      + '<button class="btn btn-sm" onclick="showNotificationPrompt(\''+m.name.replace(/'/g,"\\'")+'\')" style="color:var(--navy);border-color:var(--blue-light)">📋 Copy schedule email</button>'
+      + '<button class="btn btn-sm" onclick="setTimeout(function(){showNotificationPrompt(\''+m.name.replace(/'/g,"\\'")+'\')\},50)" style="color:var(--navy);border-color:var(--blue-light)">📋 Copy schedule email</button>'
       + '<button class="btn btn-sm" style="color:var(--red);border-color:var(--red-light)" onclick="removeMinister('+realIdx+')">Remove minister</button>'
       + '</div>'
       + '</div>'
@@ -2184,7 +2207,8 @@ function showNotificationPrompt(ministerName) {
   var email = prof.email || '';
   var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
 
-  // Build assembly visits list
+  // Build assembly visits list — current assignments only
+  var today = new Date().toISOString().split('T')[0];
   var visits = SCHEDULE.filter(function(s){
     return [s.m1,s.m2,s.m3,s.m4].indexOf(ministerName) >= 0 && !s.cancelled;
   }).sort(function(a,b){return a.fri.localeCompare(b.fri);});
@@ -2232,7 +2256,7 @@ function showNotificationPrompt(ministerName) {
     document.body.appendChild(panel);
   }
   panel.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
-    + '<span style="font-size:13px;font-weight:600;color:var(--navy-dark)">📋 Schedule email — ' + firstName + '</span>'
+    + '<span style="font-size:13px;font-weight:600;color:var(--navy-dark)">📋 Schedule email — ' + firstName + ' <span style="font-weight:400;font-size:11px;color:var(--text-muted)">(' + lines.length + ' commitments)</span></span>'
     + '<button onclick="document.getElementById(\'notif-prompt\').style.display=\'none\'" style="background:none;border:none;font-size:16px;cursor:pointer;color:var(--text-muted)">✕</button>'
     + '</div>'
     + (email ? '<div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">To: <strong>' + email + '</strong></div>'
@@ -2243,34 +2267,42 @@ function showNotificationPrompt(ministerName) {
     + '<button class="btn btn-sm" onclick="document.getElementById(\'notif-prompt\').style.display=\'none\'" style="flex:1">Dismiss</button>'
     + '</div>';
   panel._text = text;
+  panel._ministerName = ministerName;
   panel.style.display = 'block';
 }
 
 function copyNotification() {
   var panel = document.getElementById('notif-prompt');
-  var text = panel ? panel._text : '';
+  if (!panel || !panel._ministerName) return;
+  // Always regenerate fresh from current schedule state
+  var mname = panel._ministerName;
+  showNotificationPrompt(mname);
+  // Now copy the freshly generated text
+  var freshPanel = document.getElementById('notif-prompt');
+  var text = freshPanel ? freshPanel._text : '';
   if (!text) return;
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(function(){ showToast('Message copied to clipboard'); });
+    navigator.clipboard.writeText(text).then(function(){ showToast('Schedule copied to clipboard'); });
   } else {
     var el = document.createElement('textarea');
     el.value = text; document.body.appendChild(el); el.select();
     document.execCommand('copy'); document.body.removeChild(el);
-    showToast('Message copied to clipboard');
+    showToast('Schedule copied to clipboard');
   }
-  panel.style.display = 'none';
+  freshPanel.style.display = 'none';
 }
 
 // Keep camp → remove minister from assembly visit slot
 function applyKeepCamp(btn) {
   var schedIdx = parseInt(btn.getAttribute('data-sidx'));
   var slot = btn.getAttribute('data-slot');
-  if (isNaN(schedIdx)||!slot) { showToast('Could not find visit'); return; }
+  if (isNaN(schedIdx) || schedIdx < 0) { showToast('Error: could not find schedule entry (idx='+schedIdx+')'); return; }
+  if (!slot) { showToast('Error: could not find minister slot'); return; }
   var mname = SCHEDULE[schedIdx][slot] || '';
+  if (!mname) { showToast('Slot already empty — no change needed'); return; }
   var assembly = SCHEDULE[schedIdx].assembly || '';
-  var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
-  var wk = null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===SCHEDULE[schedIdx].fri){wk=allWk[w];break;}}
   SCHEDULE[schedIdx][slot] = '';
+  showToast(mname + ' removed from ' + assembly);
   renderMinistersKeepOpen(mname);
   renderConflicts(); renderSchedule(activeScheduleYear); renderDashboard(); renderAssemblies();
   if (typeof renderCamps==='function') renderCamps();
@@ -4972,7 +5004,7 @@ var CAMPS = [
   {name:"Pinelow Summer Camp", start:"2026-08-02", end:"2026-08-08", location:"Loon Lake, WA", ministers:["Andy Snoke","Nick Snoke","Jeff Olson","Nat Swaan","Dennis Aarrestad","Terry Zimmer"], airport:"Spokane International (GEG) ~1 hr", contact:"", notes:"Pinelow Park and Conference Center, 3806 N Deer Lake Rd", done:false},
   {name:"Caribbean Camp – St Vincent", start:"2026-08-02", end:"2026-08-07", location:"St Vincent", ministers:["Darren Olson","Darrell Smith"], airport:"Argyle International Airport (SVD)", contact:"bjames@globalmissionsinc.org", notes:"Beachcombers Hotel. Meeting start Sunday Aug 2, end Fri evening Aug 7. Arrive Aug 1, depart Aug 8.", done:false},
   {name:"Guyana Region 4 – Georgetown Camp", start:"2026-08-21", end:"2026-08-23", location:"Georgetown, Guyana", ministers:["Trevor Sundbo"], airport:"", contact:"", notes:"", done:false},
-  {name:"Caribbean & South America Orientation", start:"2026-08-25", end:"2026-08-28", location:"Ideal, Guyana", ministers:["David Luff","Darren Olson","Jeff Olson","Wayne Peters","Kelvin Martin"], airport:"", contact:"", notes:"In person and online. Online presenters include David Luff, Darren Olson, Jeff Olson, Wayne Peters, Kelvin Martin.", done:false},
+  {name:"Caribbean & South America Orientation", start:"2026-08-25", end:"2026-08-28", location:"Ideal, Guyana", ministers:["Trevor Sundbo"], airport:"", contact:"", notes:"In person and online. In-person: Calvin James, Bernard James, Trevor Sundbo. Online presenters (not blocked): David Luff, Darren Olson, Jeff Olson, Wayne Peters, Kelvin Martin.", done:false},
   {name:"Park Valley Young People's", start:"2026-09-04", end:"2026-09-07", location:"Park Valley, SK", ministers:["Terry Zimmer","Dennis Aarrestad","Nat Swaan"], airport:"", contact:"cyndena@hotmail.com", notes:"", done:false},
   {name:"Hidden Acres Camp", start:"2026-09-04", end:"2026-09-07", location:"New Hamburg, ON", ministers:["Kelvin Martin","PJ Mathew","Trevor Sundbo","Brian Hannigan"], airport:"", contact:"kMartin@globalmissionsinc.org", notes:"Hidden Acres Mennonite Camp, 1921 37 Line, New Hamburg, ON N3A 4B5", done:false},
   {name:"Manitoba Fall Camp", start:"2026-09-18", end:"2026-09-20", location:"Ninette, MB", ministers:["Kelvin Martin","Trevor Sundbo","Wayne Peters","Brian Hannigan"], airport:"", contact:"", notes:"Manhattan Beach Retreat Centre, Pelican Lake", done:false},
