@@ -222,7 +222,7 @@ textarea{resize:vertical;min-height:80px}
 <script>
 const SUPABASE_URL = 'https://agwlzmaiewhhfjyvfnfu.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnd2x6bWFpZXdoaGZqeXZmbmZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4ODczODUsImV4cCI6MjA5NTQ2MzM4NX0.JdFWl7WJNN8KkEvfkoTQP6S6d27wEkbzv8X8WkElJQI';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = (window.supabase || supabase).createClient(SUPABASE_URL, SUPABASE_KEY);
 
 var currentUser = null;
 var currentProfile = null;
