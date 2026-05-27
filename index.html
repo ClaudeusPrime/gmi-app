@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GMI Travel — Scheduling System</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --navy:#1A3A6B;--navy-dark:#0F2347;--blue:#2E5EA3;--blue-light:#E6F1FB;
+  --green:#1A7A3C;--green-light:#E6F5EC;--red:#B91C1C;--red-light:#FEE2E2;
+  --amber:#B45309;--amber-light:#FEF3C7;--gray:#F8F9FA;--white:#FFFFFF;
+  --border:#E2E8F0;--text:#1A202C;--text-muted:#64748B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:var(--gray);color:var(--text);min-height:100vh}
+
+/* ── Login ── */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--navy-dark)}
+.login-card{background:var(--white);border-radius:16px;padding:2.5rem;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.login-logo{text-align:center;margin-bottom:2rem}
+.login-logo svg{width:80px;height:80px}
+.login-logo h1{color:var(--navy-dark);font-size:22px;font-weight:700;margin-top:10px}
+.login-logo p{color:var(--text-muted);font-size:13px;margin-top:4px}
+.login-form input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;margin-bottom:12px;outline:none;font-family:Arial,sans-serif}
+.login-form input:focus{border-color:var(--blue)}
+.login-btn{width:100%;padding:11px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:Arial,sans-serif}
+.login-btn:hover{background:var(--navy-dark)}
+.login-error{color:var(--red);font-size:12px;margin-bottom:10px;text-align:center}
+
+/* ── App Shell ── */
+#app-screen{display:none;min-height:100vh}
+.app{display:flex;min-height:100vh}
+
+/* ── Sidebar ── */
+.sidebar{width:220px;background:var(--navy-dark);color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
+.sidebar-logo{padding:16px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.sidebar-logo svg{width:100%;max-height:80px}
+.sidebar-nav{padding:8px 0;flex:1}
+.nav-section{padding:8px 16px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.4)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:13px;cursor:pointer;color:rgba(255,255,255,0.8);border-radius:0;transition:background .15s}
+.nav-item:hover{background:rgba(255,255,255,0.1)}
+.nav-item.active{background:rgba(255,255,255,0.15);color:#fff;font-weight:600}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:.7}
+.nav-item.active svg{opacity:1}
+.sidebar-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,0.1)}
+.user-info{font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:8px}
+.user-name{font-weight:600;color:#fff;font-size:13px}
+.user-role{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,0.5)}
+.signout-btn{width:100%;padding:7px;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.2);border-radius:6px;font-size:12px;cursor:pointer;font-family:Arial,sans-serif}
+.signout-btn:hover{background:rgba(255,255,255,0.2)}
+
+/* ── Main ── */
+.main{margin-left:220px;flex:1;min-height:100vh}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:16px;font-weight:700;color:var(--navy-dark)}
+.content{padding:1.5rem 2rem}
+
+/* ── Cards ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:12px;margin-bottom:1.25rem;overflow:hidden}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 1.25rem;border-bottom:1px solid var(--border);background:var(--white)}
+.card-title{font-size:15px;font-weight:700;color:var(--navy-dark)}
+.card-body{padding:1.25rem}
+
+/* ── Panels ── */
+.panel{display:none}.panel.active{display:block}
+
+/* ── Buttons ── */
+.btn{padding:8px 16px;border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;background:var(--white);font-family:Arial,sans-serif;transition:all .15s}
+.btn:hover{background:var(--gray)}
+.btn-primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn-primary:hover{background:var(--navy-dark)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-green{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-red{color:var(--red);border-color:var(--red-light)}
+
+/* ── Badges ── */
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.badge-pending{background:var(--amber-light);color:var(--amber)}
+.badge-approved{background:var(--green-light);color:var(--green)}
+.badge-declined{background:var(--red-light);color:var(--red)}
+.badge-upcoming{background:var(--blue-light);color:var(--blue)}
+.badge-admin{background:var(--navy);color:#fff}
+.badge-minister{background:var(--blue-light);color:var(--blue)}
+.badge-overseer{background:var(--amber-light);color:var(--amber)}
+
+/* ── Tables ── */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:9px 12px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--gray)}
+
+/* ── Forms ── */
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+input,select,textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:Arial,sans-serif;background:var(--white);color:var(--text);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=number]{-moz-appearance:textfield}
+textarea{resize:vertical;min-height:80px}
+
+/* ── Stats ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center}
+.stat-number{font-size:32px;font-weight:700;color:var(--navy-dark)}
+.stat-label{font-size:12px;color:var(--text-muted);margin-top:4px}
+
+/* ── Schedule ── */
+.weekend-row{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.weekend-date{width:80px;flex-shrink:0;font-size:12px;font-weight:600;color:var(--navy-dark)}
+.weekend-year{font-size:10px;color:var(--text-muted);margin-top:2px}
+.weekend-visits{flex:1;display:flex;flex-direction:column;gap:6px}
+.visit-row{background:var(--gray);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px}
+.visit-assembly{font-weight:600;color:var(--navy-dark)}
+.visit-ministers{color:var(--text-muted);font-size:12px}
+.empty-weekend{color:var(--text-muted);font-size:12px;font-style:italic}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--navy-dark);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+
+/* ── Loading ── */
+.loading{text-align:center;padding:3rem;color:var(--text-muted);font-size:14px}
+.spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Availability grid ── */
+.avail-cell{width:20px;height:20px;border-radius:3px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+
+/* ── Proposal form ── */
+.budget-preview{background:var(--gray);border-radius:8px;padding:14px;margin-top:12px}
+.budget-line{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+.budget-total{display:flex;justify-content:space-between;font-weight:700;padding-top:8px;border-top:1px solid var(--border);margin-top:8px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="38" cy="54" rx="22" ry="17" fill="#FFCF00"/>
+        <ellipse cx="38" cy="36" rx="9" ry="11" fill="#FFCF00"/>
+        <ellipse cx="44" cy="24" rx="13" ry="12" fill="#FFCF00"/>
+        <ellipse cx="26" cy="56" rx="13" ry="7" fill="#F0BC00" transform="rotate(-15 26 56)"/>
+        <ellipse cx="57" cy="48" rx="7" ry="4" fill="#F0BC00" transform="rotate(30 57 48)"/>
+        <ellipse cx="57" cy="26" rx="7" ry="3.5" fill="#FF8C00"/>
+        <circle cx="49" cy="20" r="2.5" fill="#1A1A1A"/>
+        <rect x="40" y="16" width="9" height="6" rx="3" fill="#1A1A1A"/>
+        <rect x="41" y="17" width="7" height="4" rx="2" fill="#2255AA" opacity="0.85"/>
+        <rect x="50" y="16" width="9" height="6" rx="3" fill="#1A1A1A"/>
+        <rect x="51" y="17" width="7" height="4" rx="2" fill="#2255AA" opacity="0.85"/>
+        <line x1="49" y1="19" x2="50" y2="19" stroke="#1A1A1A" stroke-width="1.2"/>
+        <ellipse cx="38" cy="69" rx="26" ry="4" fill="#AAD4F5" opacity="0.45"/>
+        <text x="76" y="36" font-family="Arial,sans-serif" font-size="26" font-weight="700" fill="#1A3A6B" letter-spacing="-0.5">GMI</text>
+        <text x="78" y="56" font-family="Arial,sans-serif" font-size="14" font-weight="400" fill="#2E5EA3" letter-spacing="2">TRAVEL</text>
+      </svg>
+      <p>Scheduling System</p>
+    </div>
+    <div class="login-form">
+      <div id="login-error" class="login-error" style="display:none"></div>
+      <input type="email" id="login-email" placeholder="Email address" autocomplete="email">
+      <input type="password" id="login-password" placeholder="Password" autocomplete="current-password">
+      <button class="login-btn" onclick="signIn()">Sign in</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP SCREEN -->
+<div id="app-screen">
+  <div class="app">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="38" cy="54" rx="22" ry="17" fill="#FFCF00"/>
+          <ellipse cx="38" cy="36" rx="9" ry="11" fill="#FFCF00"/>
+          <ellipse cx="44" cy="24" rx="13" ry="12" fill="#FFCF00"/>
+          <ellipse cx="26" cy="56" rx="13" ry="7" fill="#F0BC00" transform="rotate(-15 26 56)"/>
+          <ellipse cx="57" cy="48" rx="7" ry="4" fill="#F0BC00" transform="rotate(30 57 48)"/>
+          <ellipse cx="57" cy="26" rx="7" ry="3.5" fill="#FF8C00"/>
+          <circle cx="49" cy="20" r="2.5" fill="#1A1A1A"/>
+          <rect x="40" y="16" width="9" height="6" rx="3" fill="#1A1A1A"/>
+          <rect x="41" y="17" width="7" height="4" rx="2" fill="#2255AA" opacity="0.85"/>
+          <rect x="50" y="16" width="9" height="6" rx="3" fill="#1A1A1A"/>
+          <rect x="51" y="17" width="7" height="4" rx="2" fill="#2255AA" opacity="0.85"/>
+          <line x1="49" y1="19" x2="50" y2="19" stroke="#1A1A1A" stroke-width="1.2"/>
+          <ellipse cx="38" cy="69" rx="26" ry="4" fill="#AAD4F5" opacity="0.45"/>
+          <text x="76" y="36" font-family="Arial,sans-serif" font-size="26" font-weight="700" fill="#ffffff">GMI</text>
+          <text x="78" y="56" font-family="Arial,sans-serif" font-size="14" fill="#AAC8F0" letter-spacing="2">TRAVEL</text>
+        </svg>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <!-- populated by JS based on role -->
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-name" id="user-name-display">Loading...</div>
+        <div class="user-role" id="user-role-display"></div>
+        <button class="signout-btn" style="margin-top:8px" onclick="signOut()">Sign out</button>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+      </div>
+      <div class="content" id="main-content">
+        <div class="loading"><div class="spinner"></div><br>Loading...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://agwlzmaiewhhfjyvfnfu.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnd2x6bWFpZXdoaGZqeXZmbmZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4ODczODUsImV4cCI6MjA5NTQ2MzM4NX0.JdFWl7WJNN8KkEvfkoTQP6S6d27wEkbzv8X8WkElJQI';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+var currentUser = null;
+var currentProfile = null;
+var currentPanel = 'dashboard';
+
+// ── Auth ──────────────────────────────────────────────────
+async function signIn() {
+  var email = document.getElementById('login-email').value.trim();
+  var pass = document.getElementById('login-password').value;
+  var errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+  if (!email || !pass) { errEl.textContent = 'Please enter email and password'; errEl.style.display = 'block'; return; }
+  var btn = document.querySelector('.login-btn');
+  btn.textContent = 'Signing in...'; btn.disabled = true;
+  var { data, error } = await sb.auth.signInWithPassword({ email: email, password: pass });
+  btn.textContent = 'Sign in'; btn.disabled = false;
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  await loadApp(data.user);
+}
+
+async function signOut() {
+  await sb.auth.signOut();
+  currentUser = null; currentProfile = null;
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+async function loadApp(user) {
+  currentUser = user;
+  // Load profile
+  var { data: profile } = await sb.from('profiles').select('*').eq('id', user.id).single();
+  if (!profile) {
+    // Create default profile if missing
+    await sb.from('profiles').insert({ id: user.id, full_name: user.email, role: 'minister' });
+    profile = { id: user.id, full_name: user.email, role: 'minister' };
+  }
+  currentProfile = profile;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'block';
+  document.getElementById('user-name-display').textContent = profile.full_name;
+  document.getElementById('user-role-display').textContent = profile.role.charAt(0).toUpperCase() + profile.role.slice(1);
+  buildNav();
+  showPanel('dashboard');
+}
+
+// ── Navigation ────────────────────────────────────────────
+function buildNav() {
+  var role = currentProfile.role;
+  var nav = '';
+
+  // All roles see dashboard and their schedule
+  nav += navItem('dashboard', 'Dashboard', iconGrid());
+  nav += '<div class="nav-section">Schedule</div>';
+  nav += navItem('my-schedule', 'My Schedule', iconCalendar());
+  nav += navItem('availability', 'My Availability', iconCheck());
+
+  if (role === 'admin') {
+    nav += navItem('full-schedule', 'Full Schedule', iconCalendar());
+    nav += navItem('avail-grid', 'Availability Grid', iconGrid());
+    nav += '<div class="nav-section">People</div>';
+    nav += navItem('ministers', 'Ministers', iconUser());
+    nav += navItem('assemblies', 'Assemblies', iconBuilding());
+    nav += '<div class="nav-section">Records</div>';
+    nav += navItem('church-reports', 'Church Reports', iconDoc());
+    nav += '<div class="nav-section">Admin</div>';
+    nav += navItem('settings', 'Settings', iconSettings());
+    nav += navItem('budget', 'Travel Budget', iconDollar());
+  }
+
+  // All roles see proposals
+  nav += '<div class="nav-section">Proposals</div>';
+  nav += navItem('proposals', 'Travel Proposals', iconMsg());
+
+  if (role === 'admin') {
+    nav += navItem('users', 'User Management', iconUser());
+  }
+
+  document.getElementById('sidebar-nav').innerHTML = nav;
+}
+
+function navItem(id, label, icon) {
+  return '<div class="nav-item" id="nav-'+id+'" onclick="showPanel(\''+id+'\')">' + icon + label + '</div>';
+}
+
+function showPanel(id) {
+  currentPanel = id;
+  var titles = {
+    'dashboard':'Dashboard','my-schedule':'My Schedule','availability':'My Availability',
+    'full-schedule':'Full Schedule','avail-grid':'Availability Grid',
+    'ministers':'Ministers','assemblies':'Assemblies','church-reports':'Church Reports',
+    'settings':'Settings','budget':'Travel Budget','proposals':'Travel Proposals',
+    'users':'User Management'
+  };
+  document.getElementById('topbar-title').textContent = titles[id] || id;
+  document.querySelectorAll('.nav-item').forEach(function(el){ el.classList.remove('active'); });
+  var navEl = document.getElementById('nav-'+id);
+  if (navEl) navEl.classList.add('active');
+  renderPanel(id);
+}
+
+async function renderPanel(id) {
+  var content = document.getElementById('main-content');
+  content.innerHTML = '<div class="loading"><div class="spinner"></div><br>Loading...</div>';
+  if (id === 'dashboard') await renderDashboard();
+  else if (id === 'my-schedule') await renderMySchedule();
+  else if (id === 'availability') await renderAvailability();
+  else if (id === 'full-schedule') await renderFullSchedule();
+  else if (id === 'proposals') await renderProposals();
+  else if (id === 'ministers') await renderMinisters();
+  else if (id === 'assemblies') await renderAssemblies();
+  else if (id === 'users') await renderUsers();
+  else if (id === 'church-reports') await renderChurchReports();
+  else if (id === 'budget') await renderBudget();
+  else if (id === 'settings') await renderSettings();
+  else content.innerHTML = '<div class="loading">Coming soon</div>';
+}
+
+// ── Dashboard ─────────────────────────────────────────────
+async function renderDashboard() {
+  var role = currentProfile.role;
+  var mname = currentProfile.minister_name;
+  var html = '';
+
+  if (role === 'admin') {
+    // Admin dashboard - system overview
+    var [schedRes, propRes, minRes, asmRes] = await Promise.all([
+      sb.from('schedule').select('*', { count:'exact', head:true }),
+      sb.from('proposals').select('*', { count:'exact', head:true }).eq('status','Pending'),
+      sb.from('ministers').select('*', { count:'exact', head:true }),
+      sb.from('assemblies').select('*', { count:'exact', head:true })
+    ]);
+    html += '<div class="stats-grid">';
+    html += statCard(minRes.count || 0, 'Ministers');
+    html += statCard(asmRes.count || 0, 'Assemblies');
+    html += statCard(schedRes.count || 0, 'Scheduled visits');
+    html += statCard(propRes.count || 0, 'Pending proposals');
+    html += '</div>';
+
+    // Pending proposals
+    var { data: pending } = await sb.from('proposals').select('*').eq('status','Pending').order('submitted_at', { ascending:false }).limit(5);
+    if (pending && pending.length) {
+      html += '<div class="card"><div class="card-header"><span class="card-title">Pending Proposals</span></div>';
+      html += '<table><thead><tr><th>Minister</th><th>Assembly</th><th>Weekend</th><th>Cost</th><th></th></tr></thead><tbody>';
+      pending.forEach(function(p){
+        var sym = p.currency === 'CAD' ? 'CA$' : 'US$';
+        html += '<tr><td><strong>'+p.minister+'</strong></td><td>'+p.assembly+'</td><td>'+p.weekend_label+'</td>';
+        html += '<td>'+sym+(p.total_cost||0).toFixed(0)+'</td>';
+        html += '<td><button class="btn btn-sm btn-green" onclick="approveProposal('+p.id+')">Approve</button> ';
+        html += '<button class="btn btn-sm btn-red" onclick="declineProposal('+p.id+')">Decline</button></td></tr>';
+      });
+      html += '</tbody></table></div>';
+    }
+
+  } else {
+    // Minister dashboard
+    if (mname) {
+      var today = new Date().toISOString().split('T')[0];
+      var { data: myVisits } = await sb.from('schedule').select('*')
+        .or('m1.eq.'+mname+',m2.eq.'+mname+',m3.eq.'+mname+',m4.eq.'+mname)
+        .gte('fri', today).order('fri').limit(5);
+
+      html += '<div class="stats-grid">';
+      html += statCard(myVisits ? myVisits.length : 0, 'Upcoming visits');
+      html += '</div>';
+
+      if (myVisits && myVisits.length) {
+        html += '<div class="card"><div class="card-header"><span class="card-title">Your Upcoming Visits</span></div><div>';
+        myVisits.forEach(function(s){
+          var d = new Date(s.fri + 'T00:00:00');
+          var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          var sat = new Date(d); sat.setDate(sat.getDate()+1);
+          var sun = new Date(d); sun.setDate(sun.getDate()+2);
+          var label = months[sat.getMonth()]+' '+sat.getDate()+'\u2013'+sun.getDate();
+          html += '<div class="weekend-row"><div class="weekend-date">'+label+'<div class="weekend-year">'+d.getFullYear()+'</div></div>';
+          html += '<div class="weekend-visits"><div class="visit-row"><span class="visit-assembly">'+s.assembly+'</span>';
+          var mins = [s.m1,s.m2,s.m3,s.m4].filter(Boolean);
+          html += '<span class="visit-ministers">'+mins.join(' \u00b7 ')+'</span></div></div></div>';
+        });
+        html += '</div></div>';
+      } else {
+        html += '<div class="card"><div class="card-body" style="color:var(--text-muted)">No upcoming visits scheduled.</div></div>';
+      }
+    }
+  }
+
+  document.getElementById('main-content').innerHTML = html;
+}
+
+// ── My Schedule ───────────────────────────────────────────
+async function renderMySchedule() {
+  var mname = currentProfile.minister_name;
+  if (!mname && currentProfile.role !== 'admin') {
+    document.getElementById('main-content').innerHTML = '<div class="card"><div class="card-body" style="color:var(--text-muted)">No minister profile linked to your account. Please contact an administrator.</div></div>';
+    return;
+  }
+
+  var query = sb.from('schedule').select('*').order('fri');
+  if (mname) query = query.or('m1.eq.'+mname+',m2.eq.'+mname+',m3.eq.'+mname+',m4.eq.'+mname);
+  var { data: visits } = await query;
+
+  var html = '<div class="card"><div class="card-header"><span class="card-title">'+(mname||'All')+' — Schedule</span></div><div>';
+  if (!visits || !visits.length) {
+    html += '<div class="card-body" style="color:var(--text-muted)">No visits scheduled.</div>';
+  } else {
+    visits.forEach(function(s){
+      var d = new Date(s.fri + 'T00:00:00');
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var sat = new Date(d); sat.setDate(sat.getDate()+1);
+      var sun = new Date(d); sun.setDate(sun.getDate()+2);
+      var label = months[sat.getMonth()]+' '+sat.getDate()+'\u2013'+sun.getDate();
+      var status = s.cancelled ? '<span class="badge badge-declined">Cancelled</span>' : s.visited ? '<span class="badge badge-approved">Visited</span>' : '<span class="badge badge-upcoming">Upcoming</span>';
+      var mins = [s.m1,s.m2,s.m3,s.m4].filter(Boolean);
+      html += '<div class="weekend-row"><div class="weekend-date">'+label+'<div class="weekend-year">'+d.getFullYear()+'</div></div>';
+      html += '<div class="weekend-visits"><div class="visit-row"><span class="visit-assembly">'+s.assembly+'</span>';
+      html += '<span class="visit-ministers">'+mins.join(' \u00b7 ')+'</span>'+status+'</div></div></div>';
+    });
+  }
+  html += '</div></div>';
+  document.getElementById('main-content').innerHTML = html;
+}
+
+// ── My Availability ───────────────────────────────────────
+async function renderAvailability() {
+  var mname = currentProfile.minister_name;
+  if (!mname) {
+    document.getElementById('main-content').innerHTML = '<div class="card"><div class="card-body" style="color:var(--text-muted)">No minister profile linked to your account.</div></div>';
+    return;
+  }
+
+  var { data: unavail } = await sb.from('availability').select('fri').eq('minister_name', mname);
+  var unavailDates = (unavail||[]).map(function(u){ return u.fri; });
+
+  var html = '<div class="card"><div class="card-header"><span class="card-title">My Unavailable Weekends</span>';
+  html += '<button class="btn btn-sm btn-primary" onclick="showAddUnavail()">+ Mark unavailable</button></div>';
+  html += '<div id="avail-add" style="display:none;padding:1rem;border-bottom:1px solid var(--border);background:var(--gray)">';
+  html += '<div style="display:flex;gap:8px;align-items:center"><input type="date" id="unavail-date" style="width:auto"><button class="btn btn-sm btn-primary" onclick="addUnavail()">Save</button><button class="btn btn-sm" onclick="document.getElementById(\'avail-add\').style.display=\'none\'">Cancel</button></div></div>';
+
+  if (!unavailDates.length) {
+    html += '<div class="card-body" style="color:var(--text-muted)">No unavailable weekends marked.</div>';
+  } else {
+    html += '<table><thead><tr><th>Weekend</th><th></th></tr></thead><tbody>';
+    unavailDates.sort().forEach(function(fri){
+      var d = new Date(fri + 'T00:00:00');
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var sat = new Date(d); sat.setDate(sat.getDate()+1);
+      var sun = new Date(d); sun.setDate(sun.getDate()+2);
+      var label = months[sat.getMonth()]+' '+sat.getDate()+'\u2013'+sun.getDate()+', '+d.getFullYear();
+      html += '<tr><td>'+label+'</td><td style="text-align:right"><button class="btn btn-sm btn-red" onclick="removeUnavail(\''+fri+'\')">Remove</button></td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+  html += '</div>';
+  document.getElementById('main-content').innerHTML = html;
+}
+
+function showAddUnavail() {
+  document.getElementById('avail-add').style.display = 'block';
+}
+
+async function addUnavail() {
+  var mname = currentProfile.minister_name;
+  var fri = document.getElementById('unavail-date').value;
+  if (!fri) { showToast('Please select a date'); return; }
+  await sb.from('availability').upsert({ minister_name: mname, fri: fri });
+  showToast('Marked as unavailable');
+  renderAvailability();
+}
+
+async function removeUnavail(fri) {
+  var mname = currentProfile.minister_name;
+  await sb.from('availability').delete().eq('minister_name', mname).eq('fri', fri);
+  showToast('Removed');
+  renderAvailability();
+}
+
+// ── Full Schedule (admin) ─────────────────────────────────
+async function renderFullSchedule() {
+  var year = new Date().getFullYear();
+  var { data: visits } = await sb.from('schedule').select('*').gte('fri', year+'-01-01').lte('fri', year+'-12-31').order('fri');
+
+  var html = '<div class="card"><div class="card-header"><span class="card-title">'+year+' Schedule</span>';
+  html += '<div style="display:flex;gap:8px">';
+  html += '<select onchange="loadScheduleYear(this.value)" style="width:auto;font-size:12px;padding:4px 8px">';
+  [2026,2027,2028,2029,2030].forEach(function(y){html+='<option value="'+y+'"'+(y===year?' selected':'')+'>'+y+'</option>';});
+  html += '</select></div></div>';
+  html += '<div id="full-sched-body">';
+  html += renderScheduleRows(visits||[]);
+  html += '</div></div>';
+  document.getElementById('main-content').innerHTML = html;
+}
+
+async function loadScheduleYear(year) {
+  var { data: visits } = await sb.from('schedule').select('*').gte('fri', year+'-01-01').lte('fri', year+'-12-31').order('fri');
+  document.getElementById('full-sched-body').innerHTML = renderScheduleRows(visits||[]);
+}
+
+function renderScheduleRows(visits) {
+  if (!visits.length) return '<div class="card-body" style="color:var(--text-muted)">No visits scheduled.</div>';
+  var html = '';
+  var lastFri = '';
+  visits.forEach(function(s){
+    if (s.fri !== lastFri) {
+      if (lastFri) html += '</div></div>';
+      var d = new Date(s.fri+'T00:00:00');
+      var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var sat=new Date(d);sat.setDate(sat.getDate()+1);
+      var sun=new Date(d);sun.setDate(sun.getDate()+2);
+      var label=months[sat.getMonth()]+' '+sat.getDate()+'\u2013'+sun.getDate();
+      html+='<div class="weekend-row"><div class="weekend-date">'+label+'<div class="weekend-year">'+d.getFullYear()+'</div></div><div class="weekend-visits">';
+      lastFri = s.fri;
+    }
+    var mins=[s.m1,s.m2,s.m3,s.m4].filter(Boolean);
+    var status=s.cancelled?'<span class="badge badge-declined">Cancelled</span>':s.visited?'<span class="badge badge-approved">Visited</span>':'';
+    html+='<div class="visit-row"><span class="visit-assembly">'+s.assembly+'</span><span class="visit-ministers">'+mins.join(' \u00b7 ')+'</span>'+status+'</div>';
+  });
+  if (lastFri) html += '</div></div>';
+  return html;
+}
+
+// ── Proposals ─────────────────────────────────────────────
+async function renderProposals() {
+  var role = currentProfile.role;
+  var mname = currentProfile.minister_name;
+
+  // Load ministers for dropdown
+  var { data: ministers } = await sb.from('ministers').select('name,country,overseers').order('name');
+  var { data: assemblies } = await sb.from('assemblies').select('name').order('name');
+
+  var proposalQuery = sb.from('proposals').select('*').order('submitted_at', { ascending: false });
+  if (role === 'minister' && mname) proposalQuery = proposalQuery.eq('minister', mname);
+  var { data: proposals } = await proposalQuery;
+
+  var html = '';
+
+  // New proposal form
+  html += '<div class="card"><div class="card-header"><span class="card-title">New Travel Proposal</span></div><div class="card-body">';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:12px">';
+
+  // Minister select
+  html += '<div class="form-group"><label class="form-label">Minister</label><select id="pf-minister" onchange="pfUpdate()">';
+  html += '<option value="">Select...</option>';
+  (ministers||[]).forEach(function(m){
+    var sel = (role==='minister' && m.name===mname) ? ' selected' : '';
+    html += '<option value="'+m.name+'" data-country="'+(m.country||'CAN')+'" data-overseers="'+(m.overseers||'').replace(/"/g,'&quot;')+'"'+sel+'>'+m.name+'</option>';
+  });
+  html += '</select></div>';
+
+  // Assembly select
+  html += '<div class="form-group"><label class="form-label">Assembly</label><select id="pf-assembly"><option value="">Select...</option>';
+  (assemblies||[]).forEach(function(a){ html += '<option value="'+a.name+'">'+a.name+'</option>'; });
+  html += '</select></div>';
+
+  // Weekend
+  html += '<div class="form-group"><label class="form-label">Weekend</label><select id="pf-weekend"><option value="">Select...</option>';
+  var allWk = getWeekends();
+  allWk.forEach(function(w){ html += '<option value="'+w.fri+'">'+w.label+' ('+w.year+')</option>'; });
+  html += '</select></div>';
+
+  html += '</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px">';
+  html += '<div class="form-group"><label class="form-label">Purpose</label><select id="pf-purpose"><option value="">Select...</option>';
+  ['Regular scheduled visitation','Follow-up visit','Assembly request','Pastoral support','Special occasion','Other'].forEach(function(p){html+='<option>'+p+'</option>';});
+  html += '</select></div>';
+  html += '<div class="form-group"><label class="form-label">Travel mode</label><select id="pf-mode" onchange="pfUpdate()"><option value="drive">Driving</option><option value="fly">Flying</option></select></div>';
+  html += '<div class="form-group"><label class="form-label" id="pf-dist-label">Distance (km)</label><input type="number" id="pf-distance" placeholder="Enter..." oninput="pfBudget()"></div>';
+  html += '<div class="form-group"><label class="form-label">Hotel nights</label><input type="number" id="pf-nights" placeholder="e.g. 2" oninput="pfBudget()"></div>';
+  html += '<div class="form-group"><label class="form-label">Meal days</label><input type="number" id="pf-days" placeholder="e.g. 3" oninput="pfBudget()"></div>';
+  html += '<div class="form-group"><label class="form-label">Plurality</label><select id="pf-plurality"><option value="">Travelling alone</option>';
+  (ministers||[]).forEach(function(m){ html+='<option value="'+m.name+'">'+m.name+'</option>'; });
+  html += '</select></div>';
+  html += '<div class="form-group"><label class="form-label">With spouse?</label><select id="pf-spouse"><option value="no">No</option><option value="yes">Yes</option></select></div>';
+  html += '</div>';
+  html += '<div class="form-group"><label class="form-label">Notes</label><textarea id="pf-notes" placeholder="Any special considerations..."></textarea></div>';
+  html += '<div id="pf-budget" style="display:none" class="budget-preview"></div>';
+  html += '<div style="margin-top:12px;display:flex;gap:8px"><button class="btn btn-primary" onclick="submitProposal()">Save &amp; copy text</button><button class="btn" onclick="pfClear()">Clear</button></div>';
+  html += '<div id="pf-result" style="display:none;margin-top:12px">';
+  html += '<div style="background:var(--green-light);border:1px solid var(--green);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between">';
+  html += '<span style="color:var(--green);font-weight:500">&#10003; Saved and copied to clipboard</span>';
+  html += '<button class="btn btn-sm" onclick="copyLastProposal()" style="color:var(--green);border-color:var(--green)">Copy again</button></div>';
+  html += '<textarea id="pf-text" style="margin-top:8px;font-size:12px;min-height:120px" readonly></textarea></div>';
+  html += '</div></div>';
+
+  // Proposals list
+  html += '<div class="card"><div class="card-header"><span class="card-title">Proposals</span></div>';
+  if (!proposals || !proposals.length) {
+    html += '<div class="card-body" style="color:var(--text-muted)">No proposals yet.</div>';
+  } else {
+    html += '<table><thead><tr><th>Date</th><th>Minister</th><th>Assembly</th><th>Weekend</th><th>Cost</th><th>Status</th><th></th></tr></thead><tbody>';
+    proposals.forEach(function(p){
+      var sym = p.currency==='CAD'?'CA$':'US$';
+      var badge = p.status==='Approved'?'badge-approved':p.status==='Declined'?'badge-declined':'badge-pending';
+      html += '<tr>';
+      html += '<td style="color:var(--text-muted);font-size:12px">'+(p.submitted_at||'').substring(0,10)+'</td>';
+      html += '<td><strong>'+p.minister+'</strong></td>';
+      html += '<td>'+p.assembly+'</td>';
+      html += '<td style="font-size:12px">'+p.weekend_label+'</td>';
+      html += '<td>'+sym+((p.total_cost||0).toFixed(0))+'</td>';
+      html += '<td><span class="badge '+badge+'">'+p.status+'</span></td>';
+      html += '<td style="white-space:nowrap">';
+      if (role==='admin' && p.status==='Pending') {
+        html += '<button class="btn btn-sm btn-green" onclick="approveProposal('+p.id+')">Approve</button> ';
+        html += '<button class="btn btn-sm btn-red" onclick="declineProposal('+p.id+')">Decline</button> ';
+      } else if (role==='admin' && p.status!=='Pending') {
+        html += '<button class="btn btn-sm" onclick="resetProposal('+p.id+')">Reset</button> ';
+      }
+      html += '<button class="btn btn-sm" onclick="copyProposalText('+p.id+','+JSON.stringify(p.proposal_text)+')">Copy</button>';
+      html += '</td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+  html += '</div>';
+
+  document.getElementById('main-content').innerHTML = html;
+
+  // Lock minister field if role is minister
+  if (role === 'minister' && mname) {
+    var sel = document.getElementById('pf-minister');
+    if (sel) sel.disabled = true;
+    pfUpdate();
+  }
+}
+
+function pfUpdate() {
+  var mSel = document.getElementById('pf-minister');
+  var mode = document.getElementById('pf-mode').value;
+  var distLabel = document.getElementById('pf-dist-label');
+  if (!mSel) return;
+  var opt = mSel.options[mSel.selectedIndex];
+  var country = opt ? (opt.getAttribute('data-country')||'CAN') : 'CAN';
+  var unit = country==='USA'?'mi':'km';
+  if (distLabel) distLabel.textContent = mode==='fly' ? 'Flight cost ($)' : 'Distance ('+unit+')';
+  pfBudget();
+}
+
+function pfBudget() {
+  var mSel = document.getElementById('pf-minister');
+  if (!mSel) return;
+  var opt = mSel.options[mSel.selectedIndex];
+  var country = opt ? (opt.getAttribute('data-country')||'CAN') : 'CAN';
+  var mode = document.getElementById('pf-mode').value;
+  var dist = parseFloat(document.getElementById('pf-distance').value)||0;
+  var nights = parseFloat(document.getElementById('pf-nights').value)||0;
+  var days = parseFloat(document.getElementById('pf-days').value)||0;
+  var unit = country==='USA'?'mi':'km';
+  var mileage = country==='CAN'?0.55:0.65;
+  var hotelRate = country==='CAN'?130:110;
+  var mealRate = country==='CAN'?65:55;
+  var cur = country==='CAN'?'CAD':'USD';
+  var sym = cur==='CAD'?'CA$':'US$';
+  var fmt = function(n){return sym+n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');};
+  if (!dist || !mSel.value) { document.getElementById('pf-budget').style.display='none'; return; }
+  var transport = mode==='fly' ? dist : dist*mileage*2;
+  var hotel = nights*hotelRate;
+  var meals = days*mealRate;
+  var total = transport+hotel+meals;
+  var html = '<div style="font-weight:600;margin-bottom:8px">Estimated Budget ('+cur+')</div>';
+  html += '<div class="budget-line"><span>'+(mode==='fly'?'Flight cost':'Driving ('+dist+' '+unit+' return @ '+mileage+'/'+unit+')')+'</span><span>'+fmt(transport)+'</span></div>';
+  html += '<div class="budget-line"><span>Hotel ('+nights+' nights @ '+fmt(hotelRate)+'/night)</span><span>'+fmt(hotel)+'</span></div>';
+  html += '<div class="budget-line"><span>Meals ('+days+' days @ '+fmt(mealRate)+'/day)</span><span>'+fmt(meals)+'</span></div>';
+  html += '<div class="budget-total"><span>Total estimate</span><span>'+fmt(total)+'</span></div>';
+  document.getElementById('pf-budget').innerHTML = html;
+  document.getElementById('pf-budget').style.display = 'block';
+  window._pfBudget = {transport:transport,hotel:hotel,meals:meals,total:total,currency:cur,mode:mode,dist:dist,unit:unit,nights:nights,days:days};
+}
+
+async function submitProposal() {
+  var mSel = document.getElementById('pf-minister');
+  var minister = mSel ? mSel.value : '';
+  var assembly = document.getElementById('pf-assembly').value;
+  var weekend = document.getElementById('pf-weekend').value;
+  var purpose = document.getElementById('pf-purpose').value;
+  var plurality = document.getElementById('pf-plurality').value;
+  var spouse = document.getElementById('pf-spouse').value === 'yes';
+  var notes = document.getElementById('pf-notes').value;
+  var mode = document.getElementById('pf-mode').value;
+  if (!minister||!assembly||!weekend||!purpose) { showToast('Please fill in all required fields'); return; }
+  var budget = window._pfBudget || {total:0,currency:'CAD'};
+  var wkLabel = '';
+  var allWk = getWeekends();
+  for (var i=0;i<allWk.length;i++){if(allWk[i].fri===weekend){wkLabel=allWk[i].label+' ('+allWk[i].year+')';break;}}
+  // Get overseers from selected minister option
+  var opt = mSel.options[mSel.selectedIndex];
+  var overseers = opt ? (opt.getAttribute('data-overseers')||'') : '';
+  var overseerLines = overseers.trim() ? overseers.trim().split('\n').map(function(l){return l.trim();}).filter(Boolean) : [];
+  var sym = budget.currency==='CAD'?'CA$':'US$';
+  var fmt = function(n){return sym+(n||0).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');};
+  var text = 'TRAVEL PROPOSAL\n================\n\n';
+  text += 'Minister:    '+minister+'\n';
+  text += 'Assembly:    '+assembly+'\n';
+  text += 'Weekend:     '+wkLabel+'\n';
+  text += 'Purpose:     '+purpose+'\n';
+  text += 'Mode:        '+(mode==='fly'?'Flying':'Driving')+'\n';
+  text += 'Plurality:   '+(plurality?'Travelling with '+plurality:'Travelling alone')+'\n';
+  text += 'With spouse: '+(spouse?'Yes':'No')+'\n\n';
+  text += 'ESTIMATED BUDGET ('+budget.currency+')\n---------------------------\n';
+  text += (mode==='fly'?'Flight cost:  ':'Driving:      ')+fmt(budget.transport)+'\n';
+  text += 'Hotel:        '+fmt(budget.hotel)+'\n';
+  text += 'Meals:        '+fmt(budget.meals)+'\n';
+  text += 'TOTAL:        '+fmt(budget.total)+'\n';
+  if (notes) text += '\nNOTES\n-----\n'+notes+'\n';
+  text += '\nSEND TO\n-------\n'+(overseerLines.length?overseerLines.join('\n'):'No overseers on file — please contact administrator');
+  text += '\n\nSubmitted: '+new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
+  var { error } = await sb.from('proposals').insert({
+    minister:minister, assembly:assembly, weekend:weekend, weekend_label:wkLabel,
+    purpose:purpose, plurality:plurality, spouse:spouse, mode:mode,
+    distance:budget.dist||0, distance_unit:budget.unit||'km',
+    flight_cost:mode==='fly'?budget.transport:0,
+    hotel_nights:budget.nights||0, meal_days:budget.days||0,
+    transport_cost:budget.transport||0, hotel_cost:budget.hotel||0,
+    meal_cost:budget.meals||0, total_cost:budget.total||0,
+    currency:budget.currency, notes:notes, overseers:overseerLines.join('\n'),
+    status:'Pending', proposal_text:text
+  });
+  if (error) { showToast('Error saving proposal: '+error.message); return; }
+  window._lastProposalText = text;
+  document.getElementById('pf-text').value = text;
+  document.getElementById('pf-result').style.display = 'block';
+  if (navigator.clipboard) { navigator.clipboard.writeText(text); }
+  showToast('Proposal saved and copied');
+  renderProposals();
+}
+
+function copyLastProposal() {
+  var text = document.getElementById('pf-text').value;
+  if (navigator.clipboard) navigator.clipboard.writeText(text).then(function(){showToast('Copied');});
+}
+
+function copyProposalText(id, text) {
+  if (navigator.clipboard) navigator.clipboard.writeText(text||'').then(function(){showToast('Copied');});
+}
+
+function pfClear() {
+  ['pf-minister','pf-assembly','pf-weekend','pf-purpose','pf-mode','pf-plurality','pf-spouse'].forEach(function(id){
+    var el=document.getElementById(id); if(el&&!el.disabled) el.value='';
+  });
+  ['pf-distance','pf-nights','pf-days','pf-notes'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('pf-budget').style.display='none';
+  document.getElementById('pf-result').style.display='none';
+}
+
+async function approveProposal(id) {
+  await sb.from('proposals').update({ status:'Approved' }).eq('id', id);
+  // Add to schedule
+  var { data: p } = await sb.from('proposals').select('*').eq('id', id).single();
+  if (p) {
+    await sb.from('schedule').insert({
+      assembly:p.assembly, fri:p.weekend,
+      m1:p.minister, m2:p.plurality||'', m3:'', m4:'',
+      note:'Approved proposal', visited:false, cancelled:false
+    });
+  }
+  showToast('Proposal approved and added to schedule');
+  renderProposals();
+}
+
+async function declineProposal(id) {
+  await sb.from('proposals').update({ status:'Declined' }).eq('id', id);
+  showToast('Proposal declined');
+  renderProposals();
+}
+
+async function resetProposal(id) {
+  await sb.from('proposals').update({ status:'Pending' }).eq('id', id);
+  showToast('Reset to pending');
+  renderProposals();
+}
+
+// ── Ministers (admin) ─────────────────────────────────────
+async function renderMinisters() {
+  var { data: ministers } = await sb.from('ministers').select('*').order('name');
+  var html = '<div class="card"><div class="card-header"><span class="card-title">Ministers</span>';
+  html += '<button class="btn btn-sm btn-primary" onclick="showMinisterForm()">+ Add minister</button></div>';
+  html += '<div id="minister-form-area" style="display:none;padding:1.25rem;border-bottom:1px solid var(--border);background:var(--gray)">';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">';
+  html += '<div class="form-group"><label class="form-label">First name</label><input id="mf-first" type="text"></div>';
+  html += '<div class="form-group"><label class="form-label">Last name</label><input id="mf-last" type="text"></div>';
+  html += '<div class="form-group"><label class="form-label">City</label><input id="mf-city" type="text"></div>';
+  html += '<div class="form-group"><label class="form-label">Country</label><select id="mf-country"><option value="CAN">Canada</option><option value="USA">USA</option></select></div>';
+  html += '<div class="form-group"><label class="form-label">Region</label><select id="mf-region"><option value="CANPR">Canada Prairies</option><option value="CANPC">Canada Pacific</option><option value="CANON">Canada Ontario</option><option value="USE">US East</option><option value="USC">US Central</option><option value="USPC">US Pacific</option></select></div>';
+  html += '<div class="form-group"><label class="form-label">Email</label><input id="mf-email" type="email"></div>';
+  html += '<div class="form-group"><label class="form-label">Phone</label><input id="mf-phone" type="text"></div>';
+  html += '</div>';
+  html += '<div class="form-group"><label class="form-label">Overseers (name | email, one per line)</label><textarea id="mf-overseers" style="min-height:60px"></textarea></div>';
+  html += '<div class="form-group"><label class="form-label">Notes</label><textarea id="mf-notes" style="min-height:60px"></textarea></div>';
+  html += '<input type="hidden" id="mf-id">';
+  html += '<div style="display:flex;gap:8px"><button class="btn btn-primary btn-sm" onclick="saveMinister()">Save</button><button class="btn btn-sm" onclick="document.getElementById(\'minister-form-area\').style.display=\'none\'">Cancel</button></div>';
+  html += '</div>';
+  html += '<table><thead><tr><th>Name</th><th>Region</th><th>Country</th><th>Email</th><th></th></tr></thead><tbody>';
+  (ministers||[]).forEach(function(m){
+    html += '<tr><td><strong>'+m.name+'</strong></td><td>'+m.region+'</td><td>'+m.country+'</td><td>'+(m.email||'')+'</td>';
+    html += '<td style="text-align:right"><button class="btn btn-sm" onclick="editMinister('+JSON.stringify(m).replace(/"/g,'&quot;')+')">Edit</button></td></tr>';
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('main-content').innerHTML = html;
+}
+
+function showMinisterForm() {
+  document.getElementById('minister-form-area').style.display='block';
+  document.getElementById('mf-id').value='';
+  ['mf-first','mf-last','mf-city','mf-email','mf-phone','mf-overseers','mf-notes'].forEach(function(id){document.getElementById(id).value='';});
+}
+
+function editMinister(m) {
+  document.getElementById('minister-form-area').style.display='block';
+  var parts = (m.name||'').split(' ');
+  document.getElementById('mf-first').value = parts[0]||'';
+  document.getElementById('mf-last').value = parts.slice(1).join(' ')||'';
+  document.getElementById('mf-city').value = m.city||'';
+  document.getElementById('mf-country').value = m.country||'CAN';
+  document.getElementById('mf-region').value = m.region||'CANPR';
+  document.getElementById('mf-email').value = m.email||'';
+  document.getElementById('mf-phone').value = m.phone||'';
+  document.getElementById('mf-overseers').value = m.overseers||'';
+  document.getElementById('mf-notes').value = m.notes||'';
+  document.getElementById('mf-id').value = m.id||'';
+}
+
+async function saveMinister() {
+  var first = document.getElementById('mf-first').value.trim();
+  var last = document.getElementById('mf-last').value.trim();
+  if (!first||!last) { showToast('Please enter first and last name'); return; }
+  var name = first+' '+last;
+  var data = {
+    name:name, first_name:first, last_name:last,
+    city:document.getElementById('mf-city').value,
+    country:document.getElementById('mf-country').value,
+    region:document.getElementById('mf-region').value,
+    email:document.getElementById('mf-email').value,
+    phone:document.getElementById('mf-phone').value,
+    overseers:document.getElementById('mf-overseers').value,
+    notes:document.getElementById('mf-notes').value
+  };
+  var id = document.getElementById('mf-id').value;
+  if (id) {
+    await sb.from('ministers').update(data).eq('id', id);
+  } else {
+    await sb.from('ministers').insert(data);
+  }
+  showToast('Minister saved');
+  renderMinisters();
+}
+
+// ── Assemblies (admin) ────────────────────────────────────
+async function renderAssemblies() {
+  var { data: assemblies } = await sb.from('assemblies').select('*').order('name');
+  var html = '<div class="card"><div class="card-header"><span class="card-title">Assemblies</span></div>';
+  html += '<table><thead><tr><th>Name</th><th>Region</th><th>Country</th><th>Frequency</th></tr></thead><tbody>';
+  (assemblies||[]).forEach(function(a){
+    html += '<tr><td><strong>'+a.name+'</strong></td><td>'+a.region+'</td><td>'+a.country+'</td><td>'+a.freq+' visit(s)/year</td></tr>';
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('main-content').innerHTML = html;
+}
+
+// ── User Management (admin) ───────────────────────────────
+async function renderUsers() {
+  var { data: profiles } = await sb.from('profiles').select('*').order('full_name');
+  var { data: ministers } = await sb.from('ministers').select('name').order('name');
+  var html = '<div class="card"><div class="card-header"><span class="card-title">User Management</span>';
+  html += '<div style="font-size:12px;color:var(--text-muted)">Invite users via Supabase Authentication &rarr; Users</div></div>';
+  html += '<table><thead><tr><th>Name</th><th>Role</th><th>Minister link</th><th></th></tr></thead><tbody>';
+  (profiles||[]).forEach(function(p){
+    var badge = p.role==='admin'?'badge-admin':p.role==='overseer'?'badge-overseer':'badge-minister';
+    html += '<tr>';
+    html += '<td><strong>'+p.full_name+'</strong></td>';
+    html += '<td><span class="badge '+badge+'">'+p.role+'</span></td>';
+    html += '<td>'+(p.minister_name||'<span style="color:var(--text-muted)">Not linked</span>')+'</td>';
+    html += '<td style="text-align:right"><button class="btn btn-sm" onclick="editUser(\''+p.id+'\',\''+p.full_name+'\',\''+p.role+'\',\''+(p.minister_name||'')+'\')">Edit</button></td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+
+  // Edit panel
+  html += '<div class="card" id="user-edit-card" style="display:none"><div class="card-header"><span class="card-title">Edit User</span></div><div class="card-body">';
+  html += '<input type="hidden" id="ue-id">';
+  html += '<div class="form-group"><label class="form-label">Full name</label><input id="ue-name" type="text"></div>';
+  html += '<div class="form-group"><label class="form-label">Role</label><select id="ue-role"><option value="admin">Admin</option><option value="minister">Minister</option><option value="overseer">Overseer</option></select></div>';
+  html += '<div class="form-group"><label class="form-label">Linked minister</label><select id="ue-minister"><option value="">None</option>';
+  (ministers||[]).forEach(function(m){ html+='<option value="'+m.name+'">'+m.name+'</option>'; });
+  html += '</select></div>';
+  html += '<div style="display:flex;gap:8px"><button class="btn btn-primary btn-sm" onclick="saveUser()">Save</button><button class="btn btn-sm" onclick="document.getElementById(\'user-edit-card\').style.display=\'none\'">Cancel</button></div>';
+  html += '</div></div>';
+
+  document.getElementById('main-content').innerHTML = html;
+}
+
+function editUser(id, name, role, ministerName) {
+  document.getElementById('user-edit-card').style.display='block';
+  document.getElementById('ue-id').value=id;
+  document.getElementById('ue-name').value=name;
+  document.getElementById('ue-role').value=role;
+  document.getElementById('ue-minister').value=ministerName||'';
+  document.getElementById('user-edit-card').scrollIntoView({behavior:'smooth'});
+}
+
+async function saveUser() {
+  var id = document.getElementById('ue-id').value;
+  var name = document.getElementById('ue-name').value;
+  var role = document.getElementById('ue-role').value;
+  var minister = document.getElementById('ue-minister').value;
+  await sb.from('profiles').update({full_name:name, role:role, minister_name:minister||null}).eq('id',id);
+  showToast('User updated');
+  renderUsers();
+}
+
+// ── Church Reports ────────────────────────────────────────
+async function renderChurchReports() {
+  var { data: reports } = await sb.from('church_reports').select('*').order('created_at', {ascending:false});
+  var { data: assemblies } = await sb.from('assemblies').select('name').order('name');
+  var html = '<div class="card"><div class="card-header"><span class="card-title">Church Reports</span>';
+  html += '<button class="btn btn-sm btn-primary" onclick="document.getElementById(\'report-form\').style.display=\'block\'">+ New report</button></div>';
+  html += '<div id="report-form" style="display:none;padding:1.25rem;border-bottom:1px solid var(--border);background:var(--gray)">';
+  html += '<div style="background:var(--amber-light);border:1px solid #EF9F27;border-radius:8px;padding:9px 14px;font-size:12px;color:var(--amber);margin-bottom:12px"><strong>Note:</strong> Please keep reports general. For confidential matters, contact a Travelling Elder directly.</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:10px">';
+  html += '<div class="form-group"><label class="form-label">Assembly</label><select id="rf-assembly"><option value="">Select...</option>';
+  (assemblies||[]).forEach(function(a){html+='<option value="'+a.name+'">'+a.name+'</option>';});
+  html += '</select></div>';
+  html += '<div class="form-group"><label class="form-label">Visit date</label><input type="date" id="rf-date"></div>';
+  html += '<div class="form-group"><label class="form-label">Attendance</label><input type="number" id="rf-attendance" placeholder="e.g. 45"></div>';
+  html += '</div>';
+  html += '<div class="form-group"><label class="form-label">General observations</label><textarea id="rf-observations"></textarea></div>';
+  html += '<div class="form-group"><label class="form-label">Prayer requests</label><textarea id="rf-prayer"></textarea></div>';
+  html += '<div class="form-group"><label class="form-label">Follow-up needed</label><textarea id="rf-followup" style="min-height:50px"></textarea></div>';
+  html += '<div style="display:flex;gap:8px"><button class="btn btn-primary btn-sm" onclick="saveReport()">Save report</button><button class="btn btn-sm" onclick="document.getElementById(\'report-form\').style.display=\'none\'">Cancel</button></div>';
+  html += '</div>';
+  if (!reports||!reports.length) {
+    html += '<div class="card-body" style="color:var(--text-muted)">No reports yet.</div>';
+  } else {
+    html += '<table><thead><tr><th>Assembly</th><th>Date</th><th>Author</th><th>Attendance</th></tr></thead><tbody>';
+    reports.forEach(function(r){
+      html+='<tr><td><strong>'+r.assembly+'</strong></td><td>'+(r.visit_date||'')+'</td><td>'+(r.author||'')+'</td><td>'+(r.attendance||'')+'</td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+  html += '</div>';
+  document.getElementById('main-content').innerHTML = html;
+}
+
+async function saveReport() {
+  var assembly = document.getElementById('rf-assembly').value;
+  var date = document.getElementById('rf-date').value;
+  if (!assembly) { showToast('Please select an assembly'); return; }
+  await sb.from('church_reports').insert({
+    assembly:assembly, visit_date:date||null,
+    author:currentProfile.full_name,
+    attendance:parseInt(document.getElementById('rf-attendance').value)||null,
+    observations:document.getElementById('rf-observations').value,
+    prayer_requests:document.getElementById('rf-prayer').value,
+    follow_up:document.getElementById('rf-followup').value
+  });
+  showToast('Report saved');
+  renderChurchReports();
+}
+
+// ── Settings (admin) ─────────────────────────────────────
+async function renderSettings() {
+  var html = '<div class="card"><div class="card-header"><span class="card-title">Settings</span></div><div class="card-body">';
+  html += '<div style="color:var(--text-muted);font-size:13px;line-height:1.7">';
+  html += '<p>User accounts and access are managed in <strong>Supabase &rarr; Authentication &rarr; Users</strong>.</p>';
+  html += '<p style="margin-top:8px">To invite a new user:</p>';
+  html += '<ol style="margin-top:4px;margin-left:20px">';
+  html += '<li>Go to your Supabase dashboard</li>';
+  html += '<li>Click Authentication &rarr; Users</li>';
+  html += '<li>Click Invite user and enter their email</li>';
+  html += '<li>They receive an email to set their password</li>';
+  html += '<li>Come back here to User Management to set their role and link them to a minister profile</li>';
+  html += '</ol></div></div></div>';
+  document.getElementById('main-content').innerHTML = html;
+}
+
+// ── Budget (admin) ────────────────────────────────────────
+async function renderBudget() {
+  var html = '<div class="card"><div class="card-body" style="color:var(--text-muted);font-size:13px">';
+  html += 'Travel Budget is being migrated to the Supabase version. Coming soon.</div></div>';
+  document.getElementById('main-content').innerHTML = html;
+}
+
+// ── Helpers ───────────────────────────────────────────────
+function statCard(n, label) {
+  return '<div class="stat-card"><div class="stat-number">'+n+'</div><div class="stat-label">'+label+'</div></div>';
+}
+
+function getWeekends() {
+  var out = [];
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  [2026,2027,2028,2029,2030].forEach(function(year){
+    var d = new Date(year,0,1);
+    while(d.getFullYear()===year){
+      if(d.getDay()===5){
+        var fri=new Date(d);
+        var sat=new Date(d);sat.setDate(sat.getDate()+1);
+        var sun=new Date(d);sun.setDate(sun.getDate()+2);
+        var label=months[sat.getMonth()]+' '+sat.getDate()+'\u2013';
+        if(sun.getMonth()!==sat.getMonth())label+=months[sun.getMonth()]+' ';
+        label+=sun.getDate();
+        out.push({fri:fri.toISOString().split('T')[0],label:label,year:year});
+      }
+      d.setDate(d.getDate()+1);
+    }
+  });
+  return out;
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2800);
+}
+
+function iconGrid(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>';}
+function iconCalendar(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';}
+function iconCheck(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';}
+function iconUser(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';}
+function iconBuilding(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';}
+function iconDoc(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';}
+function iconSettings(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>';}
+function iconDollar(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>';}
+function iconMsg(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>';}
+
+// ── Boot ──────────────────────────────────────────────────
+sb.auth.getSession().then(function(result) {
+  var session = result.data.session;
+  if (session) {
+    loadApp(session.user);
+  }
+});
+
+sb.auth.onAuthStateChange(function(event, session) {
+  if (event === 'SIGNED_OUT') {
+    document.getElementById('app-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+  }
+});
+
+// Enter key on login
+document.getElementById('login-password').addEventListener('keydown', function(e){
+  if (e.key === 'Enter') signIn();
+});
+</script>
+</body>
+</html>
