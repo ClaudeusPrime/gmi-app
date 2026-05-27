@@ -5466,8 +5466,8 @@ function trUpdateBudget() {
   }
 
   var hotelRate = 130, mealRate = 65;
-  var hotel = nights * hotelRate * (spouse ? 2 : 1);
-  var meals = days * mealRate * (spouse ? 2 : 1);
+  var hotel = nights * hotelRate; // same room whether spouse travels or not
+  var meals = days * mealRate * (spouse ? 2 : 1); // meals double for spouse
   var total = transport + hotel + meals;
 
   var linesEl = document.getElementById('tr-budget-lines');
@@ -5479,8 +5479,8 @@ function trUpdateBudget() {
   } else {
     lines += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text-muted)">Flight'+(spouse?' × 2 (with spouse)':'')+'</span><span>'+fmt(transport)+'</span></div>';
   }
-  lines += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text-muted)">Hotel ('+nights+' nights @ '+fmt(hotelRate)+'/night'+(spouse?' × 2':'')+')</span><span>'+fmt(hotel)+'</span></div>';
-  lines += '<div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--text-muted)">Meals ('+days+' days @ '+fmt(mealRate)+'/day'+(spouse?' × 2':'')+')</span><span>'+fmt(meals)+'</span></div>';
+  lines += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text-muted)">Hotel ('+nights+' nights @ '+fmt(hotelRate)+'/night)</span><span>'+fmt(hotel)+'</span></div>';
+  lines += '<div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--text-muted)">Meals ('+days+' days @ '+fmt(mealRate)+'/day'+(spouse?' × 2 (with spouse)':'')+')</span><span>'+fmt(meals)+'</span></div>';
 
   linesEl.innerHTML = lines;
   totalEl.textContent = fmt(total);
@@ -5538,8 +5538,8 @@ function submitTravelRequest() {
   } else {
     text += 'Driving (' + Math.round(b.dist||0) + ' ' + b.unit + ' × 2, ' + fmt(b.mileageRate) + '/'+b.unit+'):  ' + fmt(b.transport) + '\n';
   }
-  text += 'Hotel (' + b.nights + ' nights @ ' + fmt(b.hotelRate||130) + (spouse?' ×2':'') + '):   ' + fmt(b.hotel) + '\n';
-  text += 'Meals (' + b.days + ' days @ ' + fmt(b.mealRate||65) + (spouse?' ×2':'') + '):    ' + fmt(b.meals) + '\n';
+  text += 'Hotel (' + b.nights + ' nights @ ' + fmt(b.hotelRate||130) + '):   ' + fmt(b.hotel) + '\n';
+  text += 'Meals (' + b.days + ' days @ ' + fmt(b.mealRate||65) + (spouse?' ×2 (with spouse)':'') + '):    ' + fmt(b.meals) + '\n';
   text += 'TOTAL ESTIMATE:          ' + fmt(b.total) + '\n';
   if (notes) text += '\nNOTES\n-----\n' + notes + '\n';
   text += '\nIMPORTANT: I will not proceed with any travel arrangements until I have received written approval from my overseers.\n';
