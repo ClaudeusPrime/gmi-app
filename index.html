@@ -276,6 +276,12 @@ textarea{min-height:80px;resize:vertical}
     <div class="nav-item" onclick="showPanel('proposals')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Travel Proposal
     </div>
+    <div class="nav-item" onclick="showPanel('calendar')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendar
+    </div>
+    <div class="nav-item" onclick="showPanel('travel-request')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>Travel Request
+    </div>
   </nav>
 </aside>
 
@@ -1148,6 +1154,219 @@ textarea{min-height:80px;resize:vertical}
             <tbody id="proposals-tbody"></tbody>
           </table>
         </div>
+      </div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="panel" id="panel-calendar">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">2026 Schedule</span>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <select id="cal-year" onchange="renderCalendar()" style="font-size:12px;padding:4px 8px;width:auto">
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+              <option value="2029">2029</option>
+              <option value="2030">2030</option>
+            </select>
+            <select id="cal-view" onchange="renderCalendar()" style="font-size:12px;padding:4px 8px;width:auto">
+              <option value="bulletin">Bulletin list</option>
+              <option value="itinerary">Minister itinerary</option>
+            </select>
+            <select id="cal-minister" onchange="renderCalendar()" style="font-size:12px;padding:4px 8px;width:auto">
+              <option value="">All ministers</option>
+            </select>
+          </div>
+        </div>
+        <!-- Read-only notice -->
+        <div style="background:var(--blue-light);border-bottom:1px solid #85B7EB;padding:8px 1.25rem;font-size:11px;color:var(--navy);display:flex;align-items:center;gap:8px">
+          <span>&#128274;</span> Read-only view — updates automatically when the admin makes changes
+        </div>
+        <!-- Legend -->
+        <div style="display:flex;gap:16px;align-items:center;padding:8px 1.25rem;border-bottom:1px solid var(--border);flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted)"><div style="width:10px;height:10px;border-radius:2px;background:var(--blue-light);border:1px solid #85B7EB"></div>Assembly visit</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted)"><div style="width:10px;height:10px;border-radius:2px;background:#EEEDFE;border:1px solid #AFA9EC"></div>Camp</div>
+        </div>
+        <div id="cal-body" style="padding:0"></div>
+      </div>
+    </div>
+
+    <!-- TRAVEL REQUEST -->
+    <div class="panel" id="panel-travel-request">
+      <div style="max-width:640px">
+
+        <!-- Warning banner -->
+        <div style="background:#FFF3CD;border:1px solid #EF9F27;border-radius:10px;padding:14px 18px;margin-bottom:1.25rem;display:flex;gap:12px;align-items:flex-start">
+          <span style="font-size:20px;flex-shrink:0">&#9888;</span>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:#633806;margin-bottom:4px">Do not book or arrange any travel until you receive approval</div>
+            <div style="font-size:12px;color:#7B4D00;line-height:1.5">Submit this request and wait for written confirmation from your overseers before making any travel arrangements, purchasing tickets, or booking accommodation.</div>
+          </div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-header" style="background:var(--navy)">
+            <span class="card-title" style="color:#fff">Step 1 — Your trip</span>
+            <span style="font-size:12px;color:rgba(255,255,255,.5)">Who, where and when</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">Your name <span style="color:var(--red)">*</span></label>
+              <select id="tr-minister" onchange="trMinisterChange()"><option value="">Select your name...</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Trip type <span style="color:var(--red)">*</span></label>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--white)" id="tr-type-visit-label">
+                  <input type="radio" name="tr-type" value="assembly" checked onchange="trTypeChange()"> Assembly Visit
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;padding:8px 14px;border:1px solid var(--border);border-radius:8px" id="tr-type-camp-label">
+                  <input type="radio" name="tr-type" value="camp" onchange="trTypeChange()"> Camp
+                </label>
+              </div>
+            </div>
+            <!-- Assembly fields -->
+            <div id="tr-assembly-fields">
+              <div class="form-group">
+                <label class="form-label">Assembly <span style="color:var(--red)">*</span></label>
+                <select id="tr-assembly"><option value="">Select assembly...</option></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Proposed weekend <span style="color:var(--red)">*</span></label>
+                <select id="tr-weekend"><option value="">Select weekend...</option></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Purpose of visit <span style="color:var(--red)">*</span></label>
+                <select id="tr-purpose">
+                  <option value="">Select purpose...</option>
+                  <option>Regular scheduled visitation</option>
+                  <option>Follow-up visit</option>
+                  <option>Assembly request</option>
+                  <option>Pastoral support</option>
+                  <option>Special occasion</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+            <!-- Camp fields -->
+            <div id="tr-camp-fields" style="display:none">
+              <div class="form-group">
+                <label class="form-label">Camp <span style="color:var(--red)">*</span></label>
+                <select id="tr-camp"><option value="">Select camp...</option></select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-header" style="background:var(--navy)">
+            <span class="card-title" style="color:#fff">Step 2 — Travel details</span>
+            <span style="font-size:12px;color:rgba(255,255,255,.5)">How you are getting there</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">Travel mode <span style="color:var(--red)">*</span></label>
+              <select id="tr-mode" onchange="trModeChange()">
+                <option value="drive">Driving</option>
+                <option value="fly">Flying</option>
+              </select>
+            </div>
+            <div id="tr-drive-fields">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div class="form-group">
+                  <label class="form-label">Distance (one way)</label>
+                  <input type="number" id="tr-distance" placeholder="e.g. 450" oninput="trUpdateBudget()">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Unit</label>
+                  <select id="tr-unit" onchange="trUpdateBudget()">
+                    <option value="km">Kilometres (km)</option>
+                    <option value="mi">Miles (mi)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div id="tr-fly-fields" style="display:none">
+              <div class="form-group">
+                <label class="form-label">Estimated flight cost (return)</label>
+                <input type="number" id="tr-flight" placeholder="e.g. 650" oninput="trUpdateBudget()">
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div class="form-group">
+                <label class="form-label">Hotel nights</label>
+                <input type="number" id="tr-nights" value="2" min="0" oninput="trUpdateBudget()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Meal days</label>
+                <input type="number" id="tr-days" value="3" min="0" oninput="trUpdateBudget()">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Travelling with spouse?</label>
+              <select id="tr-spouse" onchange="trUpdateBudget()">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+
+            <!-- Live budget preview -->
+            <div id="tr-budget-box" style="background:var(--gray);border-radius:8px;padding:14px 16px;margin-top:8px">
+              <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Estimated budget</div>
+              <div id="tr-budget-lines" style="font-size:13px"></div>
+              <div style="border-top:1px solid var(--border);margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;align-items:center">
+                <strong style="font-size:13px">Total estimate</strong>
+                <strong id="tr-budget-total" style="font-size:16px;color:var(--navy-dark)">—</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-header" style="background:var(--navy)">
+            <span class="card-title" style="color:#fff">Step 3 — Review &amp; submit</span>
+            <span style="font-size:12px;color:rgba(255,255,255,.5)">Notes and confirmation</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">Additional notes</label>
+              <textarea id="tr-notes" style="min-height:70px" placeholder="Any special considerations, connections or context your overseers should know..."></textarea>
+            </div>
+
+            <!-- Overseers box -->
+            <div id="tr-overseers-box" style="display:none;background:var(--blue-light);border:1px solid #85B7EB;border-radius:8px;padding:12px 14px;margin-bottom:14px">
+              <div style="font-size:11px;font-weight:600;color:var(--navy);margin-bottom:4px">This request will be sent to your overseers:</div>
+              <div id="tr-overseers-list" style="font-size:13px;color:var(--navy-dark)"></div>
+            </div>
+            <div id="tr-no-overseers-box" style="display:none;background:var(--amber-light);border:1px solid #EF9F27;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:#633806">
+              &#9888; No overseers found in your profile. Please contact your administrator to have overseers added before submitting.
+            </div>
+
+            <div style="background:#FFF3CD;border:1px solid #EF9F27;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#633806;font-weight:500">
+              &#9888; By submitting this request you confirm you will not proceed with any travel arrangements until written approval has been received from your overseers.
+            </div>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-primary" onclick="submitTravelRequest()">Submit request &amp; copy text</button>
+              <button class="btn" onclick="clearTravelRequest()">Clear</button>
+            </div>
+
+            <!-- Result -->
+            <div id="tr-result" style="display:none;margin-top:14px">
+              <div style="background:var(--green-light);border:1px solid var(--green);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+                <span style="font-size:13px;color:var(--green);font-weight:500">&#10003; Request submitted and text copied to clipboard</span>
+                <button class="btn btn-sm" onclick="copyTrText()" style="color:var(--green);border-color:var(--green)">Copy again</button>
+              </div>
+              <label class="form-label" style="font-size:11px">Request text (paste into email to your overseers)</label>
+              <textarea id="tr-text-output" style="min-height:160px;font-size:12px;font-family:Arial,sans-serif;background:var(--white)" readonly></textarea>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -3635,7 +3854,7 @@ function showPanel(id) {
     'dashboard':'Dashboard','schedule':'Schedule','avail-grid':'Availability Grid',
     'conflicts':'Conflicts','ministers':'Ministers','assemblies':'Assemblies',
     'assembly-detail':'Assembly Detail','history':'Visit History',
-    'church-reports':'Church Reports','proposals':'Travel Proposal',
+    'church-reports':'Church Reports','proposals':'Travel Proposal','calendar':'Calendar','travel-request':'Travel Request',
     'settings':'Settings','budget':'Travel Budget','form-availability':'Availability Form'
   };
   document.getElementById('page-title').textContent=navMap[id]||id;
@@ -3653,6 +3872,8 @@ function showPanel(id) {
   if(id==='assemblies')renderAssemblies();
   if(id==='church-reports')renderChurchReports();
   if(id==='history')renderHistory();
+  if(id==='calendar'){initCalendarSelects();renderCalendar();}
+  if(id==='travel-request')initTravelRequest();
 }
 
 // ── GPS coordinates for distance scoring ─────────────────
@@ -5141,6 +5362,434 @@ function setFlightCost(mname, fri, assembly, val) {
 }
 
 
+// ── Travel Request (Minister self-service) ────────────────
+
+function initTravelRequest() {
+  // Minister dropdown
+  var mSel = document.getElementById('tr-minister');
+  if (!mSel) return;
+  var cur = mSel.value;
+  mSel.innerHTML = '<option value="">Select your name...</option>';
+  MINISTERS.slice().sort(function(a,b){return a.name.localeCompare(b.name);}).forEach(function(m){
+    mSel.innerHTML += '<option value="'+m.name+'"'+(cur===m.name?' selected':'')+'>'+m.name+'</option>';
+  });
+
+  // Assembly dropdown
+  var aSel = document.getElementById('tr-assembly');
+  aSel.innerHTML = '<option value="">Select assembly...</option>';
+  ASSEMBLIES.filter(function(a){return !a.archived;}).slice().sort(function(a,b){return a.name.localeCompare(b.name);}).forEach(function(a){
+    aSel.innerHTML += '<option value="'+a.name+'">'+a.name+'</option>';
+  });
+
+  // Weekend dropdown
+  var wSel = document.getElementById('tr-weekend');
+  wSel.innerHTML = '<option value="">Select weekend...</option>';
+  WK2026.concat(WK2027).concat(WK2028).forEach(function(w){
+    wSel.innerHTML += '<option value="'+w.fri+'">'+w.label+' ('+w.year+')</option>';
+  });
+
+  // Camp dropdown
+  var cSel = document.getElementById('tr-camp');
+  cSel.innerHTML = '<option value="">Select camp...</option>';
+  CAMPS.filter(function(c){return c.start;}).slice().sort(function(a,b){return a.start.localeCompare(b.start);}).forEach(function(c){
+    var sd = new Date(c.start+'T12:00:00');
+    var mns = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    cSel.innerHTML += '<option value="'+c.name+'">'+c.name+' ('+mns[sd.getMonth()]+' '+sd.getDate()+')</option>';
+  });
+
+  trUpdateBudget();
+  if (cur) trMinisterChange();
+}
+
+function trTypeChange() {
+  var type = document.querySelector('input[name="tr-type"]:checked').value;
+  var visitLabel = document.getElementById('tr-type-visit-label');
+  var campLabel = document.getElementById('tr-type-camp-label');
+  document.getElementById('tr-assembly-fields').style.display = type === 'assembly' ? 'block' : 'none';
+  document.getElementById('tr-camp-fields').style.display = type === 'camp' ? 'block' : 'none';
+  visitLabel.style.borderColor = type === 'assembly' ? 'var(--navy)' : 'var(--border)';
+  visitLabel.style.background = type === 'assembly' ? 'var(--blue-light)' : 'var(--white)';
+  campLabel.style.borderColor = type === 'camp' ? 'var(--navy)' : 'var(--border)';
+  campLabel.style.background = type === 'camp' ? 'var(--blue-light)' : 'var(--white)';
+}
+
+function trModeChange() {
+  var mode = document.getElementById('tr-mode').value;
+  document.getElementById('tr-drive-fields').style.display = mode === 'drive' ? 'block' : 'none';
+  document.getElementById('tr-fly-fields').style.display = mode === 'fly' ? 'block' : 'none';
+  trUpdateBudget();
+}
+
+function trMinisterChange() {
+  var mname = document.getElementById('tr-minister').value;
+  var prof = MINISTER_PROFILES[mname] || {};
+  var overseers = (prof.overseers || '').trim().split('\n').map(function(l){return l.trim();}).filter(Boolean);
+  var oBox = document.getElementById('tr-overseers-box');
+  var oList = document.getElementById('tr-overseers-list');
+  var noBox = document.getElementById('tr-no-overseers-box');
+  if (!mname) { oBox.style.display='none'; noBox.style.display='none'; return; }
+  if (overseers.length) {
+    oBox.style.display = 'block'; noBox.style.display = 'none';
+    oList.innerHTML = overseers.map(function(o){return '<div>'+o+'</div>';}).join('');
+  } else {
+    oBox.style.display = 'none'; noBox.style.display = 'block';
+  }
+  // Auto-detect unit based on minister country
+  var m = null; for (var i=0;i<MINISTERS.length;i++){if(MINISTERS[i].name===mname){m=MINISTERS[i];break;}}
+  if (m) {
+    var unitSel = document.getElementById('tr-unit');
+    if (!unitSel._userChanged) unitSel.value = (m.country==='USA')?'mi':'km';
+  }
+  trUpdateBudget();
+}
+
+function trUpdateBudget() {
+  var mode = document.getElementById('tr-mode').value;
+  var nights = parseFloat(document.getElementById('tr-nights').value) || 0;
+  var days = parseFloat(document.getElementById('tr-days').value) || 0;
+  var spouse = document.getElementById('tr-spouse').value === 'yes';
+  var unit = document.getElementById('tr-unit').value;
+  var mname = document.getElementById('tr-minister').value;
+  var m = null; for (var i=0;i<MINISTERS.length;i++){if(MINISTERS[i].name===mname){m=MINISTERS[i];break;}}
+  var currency = (m && m.country==='USA') ? 'USD' : 'CAD';
+  var sym = currency === 'USD' ? 'US$' : 'CA$';
+  var fmt = function(n){ return sym + Math.round(n||0).toLocaleString(); };
+
+  var transport = 0, mileageRate = 0, dist = 0;
+  if (mode === 'drive') {
+    dist = parseFloat(document.getElementById('tr-distance').value) || 0;
+    mileageRate = unit === 'mi' ? 0.67 : 0.55;
+    transport = dist * 2 * mileageRate * (spouse ? 1 : 1); // mileage same with/without spouse
+  } else {
+    transport = parseFloat(document.getElementById('tr-flight').value) || 0;
+    if (spouse) transport *= 2;
+  }
+
+  var hotelRate = 130, mealRate = 65;
+  var hotel = nights * hotelRate * (spouse ? 2 : 1);
+  var meals = days * mealRate * (spouse ? 2 : 1);
+  var total = transport + hotel + meals;
+
+  var linesEl = document.getElementById('tr-budget-lines');
+  var totalEl = document.getElementById('tr-budget-total');
+
+  var lines = '';
+  if (mode === 'drive') {
+    lines += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text-muted)">Driving ('+(Math.round(dist))+' '+unit+' each way, '+fmt(mileageRate)+'/'+unit+' return)</span><span>'+fmt(transport)+'</span></div>';
+  } else {
+    lines += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text-muted)">Flight'+(spouse?' × 2 (with spouse)':'')+'</span><span>'+fmt(transport)+'</span></div>';
+  }
+  lines += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text-muted)">Hotel ('+nights+' nights @ '+fmt(hotelRate)+'/night'+(spouse?' × 2':'')+')</span><span>'+fmt(hotel)+'</span></div>';
+  lines += '<div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--text-muted)">Meals ('+days+' days @ '+fmt(mealRate)+'/day'+(spouse?' × 2':'')+')</span><span>'+fmt(meals)+'</span></div>';
+
+  linesEl.innerHTML = lines;
+  totalEl.textContent = fmt(total);
+
+  window._trBudget = { total, transport, hotel, meals, nights, days, dist, mileageRate, hotelRate, mealRate, currency, sym, mode, unit, spouse };
+}
+
+function submitTravelRequest() {
+  var mname = document.getElementById('tr-minister').value;
+  var type = document.querySelector('input[name="tr-type"]:checked').value;
+  var mode = document.getElementById('tr-mode').value;
+  var notes = document.getElementById('tr-notes').value;
+  var spouse = document.getElementById('tr-spouse').value === 'yes';
+
+  if (!mname) { showToast('Please select your name'); return; }
+
+  var destination = '', dateLabel = '', dateFri = '', purpose = '';
+  if (type === 'assembly') {
+    destination = document.getElementById('tr-assembly').value;
+    dateFri = document.getElementById('tr-weekend').value;
+    purpose = document.getElementById('tr-purpose').value;
+    if (!destination || !dateFri || !purpose) { showToast('Please fill in assembly, weekend and purpose'); return; }
+    var allWk = WK2026.concat(WK2027).concat(WK2028);
+    for (var w=0;w<allWk.length;w++){if(allWk[w].fri===dateFri){dateLabel=allWk[w].label+' ('+allWk[w].year+')';break;}}
+  } else {
+    destination = document.getElementById('tr-camp').value;
+    if (!destination) { showToast('Please select a camp'); return; }
+    var camp = null; for (var i=0;i<CAMPS.length;i++){if(CAMPS[i].name===destination){camp=CAMPS[i];break;}}
+    if (camp && camp.start) {
+      var sd=new Date(camp.start+'T12:00:00'); var ed=new Date(camp.end+'T12:00:00');
+      var mns=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      dateLabel=mns[sd.getMonth()]+' '+sd.getDate()+'\u2013'+mns[ed.getMonth()]+' '+ed.getDate();
+      dateFri = camp.start;
+    }
+    purpose = 'Camp attendance';
+  }
+
+  var prof = MINISTER_PROFILES[mname] || {};
+  var overseerLines = (prof.overseers||'').trim().split('\n').map(function(l){return l.trim();}).filter(Boolean);
+  var b = window._trBudget || {total:0,currency:'CAD',sym:'CA$'};
+  var fmt = function(n){ return b.sym + Math.round(n||0).toLocaleString(); };
+
+  var text = 'TRAVEL REQUEST\n';
+  text += '==============\n\n';
+  text += 'Minister:    ' + mname + '\n';
+  text += (type==='assembly'?'Assembly:    ':'Camp:        ') + destination + '\n';
+  text += 'Date:        ' + dateLabel + '\n';
+  if (type==='assembly') text += 'Purpose:     ' + purpose + '\n';
+  text += 'Mode:        ' + (mode==='fly'?'Flying':'Driving') + '\n';
+  text += 'With spouse: ' + (spouse?'Yes':'No') + '\n\n';
+  text += 'ESTIMATED BUDGET (' + b.currency + ')\n';
+  text += '---------------------------\n';
+  if (mode==='fly') {
+    text += 'Flight'+(spouse?' (×2)':'')+':             ' + fmt(b.transport) + '\n';
+  } else {
+    text += 'Driving (' + Math.round(b.dist||0) + ' ' + b.unit + ' × 2, ' + fmt(b.mileageRate) + '/'+b.unit+'):  ' + fmt(b.transport) + '\n';
+  }
+  text += 'Hotel (' + b.nights + ' nights @ ' + fmt(b.hotelRate||130) + (spouse?' ×2':'') + '):   ' + fmt(b.hotel) + '\n';
+  text += 'Meals (' + b.days + ' days @ ' + fmt(b.mealRate||65) + (spouse?' ×2':'') + '):    ' + fmt(b.meals) + '\n';
+  text += 'TOTAL ESTIMATE:          ' + fmt(b.total) + '\n';
+  if (notes) text += '\nNOTES\n-----\n' + notes + '\n';
+  text += '\nIMPORTANT: I will not proceed with any travel arrangements until I have received written approval from my overseers.\n';
+  if (overseerLines.length) {
+    text += '\nSEND TO\n-------\n' + overseerLines.join('\n') + '\n';
+  }
+  text += '\nSubmitted: ' + new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
+
+  // Save to PROPOSALS so admin sees it
+  var proposal = {
+    id: Date.now(),
+    submitted: new Date().toISOString().split('T')[0],
+    propType: type,
+    minister: mname,
+    assembly: destination,
+    weekend: dateFri,
+    weekendLabel: dateLabel,
+    purpose: purpose,
+    spouse: spouse,
+    mode: mode,
+    budget: b,
+    notes: notes,
+    overseers: overseerLines,
+    status: 'Pending',
+    text: text,
+    _source: 'minister-request'
+  };
+  PROPOSALS.unshift(proposal);
+
+  document.getElementById('tr-text-output').value = text;
+  window._trLastText = text;
+  document.getElementById('tr-result').style.display = 'block';
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function(){ showToast('Request submitted and copied'); });
+  } else {
+    document.getElementById('tr-text-output').select();
+    document.execCommand('copy');
+    showToast('Request submitted and copied');
+  }
+}
+
+function copyTrText() {
+  var text = document.getElementById('tr-text-output').value;
+  if (navigator.clipboard) { navigator.clipboard.writeText(text).then(function(){ showToast('Copied'); }); }
+  else { document.getElementById('tr-text-output').select(); document.execCommand('copy'); showToast('Copied'); }
+}
+
+function clearTravelRequest() {
+  ['tr-minister','tr-assembly','tr-weekend','tr-purpose','tr-camp','tr-mode','tr-spouse'].forEach(function(id){
+    var el = document.getElementById(id); if(el) el.value = el.tagName==='SELECT'?el.options[0].value:'';
+  });
+  document.getElementById('tr-distance').value = '';
+  document.getElementById('tr-flight').value = '';
+  document.getElementById('tr-nights').value = '2';
+  document.getElementById('tr-days').value = '3';
+  document.getElementById('tr-notes').value = '';
+  document.getElementById('tr-result').style.display = 'none';
+  document.getElementById('tr-overseers-box').style.display = 'none';
+  document.getElementById('tr-no-overseers-box').style.display = 'none';
+  var visitRadio = document.querySelector('input[name="tr-type"][value="assembly"]');
+  if (visitRadio) { visitRadio.checked = true; trTypeChange(); }
+  document.getElementById('tr-drive-fields').style.display = 'block';
+  document.getElementById('tr-fly-fields').style.display = 'none';
+  trUpdateBudget();
+}
+
+// ── Calendar (read-only) ──────────────────────────────────
+
+function initCalendarSelects() {
+  var sel = document.getElementById('cal-minister');
+  if (!sel) return;
+  var cur = sel.value;
+  sel.innerHTML = '<option value="">All ministers</option>';
+  MINISTERS.slice().sort(function(a,b){return a.name.localeCompare(b.name);}).forEach(function(m){
+    sel.innerHTML += '<option value="'+m.name+'"'+(cur===m.name?' selected':'')+'>'+m.name+'</option>';
+  });
+}
+
+function renderCalendar() {
+  initCalendarSelects();
+  var year = parseInt(document.getElementById('cal-year').value) || 2026;
+  var view = document.getElementById('cal-view').value;
+  var ministerF = document.getElementById('cal-minister').value;
+  var yearStr = String(year);
+
+  // Update card title
+  var titleEl = document.querySelector('#panel-calendar .card-title');
+  if (titleEl) titleEl.textContent = year + ' Schedule';
+
+  var body = document.getElementById('cal-body');
+  if (!body) return;
+
+  if (view === 'bulletin') {
+    body.innerHTML = renderBulletinView(year, yearStr, ministerF);
+  } else {
+    body.innerHTML = renderItineraryView(year, yearStr, ministerF);
+  }
+}
+
+function renderBulletinView(year, yearStr, ministerF) {
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var html = '';
+
+  for (var mo = 0; mo < 12; mo++) {
+    var moStr = String(mo + 1).padStart(2, '0');
+    var moKey = yearStr + '-' + moStr;
+    var entries = [];
+
+    SCHEDULE.filter(function(s){
+      return s.fri.startsWith(moKey) && !s.cancelled;
+    }).forEach(function(s) {
+      var mins = [s.m1,s.m2,s.m3,s.m4].filter(Boolean);
+      if (ministerF && mins.indexOf(ministerF) < 0) return;
+      var wk = null; for (var w=0;w<allWk.length;w++){if(allWk[w].fri===s.fri){wk=allWk[w];break;}}
+      entries.push({ type:'visit', date:s.fri, dateLabel: wk ? 'Fri '+wk.label.replace(/\s+\d+/,'') : s.fri, assembly:s.assembly, ministers:mins });
+    });
+
+    CAMPS.filter(function(c){
+      return c.start && (c.start.startsWith(moKey) || (c.start < moKey+'-99' && c.end >= moKey+'-01'));
+    }).forEach(function(c) {
+      var campMins = (c.ministers||[]).filter(Boolean);
+      if (ministerF && campMins.indexOf(ministerF) < 0) return;
+      var sd = new Date(c.start+'T12:00:00'); var ed = new Date(c.end+'T12:00:00');
+      var mns = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var label = mns[sd.getMonth()]+' '+sd.getDate()+'\u2013'+mns[ed.getMonth()]+' '+ed.getDate();
+      entries.push({ type:'camp', date:c.start, dateLabel:label, assembly:c.name, location:c.location, ministers:campMins });
+    });
+
+    if (!entries.length) continue;
+    entries.sort(function(a,b){return a.date.localeCompare(b.date);});
+
+    html += '<div>'
+      + '<div style="background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 1.25rem;letter-spacing:.03em">'+months[mo]+' '+year+'</div>'
+      + '<table style="width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed">'
+      + '<colgroup><col style="width:130px"><col style="width:120px"><col style="width:auto"><col style="width:auto"></colgroup>';
+
+    entries.forEach(function(e) {
+      var isCamp = e.type === 'camp';
+      var bg = isCamp ? 'background:#EEEDFE' : '';
+      var badge = isCamp
+        ? '<span style="font-size:10px;background:#EEEDFE;color:#3C3489;border:1px solid #AFA9EC;padding:1px 7px;border-radius:3px;font-weight:700">Camp</span>'
+        : '<span style="font-size:10px;background:var(--blue-light);color:var(--navy);border:1px solid #85B7EB;padding:1px 7px;border-radius:3px;font-weight:700">Assembly Visit</span>';
+
+      var ministersHtml = e.ministers.map(function(m){
+        return '<div style="font-size:12px;color:var(--text-muted);line-height:1.7">'+m+'</div>';
+      }).join('');
+
+      html += '<tr style="border-bottom:1px solid var(--border);'+bg+';vertical-align:top">'
+        + '<td style="padding:9px 1.25rem;font-size:12px;color:var(--text-muted);white-space:nowrap;vertical-align:middle">'+e.dateLabel+'</td>'
+        + '<td style="padding:9px 8px;vertical-align:middle">'+badge+'</td>'
+        + '<td style="padding:9px 8px;font-weight:500;vertical-align:middle">'+e.assembly+(e.location?'<div style="font-size:11px;color:var(--text-muted);font-weight:400">'+e.location+'</div>':'')+'</td>'
+        + '<td style="padding:9px 8px;vertical-align:top">'+ministersHtml+'</td>'
+        + '</tr>';
+    });
+
+    html += '</table></div>';
+  }
+
+  if (!html) return '<div style="padding:1.5rem;color:var(--text-muted);font-size:13px">No schedule data for '+year+'.</div>';
+  return html;
+}
+
+function renderItineraryView(year, yearStr, ministerF) {
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var colors = ['#1A3A6B','#1A5C24','#7B0000','#7B4D00','#2E5EA3','#0F4D2E','#5B1A8B','#A32D2D','#854F0B','#185FA5','#0F6E56','#3C3489','#712B13','#27500A','#633806','#023E7A','#3B6D11','#993556'];
+
+  var ministers = MINISTERS.filter(function(m){
+    return !ministerF || m.name === ministerF;
+  }).slice().sort(function(a,b){return a.name.localeCompare(b.name);});
+
+  var html = '';
+
+  ministers.forEach(function(m, mi) {
+    var color = colors[MINISTERS.indexOf(m) % colors.length];
+    var initials = m.name.split(' ').map(function(w){return w[0];}).join('');
+
+    // Get all visits this year
+    var entries = [];
+    SCHEDULE.filter(function(s){
+      return s.fri.startsWith(yearStr) && !s.cancelled &&
+             [s.m1,s.m2,s.m3,s.m4].indexOf(m.name) >= 0;
+    }).forEach(function(s) {
+      var wk = null; for (var w=0;w<allWk.length;w++){if(allWk[w].fri===s.fri){wk=allWk[w];break;}}
+      var mns = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var d = new Date(s.fri+'T12:00:00');
+      entries.push({ type:'visit', date:s.fri, monthIdx:d.getMonth(), dateLabel: wk ? wk.label : s.fri, assembly:s.assembly });
+    });
+
+    CAMPS.filter(function(c){
+      return c.start && c.start.startsWith(yearStr) && (c.ministers||[]).indexOf(m.name) >= 0;
+    }).forEach(function(c) {
+      var sd = new Date(c.start+'T12:00:00'); var ed = new Date(c.end+'T12:00:00');
+      var mns2 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var label = mns2[sd.getMonth()]+' '+sd.getDate()+'–'+mns2[ed.getMonth()]+' '+ed.getDate();
+      entries.push({ type:'camp', date:c.start, monthIdx:sd.getMonth(), dateLabel:label, assembly:c.name, location:c.location });
+    });
+
+    if (!entries.length) return;
+    entries.sort(function(a,b){return a.date.localeCompare(b.date);});
+
+    var tripCount = entries.filter(function(e){return e.type==='visit';}).length;
+    var campCount = entries.filter(function(e){return e.type==='camp';}).length;
+
+    html += '<div style="border-bottom:1px solid var(--border)">'
+      // Minister header
+      + '<div style="display:flex;align-items:center;gap:12px;padding:12px 1.25rem;background:var(--gray);border-bottom:1px solid var(--border)">'
+      +   '<div style="width:36px;height:36px;border-radius:50%;background:'+color+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">'+initials+'</div>'
+      +   '<div>'
+      +     '<div style="font-size:14px;font-weight:600;color:var(--navy-dark)">'+m.name+'</div>'
+      +     '<div style="font-size:11px;color:var(--text-muted)">'+m.city+(m.state?', '+m.state:'')+(m.country?' · '+m.country:'')+'</div>'
+      +   '</div>'
+      +   '<div style="margin-left:auto;display:flex;gap:8px">'
+      +     '<span style="background:var(--blue-light);color:var(--navy);font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500">'+tripCount+' visit'+(tripCount!==1?'s':'')+'</span>'
+      +     (campCount ? '<span style="background:#EEEDFE;color:#3C3489;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500">'+campCount+' camp'+(campCount!==1?'s':'')+'</span>' : '')
+      +   '</div>'
+      + '</div>';
+
+    // Group by month
+    var lastMonth = -1;
+    entries.forEach(function(e) {
+      var isCamp = e.type === 'camp';
+      if (e.monthIdx !== lastMonth) {
+        if (lastMonth >= 0) html += '</div>';
+        html += '<div style="font-size:10px;font-weight:600;color:var(--text-muted);padding:6px 1.25rem 2px;letter-spacing:.05em;text-transform:uppercase;background:var(--gray);border-top:1px solid var(--border)">'+months[e.monthIdx]+'</div>';
+        html += '<div>';
+        lastMonth = e.monthIdx;
+      }
+      html += '<div style="display:grid;grid-template-columns:110px 120px 1fr;align-items:center;padding:8px 1.25rem;border-bottom:1px solid var(--border);'+(isCamp?'background:#EEEDFE':'')+'">'
+        + '<div style="font-size:11px;color:var(--text-muted);white-space:nowrap">'+e.dateLabel+'</div>'
+        + '<div>'+(isCamp
+            ? '<span style="font-size:10px;background:#EEEDFE;color:#3C3489;border:1px solid #AFA9EC;padding:2px 7px;border-radius:3px;font-weight:700">Camp</span>'
+            : '<span style="font-size:10px;background:var(--blue-light);color:var(--navy);border:1px solid #85B7EB;padding:2px 7px;border-radius:3px;font-weight:700">Assembly Visit</span>')
+        + '</div>'
+        + '<div>'
+        +   '<div style="font-size:13px;font-weight:500;color:var(--navy-dark)">'+e.assembly+'</div>'
+        +   (e.location ? '<div style="font-size:11px;color:var(--text-muted)">'+e.location+'</div>' : '')
+        + '</div>'
+        + '</div>';
+    });
+    if (lastMonth >= 0) html += '</div>';
+    html += '</div>';
+  });
+
+  if (!html) return '<div style="padding:1.5rem;color:var(--text-muted);font-size:13px">No schedule data for '+year+'.</div>';
+  return html;
+}
+
 // ── Travel Proposals ──────────────────────────────────────
 var PROPOSALS = [];
 
@@ -5443,9 +6092,12 @@ function renderProposals() {
     var typeBadge = isCamp
       ? '<span class="badge badge-camp" style="font-size:10px">⛺ Camp</span>'
       : '<span class="badge badge-upcoming" style="font-size:10px">Visit</span>';
+    var sourceBadge = p._source === 'minister-request'
+      ? ' <span style="font-size:10px;background:var(--green-light);color:var(--green);border:1px solid var(--green);padding:1px 6px;border-radius:3px;font-weight:600">Minister</span>'
+      : '';
     html+='<tr style="'+(p.status==='Approved'?'background:var(--green-light)':p.status==='Declined'?'opacity:0.6':'')+'">'
       +'<td style="padding:9px 12px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text-muted)">'+fmtDate(p.submitted)+'</td>'
-      +'<td style="padding:9px 8px;border-bottom:1px solid var(--border)">'+typeBadge+'</td>'
+      +'<td style="padding:9px 8px;border-bottom:1px solid var(--border)">'+typeBadge+sourceBadge+'</td>'
       +'<td style="padding:9px 8px;border-bottom:1px solid var(--border);font-weight:500">'+p.minister+'</td>'
       +'<td style="padding:9px 8px;border-bottom:1px solid var(--border)">'+p.assembly+'</td>'
       +'<td style="padding:9px 8px;border-bottom:1px solid var(--border);font-size:12px">'+p.weekendLabel+'</td>'
