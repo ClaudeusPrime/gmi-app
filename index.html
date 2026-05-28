@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>GMI Travel — Scheduling System</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='42' rx='22' ry='17' fill='%23FFCF00'/%3E%3Cellipse cx='32' cy='26' rx='10' ry='12' fill='%23FFCF00'/%3E%3Cellipse cx='40' cy='18' rx='14' ry='12' fill='%23FFCF00'/%3E%3Cellipse cx='52' cy='21' rx='7' ry='4' fill='%23FF8C00'/%3E%3Cline x1='45' y1='21' x2='59' y2='21' stroke='%23E07800' stroke-width='1'/%3E%3Ccircle cx='44' cy='14' r='3' fill='%231A1A1A'/%3E%3Ccircle cx='45' cy='13' r='1' fill='%23fff'/%3E%3Crect x='35' y='10' width='11' height='7' rx='3.5' fill='%231A1A1A'/%3E%3Crect x='36' y='11' width='9' height='5' rx='2.5' fill='%232255AA' opacity='.85'/%3E%3Crect x='47' y='10' width='11' height='7' rx='3.5' fill='%231A1A1A'/%3E%3Crect x='48' y='11' width='9' height='5' rx='2.5' fill='%232255AA' opacity='.85'/%3E%3Cline x1='46' y1='13.5' x2='47' y2='13.5' stroke='%231A1A1A' stroke-width='1.5'/%3E%3Cellipse cx='32' cy='57' rx='26' ry='4' fill='%23AAD4F5' opacity='.5'/%3E%3C/svg%3E">
 <link rel="shortcut icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
@@ -22,7 +24,7 @@ body{font-family:Arial,sans-serif;background:var(--gray);color:var(--text);min-h
 h1,h2,h3{font-family:Arial,sans-serif}
 
 /* Layout */
-.app{display:flex;min-height:100vh}
+.app{display:flex;min-height:100vh;padding-bottom:env(safe-area-inset-bottom)}
 .sidebar{width:220px;min-width:220px;background:var(--navy-dark);flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:100}
 .main{flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0;width:0;overflow-x:hidden}
 .topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;min-width:0}
@@ -168,12 +170,15 @@ textarea{min-height:80px;resize:vertical}
   .sidebar-logo{padding:.6rem 1rem;display:flex;align-items:center;justify-content:space-between}
   .sidebar-logo h1{font-size:13px}
   .sidebar-logo p{display:none}
-  .sidebar-nav{display:flex;flex-direction:row;padding:0;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;border-top:1px solid rgba(255,255,255,.08)}
+  .sidebar-nav{display:flex;flex-direction:row;padding:0;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;border-top:1px solid rgba(255,255,255,.08);scrollbar-width:none}
+  .sidebar-nav::-webkit-scrollbar{display:none}
+  .sidebar-logo svg{max-height:36px!important;width:auto!important}
+  .sidebar-logo{padding:.4rem .75rem!important}
   .nav-section{display:none}
-  .nav-item{flex-direction:column;gap:2px;padding:6px 10px;font-size:9px;border-left:none;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0}
-  .nav-item svg{width:14px;height:14px}
+  .nav-item{flex-direction:column;gap:2px;padding:8px 12px;font-size:9px;border-left:none;border-bottom:3px solid transparent;white-space:nowrap;flex-shrink:0;min-width:56px;align-items:center}
+  .nav-item svg{width:18px;height:18px}
   .nav-item.active{border-bottom-color:#fff;border-left-color:transparent;background:rgba(255,255,255,.1)}
-  .main{width:100%}
+  .main{width:100%;min-width:0}
   .content{padding:.75rem}
   .topbar{padding:0 .75rem;height:50px}
   .page-title{font-size:15px}
@@ -183,16 +188,38 @@ textarea{min-height:80px;resize:vertical}
   .card > div[style*="padding:0"]{overflow-x:auto;-webkit-overflow-scrolling:touch}
   .weekend-row{flex-direction:column;gap:4px;padding:8px}
   .weekend-date{width:100%}
-  .card-header{flex-wrap:wrap;gap:6px;height:auto;padding:.75rem 1rem}
+  .card-header{flex-wrap:wrap;gap:6px;height:auto;padding:.75rem 1rem;min-height:48px}
+  .card-header select,.card-header button{font-size:12px}
   .card-body{padding:.75rem}
   .form-section{padding:.75rem}
+  .filter-bar{flex-wrap:wrap;gap:6px;padding:.5rem .75rem}
+  .filter-bar select,.filter-bar button{font-size:12px;padding:5px 8px}
+  table{font-size:12px;min-width:100%}
+  th,td{padding:7px 8px}
+  /* forms */
+  .form-group input,.form-group select,.form-group textarea{font-size:16px!important} /* prevents iOS zoom */
+  input[type=number]{font-size:16px!important}
+  /* radio/toggle groups */
+  .radio-group{flex-direction:column;gap:6px}
+  /* assembly detail grid */
+  .asm-detail-grid{grid-template-columns:1fr}
+  /* step cards on travel request */
+  #panel-travel-request .card{margin-bottom:.75rem}
+  /* availability grid — full width scroll */
+  #ag-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  /* proposals table */
+  #proposals-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 }
 @media(max-width:480px){
   .metrics-grid{grid-template-columns:1fr 1fr!important;gap:.4rem}
   .metric-value{font-size:22px}
   .content{padding:.5rem}
-  table{font-size:12px}
-  th,td{padding:6px 8px}
+  table{font-size:11px}
+  th,td{padding:5px 6px}
+  .nav-item{padding:6px 10px;font-size:8.5px;min-width:50px}
+  .nav-item svg{width:16px;height:16px}
+  .card-header{padding:.6rem .75rem}
+  .card-body{padding:.6rem}
 }
 </style>
 </head>
@@ -474,6 +501,8 @@ textarea{min-height:80px;resize:vertical}
             </div>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+            <div class="form-group"><label class="form-label">Role</label><input type="text" id="mf-role" placeholder="e.g. Traveling Elder"></div>
+            <div class="form-group"><label class="form-label">Spouse</label><input type="text" id="mf-spouse" placeholder="Spouse name"></div>
             <div class="form-group"><label class="form-label">Phone</label><input type="text" id="mf-phone" placeholder="+1 306 555 0100"></div>
             <div class="form-group"><label class="form-label">Email</label><input type="text" id="mf-email" placeholder="email@example.com"></div>
           </div>
@@ -1556,29 +1585,29 @@ var ASSEMBLIES = [
 
 var SCHEDULE = [
   {assembly:"Victoria BC",        fri:"2026-01-16",m1:"Terry Zimmer",   m2:"David Luff",    m3:"Nick Snoke",      note:"Brian/Jeff instead of David",visited:false},
-  {assembly:"Charlotte NC",       fri:"2026-01-16",m1:"Bill Chinnis",   m2:"Nick Snoke",    m3:"David Luff",      note:"Trevor instead of Nick",visited:false},
+  {assembly:"Charlotte NC",       fri:"2026-01-16",m1:"Bill Chinnis",   m2:"Terry Zimmer",    m3:"",      note:"Trevor instead of Nick",visited:false},
   {assembly:"Saskatoon SK",       fri:"2026-02-13",m1:"Trevor Sundbo",  m2:"Brian Hannigan",m3:"Darren Olson",    note:"",visited:false},
-  {assembly:"Portland OR",        fri:"2026-02-13",m1:"PJ Mathew",      m2:"Jeff Olson",    m3:"Andy Snoke",      note:"",visited:false},
+  {assembly:"Portland OR",        fri:"2026-02-13",m1:"PJ Mathew",      m2:"Trevor Sundbo",    m3:"",      note:"",visited:false},
   {assembly:"Sidney/Carberry MB", fri:"2026-03-13",m1:"Wayne Peters",   m2:"Nick Snoke",    m3:"Kelvin Martin",   note:"",visited:false},
   {assembly:"Vancouver BC",       fri:"2026-03-13",m1:"Darrell Smith",  m2:"David Luff",    m3:"Andy Snoke",      note:"",visited:false},
   {assembly:"Grand Junction CO",  fri:"2026-04-17",m1:"Wayne Peters",   m2:"Terry Zimmer",  m3:"Bill Chinnis",    note:"",visited:false},
-  {assembly:"Prince Albert SK",   fri:"2026-04-17",m1:"Brian Hannigan", m2:"Darren Olson",  m3:"",    note:"Trevor instead of Bill",visited:false},
+  {assembly:"Prince Albert SK",   fri:"2026-04-17",m1:"Brian Hannigan", m2:"Darren Olson",  m3:"Wayne Peters",    note:"Trevor instead of Bill",visited:false},
   {assembly:"High Point NC",      fri:"2026-04-24",m1:"Bill Chinnis",   m2:"Nat Swaan",     m3:"Darrell Smith",   note:"",visited:false},
   {assembly:"Peoria IL",          fri:"2026-05-01",m1:"Wayne Peters",   m2:"Nick Snoke",    m3:"Darrell Smith",   note:"alternatives to Nick/Darrell",visited:false},
   {assembly:"Brooklyn NY",        fri:"2026-05-01",m1:"PJ Mathew",      m2:"Jeff Olson",    m3:"Darren Olson",    note:"",visited:false},
   {assembly:"Poynette WI",        fri:"2026-05-15",m1:"Kelvin Martin",  m2:"Andy Snoke",    m3:"David Luff",      note:"",visited:false},
-  {assembly:"Payette ID",         fri:"2026-05-15",m1:"Trevor Sundbo",  m2:"Brian Hannigan",m3:"",      note:"",visited:false},
+  {assembly:"Payette ID",         fri:"2026-05-15",m1:"Trevor Sundbo",  m2:"Brian Hannigan",m3:"Kelvin Martin",      note:"",visited:false},
   {assembly:"Cranbrook BC",       fri:"2026-07-17",m1:"Nick Snoke",     m2:"Dennis Aarrestad",m3:"David Luff",    note:"Wayne instead of David",visited:false},
   {assembly:"Bapaume SK",         fri:"2026-07-17",m1:"Brian Hannigan", m2:"Darren Olson",  m3:"Wayne Peters",    note:"",visited:false},
   {assembly:"Rosetown SK",        fri:"2026-07-24",m1:"Brian Hannigan", m2:"Dennis Aarrestad",m3:"PJ Mathew",     note:"",visited:false},
   {assembly:"Regina SK",          fri:"2026-07-24",m1:"Brian Hannigan", m2:"Nat Swaan",     m3:"Kelvin Martin",   note:"",visited:false},
-  {assembly:"North Battleford SK",fri:"2026-07-31",m1:"Brian Hannigan", m2:"Trevor Sundbo", m3:"PJ Mathew",       note:"",visited:false},
+  {assembly:"North Battleford SK",fri:"2026-07-31",m1:"Brian Hannigan", m2:"", m3:"",       note:"",visited:false},
   {assembly:"Calgary AB",         fri:"2026-07-31",m1:"Darrell Smith",  m2:"Terry Zimmer",  m3:"Jeff Olson",      note:"",visited:false},
-  {assembly:"Edmonton AB",        fri:"2026-08-21",m1:"Darrell Smith",  m2:"Terry Zimmer",  m3:"Trevor Sundbo",   note:"",visited:false},
-  {assembly:"Clearwater FL",      fri:"2026-08-21",m1:"Darren Olson",   m2:"Darrell Smith", m3:"",   note:"",visited:false},
-  {assembly:"Minden NE",          fri:"2026-08-28",m1:"Darren Olson",   m2:"Trevor Sundbo", m3:"Terry Zimmer",    note:"",visited:false},
+  {assembly:"Edmonton AB",        fri:"2026-08-21",m1:"Darrell Smith",  m2:"Terry Zimmer",  m3:"",   note:"",visited:false},
+  {assembly:"Clearwater FL",      fri:"2026-08-21",m1:"Darren Olson",   m2:"", m3:"",   note:"",visited:false},
+  {assembly:"Minden NE",          fri:"2026-08-28",m1:"Darren Olson",   m2:"", m3:"Terry Zimmer",    note:"",visited:false},
   {assembly:"Geneva/Genoa IL",    fri:"2026-08-28",m1:"David Luff",     m2:"Jeff Olson",    m3:"Kelvin Martin",   note:"",visited:false},
-  {assembly:"Kingsport TN",       fri:"2026-09-04",m1:"David Luff",     m2:"Wayne Peters",  m3:"Dennis Aarrestad",note:"",visited:false},
+  {assembly:"Kingsport TN",       fri:"2026-09-04",m1:"David Luff",     m2:"Wayne Peters",  m3:"",note:"",visited:false},
   {assembly:"St. Louis MO",       fri:"2026-09-04",m1:"",m2:"Darrell Smith",m3:"",    note:"",visited:false},
   {assembly:"Penticton BC",       fri:"2026-09-11",m1:"Jeff Olson",     m2:"David Luff",    m3:"Wayne Peters",    note:"",visited:false},
   {assembly:"Devlin ON",          fri:"2026-09-11",m1:"Kelvin Martin",  m2:"Andy Snoke",    m3:"Nat Swaan",       note:"",visited:false},
@@ -1588,7 +1617,7 @@ var SCHEDULE = [
   {assembly:"Portland OR",        fri:"2026-06-19",m1:"Jeff Olson",     m2:"Terry Zimmer",  m3:"Andy Snoke",      note:"",visited:false},
   {assembly:"Calgary AB",         fri:"2026-06-19",m1:"Darrell Smith",  m2:"Trevor Sundbo", m3:"Dennis Aarrestad",note:"",visited:false},
   {assembly:"Stratford ON",       fri:"2026-09-25",m1:"Kelvin Martin",  m2:"Bill Chinnis",  m3:"PJ Mathew",       note:"",visited:false},
-  {assembly:"Toronto ON",         fri:"2026-09-25",m1:"Kelvin Martin",  m2:"Dennis Aarrestad",m3:"Jeff Olson",    note:"",visited:false},
+  {assembly:"Toronto ON",         fri:"2026-09-25",m1:"",  m2:"Dennis Aarrestad",m3:"Jeff Olson",    note:"",visited:false},
   {assembly:"Minneapolis MN",     fri:"2026-10-02",m1:"Kelvin Martin",  m2:"Nat Swaan",     m3:"Dennis Aarrestad",note:"",visited:false},
   {assembly:"Park Valley SK",     fri:"2026-10-02",m1:"",      m2:"Darren Olson",  m3:"Nick Snoke",      note:"",visited:false},
   {assembly:"Easton MD",          fri:"2026-11-06",m1:"Nat Swaan",      m2:"Dennis Aarrestad",m3:"Nick Snoke",    note:"",visited:false},
@@ -2160,6 +2189,7 @@ function renderDashboard() {
   document.getElementById('m-visits').textContent=SCHEDULE.length;
   document.getElementById('m-visited-sub').textContent=visited+' confirmed visited';
   var conflicts=detectConflicts();
+  conflicts.sort(function(a,b){return a.minister.localeCompare(b.minister);});
   document.getElementById('m-conflicts').textContent=conflicts.length;
 
   var today=new Date().toISOString().split('T')[0];
@@ -2335,6 +2365,7 @@ var conflictFixData = null;
 
 function renderConflicts() {
   var conflicts = detectConflicts();
+  conflicts.sort(function(a,b){return a.minister.localeCompare(b.minister);});
   var body = document.getElementById('conflicts-body');
 
   if (!conflicts.length) {
@@ -2587,6 +2618,122 @@ function closeConflictFix() {}
 // ── Ministers ─────────────────────────────────────────────
 var MINISTER_PROFILES = {}; // extra fields: phone, email, notes keyed by name
 
+MINISTER_PROFILES["Bill Chinnis"]     = {role:"Traveling Deacon", spouse:"Pauline"};
+MINISTER_PROFILES["Cephas Forde"]     = {role:"Traveling Deacon", spouse:"Merlene"};
+MINISTER_PROFILES["Dennis Aarrestad"] = {role:"Helper",           spouse:"Cynthia"};
+
+// Seed minister profiles from spreadsheet
+(function(){
+  if(!window.MINISTER_PROFILES) MINISTER_PROFILES={};
+  if(!MINISTER_PROFILES["Darrell Smith"]) MINISTER_PROFILES["Darrell Smith"]={};
+  MINISTER_PROFILES["Darrell Smith"]["phone"]="780-298-1190";
+  if(!MINISTER_PROFILES["Darrell Smith"]["role"]) MINISTER_PROFILES["Darrell Smith"]["role"]="Traveling Elder";
+  if(!MINISTER_PROFILES["Darrell Smith"]["email"]) MINISTER_PROFILES["Darrell Smith"]["email"]="dsmith@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["Darrell Smith"]["spouse"]) MINISTER_PROFILES["Darrell Smith"]["spouse"]="Norma";
+  if(!MINISTER_PROFILES["Darrell Smith"]["city"]) MINISTER_PROFILES["Darrell Smith"]["city"]="Edmonton, AB";
+  if(!MINISTER_PROFILES["Darrell Smith"]["country"]) MINISTER_PROFILES["Darrell Smith"]["country"]="Canada";
+  if(!MINISTER_PROFILES["Terry Zimmer"]) MINISTER_PROFILES["Terry Zimmer"]={};
+  MINISTER_PROFILES["Terry Zimmer"]["phone"]="780-817-1599";
+  if(!MINISTER_PROFILES["Terry Zimmer"]["role"]) MINISTER_PROFILES["Terry Zimmer"]["role"]="Helper";
+  if(!MINISTER_PROFILES["Terry Zimmer"]["email"]) MINISTER_PROFILES["Terry Zimmer"]["email"]="tzimmer@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["Terry Zimmer"]["spouse"]) MINISTER_PROFILES["Terry Zimmer"]["spouse"]="Brenda";
+  if(!MINISTER_PROFILES["Terry Zimmer"]["city"]) MINISTER_PROFILES["Terry Zimmer"]["city"]="Hinton, AB";
+  if(!MINISTER_PROFILES["Terry Zimmer"]["country"]) MINISTER_PROFILES["Terry Zimmer"]["country"]="Canada";
+  if(!MINISTER_PROFILES["Jeff Olson"]) MINISTER_PROFILES["Jeff Olson"]={};
+  if(!MINISTER_PROFILES["Jeff Olson"]["role"]) MINISTER_PROFILES["Jeff Olson"]["role"]="Traveling Deacon";
+  if(!MINISTER_PROFILES["Jeff Olson"]["phone"]) MINISTER_PROFILES["Jeff Olson"]["phone"]="970-234-6505";
+  if(!MINISTER_PROFILES["Jeff Olson"]["email"]) MINISTER_PROFILES["Jeff Olson"]["email"]="jolson@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["Jeff Olson"]["spouse"]) MINISTER_PROFILES["Jeff Olson"]["spouse"]="Heather";
+  if(!MINISTER_PROFILES["Jeff Olson"]["city"]) MINISTER_PROFILES["Jeff Olson"]["city"]="Grand Junction, CO";
+  if(!MINISTER_PROFILES["Jeff Olson"]["country"]) MINISTER_PROFILES["Jeff Olson"]["country"]="USA";
+  if(!MINISTER_PROFILES["Nick Snoke"]) MINISTER_PROFILES["Nick Snoke"]={};
+  MINISTER_PROFILES["Nick Snoke"]["phone"]="970-250-4630";
+  if(!MINISTER_PROFILES["Nick Snoke"]["role"]) MINISTER_PROFILES["Nick Snoke"]["role"]="Traveling Elder";
+  if(!MINISTER_PROFILES["Nick Snoke"]["email"]) MINISTER_PROFILES["Nick Snoke"]["email"]="nsnoke@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["Nick Snoke"]["spouse"]) MINISTER_PROFILES["Nick Snoke"]["spouse"]="Lenore";
+  if(!MINISTER_PROFILES["Nick Snoke"]["city"]) MINISTER_PROFILES["Nick Snoke"]["city"]="Grand Junction, CO";
+  if(!MINISTER_PROFILES["Nick Snoke"]["country"]) MINISTER_PROFILES["Nick Snoke"]["country"]="USA";
+  if(!MINISTER_PROFILES["Andy Snoke"]) MINISTER_PROFILES["Andy Snoke"]={};
+  MINISTER_PROFILES["Andy Snoke"]["phone"]="970-640-6219";
+  if(!MINISTER_PROFILES["Andy Snoke"]["role"]) MINISTER_PROFILES["Andy Snoke"]["role"]="Traveling Elder";
+  if(!MINISTER_PROFILES["Andy Snoke"]["phone"]) MINISTER_PROFILES["Andy Snoke"]["phone"]="309-684-7048";
+  if(!MINISTER_PROFILES["Andy Snoke"]["email"]) MINISTER_PROFILES["Andy Snoke"]["email"]="asnoke@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["Andy Snoke"]["spouse"]) MINISTER_PROFILES["Andy Snoke"]["spouse"]="Debbie";
+  if(!MINISTER_PROFILES["Andy Snoke"]["city"]) MINISTER_PROFILES["Andy Snoke"]["city"]="Grand Junction, CO";
+  if(!MINISTER_PROFILES["Andy Snoke"]["country"]) MINISTER_PROFILES["Andy Snoke"]["country"]="USA";
+  if(!MINISTER_PROFILES["Bernard James"]) MINISTER_PROFILES["Bernard James"]={};
+  if(!MINISTER_PROFILES["Bernard James"]["role"]) MINISTER_PROFILES["Bernard James"]["role"]="Traveling Deacon";
+  if(!MINISTER_PROFILES["Bernard James"]["phone"]) MINISTER_PROFILES["Bernard James"]["phone"]="473-403-8110";
+  if(!MINISTER_PROFILES["Bernard James"]["email"]) MINISTER_PROFILES["Bernard James"]["email"]="bjames@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["Bernard James"]["spouse"]) MINISTER_PROFILES["Bernard James"]["spouse"]="Roslyn";
+  if(!MINISTER_PROFILES["Bernard James"]["city"]) MINISTER_PROFILES["Bernard James"]["city"]="St. Davids";
+  if(!MINISTER_PROFILES["Bernard James"]["country"]) MINISTER_PROFILES["Bernard James"]["country"]="Caribbean";
+  if(!MINISTER_PROFILES["Calvin James"]) MINISTER_PROFILES["Calvin James"]={};
+  if(!MINISTER_PROFILES["Calvin James"]["role"]) MINISTER_PROFILES["Calvin James"]["role"]="Traveling Elder";
+  if(!MINISTER_PROFILES["Calvin James"]["phone"]) MINISTER_PROFILES["Calvin James"]["phone"]="868-731-6234";
+  if(!MINISTER_PROFILES["Calvin James"]["email"]) MINISTER_PROFILES["Calvin James"]["email"]="cjames@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["Calvin James"]["spouse"]) MINISTER_PROFILES["Calvin James"]["spouse"]="Keisha";
+  if(!MINISTER_PROFILES["Calvin James"]["city"]) MINISTER_PROFILES["Calvin James"]["city"]="Georgetown, Guyana";
+  if(!MINISTER_PROFILES["Calvin James"]["country"]) MINISTER_PROFILES["Calvin James"]["country"]="Caribbean";
+  if(!MINISTER_PROFILES["Wayne Peters"]) MINISTER_PROFILES["Wayne Peters"]={};
+  if(!MINISTER_PROFILES["Wayne Peters"]["role"]) MINISTER_PROFILES["Wayne Peters"]["role"]="Traveling Elder";
+  if(!MINISTER_PROFILES["Wayne Peters"]["phone"]) MINISTER_PROFILES["Wayne Peters"]["phone"]="204-325-3227";
+  if(!MINISTER_PROFILES["Wayne Peters"]["email"]) MINISTER_PROFILES["Wayne Peters"]["email"]="wpeters@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["Wayne Peters"]["spouse"]) MINISTER_PROFILES["Wayne Peters"]["spouse"]="Lois";
+  if(!MINISTER_PROFILES["Wayne Peters"]["city"]) MINISTER_PROFILES["Wayne Peters"]["city"]="Winkler, MB";
+  if(!MINISTER_PROFILES["Wayne Peters"]["country"]) MINISTER_PROFILES["Wayne Peters"]["country"]="Canada";
+  if(!MINISTER_PROFILES["PJ Mathew"]) MINISTER_PROFILES["PJ Mathew"]={};
+  if(!MINISTER_PROFILES["PJ Mathew"]["role"]) MINISTER_PROFILES["PJ Mathew"]["role"]="Traveling Deacon";
+  if(!MINISTER_PROFILES["PJ Mathew"]["phone"]) MINISTER_PROFILES["PJ Mathew"]["phone"]="914-831-7064";
+  if(!MINISTER_PROFILES["PJ Mathew"]["email"]) MINISTER_PROFILES["PJ Mathew"]["email"]="pjmathew@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["PJ Mathew"]["spouse"]) MINISTER_PROFILES["PJ Mathew"]["spouse"]="Shusheela";
+  if(!MINISTER_PROFILES["PJ Mathew"]["city"]) MINISTER_PROFILES["PJ Mathew"]["city"]="New York, NY";
+  if(!MINISTER_PROFILES["PJ Mathew"]["country"]) MINISTER_PROFILES["PJ Mathew"]["country"]="USA";
+  if(!MINISTER_PROFILES["Kelvin Martin"]) MINISTER_PROFILES["Kelvin Martin"]={};
+  if(!MINISTER_PROFILES["Kelvin Martin"]["role"]) MINISTER_PROFILES["Kelvin Martin"]["role"]="Traveling Deacon";
+  if(!MINISTER_PROFILES["Kelvin Martin"]["phone"]) MINISTER_PROFILES["Kelvin Martin"]["phone"]="519-301-4900";
+  if(!MINISTER_PROFILES["Kelvin Martin"]["email"]) MINISTER_PROFILES["Kelvin Martin"]["email"]="kmartin@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["Kelvin Martin"]["spouse"]) MINISTER_PROFILES["Kelvin Martin"]["spouse"]="Tanya";
+  if(!MINISTER_PROFILES["Kelvin Martin"]["city"]) MINISTER_PROFILES["Kelvin Martin"]["city"]="Stratford, ON";
+  if(!MINISTER_PROFILES["Kelvin Martin"]["country"]) MINISTER_PROFILES["Kelvin Martin"]["country"]="Canada";
+  if(!MINISTER_PROFILES["Nat Swaan"]) MINISTER_PROFILES["Nat Swaan"]={};
+  if(!MINISTER_PROFILES["Nat Swaan"]["role"]) MINISTER_PROFILES["Nat Swaan"]["role"]="Traveling Elder";
+  if(!MINISTER_PROFILES["Nat Swaan"]["phone"]) MINISTER_PROFILES["Nat Swaan"]["phone"]="519-396-4416";
+  if(!MINISTER_PROFILES["Nat Swaan"]["email"]) MINISTER_PROFILES["Nat Swaan"]["email"]="nswaan@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["Nat Swaan"]["spouse"]) MINISTER_PROFILES["Nat Swaan"]["spouse"]="Carol";
+  if(!MINISTER_PROFILES["Nat Swaan"]["city"]) MINISTER_PROFILES["Nat Swaan"]["city"]="Toronto, ON";
+  if(!MINISTER_PROFILES["Nat Swaan"]["country"]) MINISTER_PROFILES["Nat Swaan"]["country"]="Canada";
+  if(!MINISTER_PROFILES["Brian Hannigan"]) MINISTER_PROFILES["Brian Hannigan"]={};
+  if(!MINISTER_PROFILES["Brian Hannigan"]["role"]) MINISTER_PROFILES["Brian Hannigan"]["role"]="Traveling Deacon";
+  if(!MINISTER_PROFILES["Brian Hannigan"]["phone"]) MINISTER_PROFILES["Brian Hannigan"]["phone"]="306-386-7452";
+  if(!MINISTER_PROFILES["Brian Hannigan"]["email"]) MINISTER_PROFILES["Brian Hannigan"]["email"]="bhannigan@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["Brian Hannigan"]["spouse"]) MINISTER_PROFILES["Brian Hannigan"]["spouse"]="Marjorie";
+  if(!MINISTER_PROFILES["Brian Hannigan"]["city"]) MINISTER_PROFILES["Brian Hannigan"]["city"]="North Battleford, SK";
+  if(!MINISTER_PROFILES["Brian Hannigan"]["country"]) MINISTER_PROFILES["Brian Hannigan"]["country"]="Canada";
+  if(!MINISTER_PROFILES["Darren Olson"]) MINISTER_PROFILES["Darren Olson"]={};
+  if(!MINISTER_PROFILES["Darren Olson"]["role"]) MINISTER_PROFILES["Darren Olson"]["role"]="Traveling Deacon";
+  if(!MINISTER_PROFILES["Darren Olson"]["phone"]) MINISTER_PROFILES["Darren Olson"]["phone"]="306-480-8900";
+  if(!MINISTER_PROFILES["Darren Olson"]["email"]) MINISTER_PROFILES["Darren Olson"]["email"]="dolson@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["Darren Olson"]["spouse"]) MINISTER_PROFILES["Darren Olson"]["spouse"]="Cheryl";
+  if(!MINISTER_PROFILES["Darren Olson"]["city"]) MINISTER_PROFILES["Darren Olson"]["city"]="North Battleford, SK";
+  if(!MINISTER_PROFILES["Darren Olson"]["country"]) MINISTER_PROFILES["Darren Olson"]["country"]="Canada";
+  if(!MINISTER_PROFILES["Trevor Sundbo"]) MINISTER_PROFILES["Trevor Sundbo"]={};
+  if(!MINISTER_PROFILES["Trevor Sundbo"]["role"]) MINISTER_PROFILES["Trevor Sundbo"]["role"]="Traveling Elder";
+  if(!MINISTER_PROFILES["Trevor Sundbo"]["phone"]) MINISTER_PROFILES["Trevor Sundbo"]["phone"]="306-527-2019";
+  if(!MINISTER_PROFILES["Trevor Sundbo"]["email"]) MINISTER_PROFILES["Trevor Sundbo"]["email"]="tsundbo@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["Trevor Sundbo"]["spouse"]) MINISTER_PROFILES["Trevor Sundbo"]["spouse"]="Candace";
+  if(!MINISTER_PROFILES["Trevor Sundbo"]["city"]) MINISTER_PROFILES["Trevor Sundbo"]["city"]="Regina, SK";
+  if(!MINISTER_PROFILES["Trevor Sundbo"]["country"]) MINISTER_PROFILES["Trevor Sundbo"]["country"]="Canada";
+  if(!MINISTER_PROFILES["David Luff"]) MINISTER_PROFILES["David Luff"]={};
+  if(!MINISTER_PROFILES["David Luff"]["role"]) MINISTER_PROFILES["David Luff"]["role"]="Traveling Elder";
+  if(!MINISTER_PROFILES["David Luff"]["phone"]) MINISTER_PROFILES["David Luff"]["phone"]="423-677-9758";
+  if(!MINISTER_PROFILES["David Luff"]["email"]) MINISTER_PROFILES["David Luff"]["email"]="dluff@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["David Luff"]["spouse"]) MINISTER_PROFILES["David Luff"]["spouse"]="Jan";
+  if(!MINISTER_PROFILES["David Luff"]["city"]) MINISTER_PROFILES["David Luff"]["city"]="Kingsport, TN";
+  if(!MINISTER_PROFILES["David Luff"]["country"]) MINISTER_PROFILES["David Luff"]["country"]="USA";
+})();
+
+
 
 // ── Custom abbreviation codes ─────────────────────────────
 // Keys are lowercase start of assembly/camp name, values are the 3-letter code
@@ -2715,12 +2862,19 @@ function renderMinisters() {
       // Collapsed row
       + '<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer" onclick="toggleMinisterRow(\'mr-'+i+'\')">'
       + '<div style="width:36px;height:36px;border-radius:50%;background:'+color+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0">'+initials+'</div>'
-      + '<div style="flex:1;min-width:0">'
-      + '<div style="font-size:14px;font-weight:600;color:var(--navy-dark)">'+m.name+'</div>'
-      + '<div style="font-size:12px;color:var(--text-muted)">'+(m.city?(m.city+(m.state?', '+m.state:'')+(m.country?' · '+m.country:'')):'')+'</div>'
+      + '<div style="flex:1;min-width:0;display:flex;align-items:center;gap:0">'
+      + '<div style="flex:0 0 200px;min-width:0">'
+      + '<div style="font-size:14px;font-weight:500;color:var(--navy-dark)">'+m.name+'</div>'
+      + '<div style="font-size:12px;color:var(--text-muted)">'+(m.city?(m.city+(m.state?', '+m.state:'')):'')+'</div>'
+      + '</div>'
+      + '<div style="flex:0 0 1px;align-self:stretch;background:var(--border);margin:0 12px"></div>'
+      + '<div style="flex:0 0 180px;min-width:0">'
+      + (prof.role?'<div style="font-size:13px;color:var(--navy-dark)">'+prof.role+'</div>':'')
+      + (prof.spouse?'<div style="font-size:12px;color:var(--text-muted)">Spouse: '+prof.spouse+'</div>':'')
+      + '</div>'
       + '</div>'
       + regionBadge(m.region)
-      + (prof.phone||prof.email ? '<span style="font-size:11px;color:var(--text-muted)">📋</span>' : '')
+      + (prof.phone||prof.email ? '<span style="font-size:10px;font-weight:600;color:var(--blue);background:var(--blue-light);padding:1px 6px;border-radius:8px;border:1px solid #85B7EB">info</span>' : '')
       + (hasConflict ? '<span title="Has scheduling conflict" style="font-size:13px">⚠️</span>' : '')
       + '<span style="font-size:18px;color:var(--text-muted)" id="mr-icon-'+i+'">\u25b8</span>'
       + '</div>'
@@ -3174,7 +3328,7 @@ function applyMinisterCampCancelVisit(btn) {
 function openAddMinister() {
   document.getElementById('mf-idx').value = -1;
   document.getElementById('minister-form-title').textContent = 'Add minister';
-  ['mf-first','mf-last','mf-city','mf-state','mf-phone','mf-email','mf-notes','mf-overseers'].forEach(function(id){document.getElementById(id).value='';});
+  ['mf-first','mf-last','mf-city','mf-state','mf-phone','mf-email','mf-role','mf-spouse','mf-notes','mf-overseers'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('mf-country').value = 'CAN';
   document.getElementById('mf-region').value = 'CANPR';
   var card = document.getElementById('minister-form-card');
@@ -3194,6 +3348,8 @@ function editMinister(idx) {
   document.getElementById('mf-state').value = m.state || '';
   document.getElementById('mf-country').value = m.country || 'CAN';
   document.getElementById('mf-region').value = m.region || 'CANPR';
+  document.getElementById('mf-role').value = prof.role || '';
+  document.getElementById('mf-spouse').value = prof.spouse || '';
   document.getElementById('mf-phone').value = prof.phone || '';
   document.getElementById('mf-email').value = prof.email || '';
   document.getElementById('mf-notes').value = prof.notes || '';
@@ -3220,6 +3376,8 @@ function saveMinister() {
   var prof = {
     phone: document.getElementById('mf-phone').value,
     email: document.getElementById('mf-email').value,
+    role:  document.getElementById('mf-role').value,
+    spouse:document.getElementById('mf-spouse').value,
     notes: document.getElementById('mf-notes').value,
     overseers: document.getElementById('mf-overseers').value
   };
