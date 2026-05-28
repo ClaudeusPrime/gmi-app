@@ -610,6 +610,7 @@ textarea{min-height:80px;resize:vertical}
             <div class="card-header"><span class="card-title">Church Address</span><button class="btn btn-sm btn-primary" id="asm-addr-btn" onclick="toggleAddressEdit()">Edit</button></div>
             <div id="asm-addr-view" class="card-body"><div id="asm-addr-display" style="font-size:13px;color:var(--text-muted)">No address saved yet. Click Edit to add.</div></div>
             <div id="asm-addr-form" class="card-body" style="display:none">
+              <div class="form-group"><label class="form-label">Building / Venue name</label><input type="text" id="addr-building" placeholder="e.g. Rosedale Community Hall"></div>
               <div class="form-group"><label class="form-label">Street address</label><input type="text" id="addr-street" placeholder="123 Main Street"></div>
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px">
                 <div class="form-group"><label class="form-label">City</label><input type="text" id="addr-city" placeholder="City"></div>
@@ -1526,7 +1527,7 @@ var ASSEMBLIES = [
   {name:"Sidney/Carberry MB", region:"CANPR",country:"CAN",freq:1},
   {name:"Winnipeg MB",        region:"CANPR",country:"CAN",freq:2},
   {name:"Winkler MB",         region:"CANPR",country:"CAN",freq:1},
-  {name:"Cranbrook BC",       region:"CANPC", country:"CAN",freq:1},
+  {name:"Cranbrook BC",       region:"CANPC", country:"CAN",freq:1,archived:true},
   {name:"Penticton BC",       region:"CANPC", country:"CAN",freq:1},
   {name:"Vancouver BC",       region:"CANPC", country:"CAN",freq:2},
   {name:"Victoria BC",        region:"CANPC", country:"CAN",freq:1},
@@ -1552,6 +1553,7 @@ var ASSEMBLIES = [
   {name:"Portland OR",        region:"USPC",  country:"USA",freq:1}
 ];
 
+
 var SCHEDULE = [
   {assembly:"Victoria BC",        fri:"2026-01-16",m1:"Terry Zimmer",   m2:"David Luff",    m3:"Nick Snoke",      note:"Brian/Jeff instead of David",visited:false},
   {assembly:"Charlotte NC",       fri:"2026-01-16",m1:"Bill Chinnis",   m2:"Nick Snoke",    m3:"David Luff",      note:"Trevor instead of Nick",visited:false},
@@ -1560,12 +1562,12 @@ var SCHEDULE = [
   {assembly:"Sidney/Carberry MB", fri:"2026-03-13",m1:"Wayne Peters",   m2:"Nick Snoke",    m3:"Kelvin Martin",   note:"",visited:false},
   {assembly:"Vancouver BC",       fri:"2026-03-13",m1:"Darrell Smith",  m2:"David Luff",    m3:"Andy Snoke",      note:"",visited:false},
   {assembly:"Grand Junction CO",  fri:"2026-04-17",m1:"Wayne Peters",   m2:"Terry Zimmer",  m3:"Bill Chinnis",    note:"",visited:false},
-  {assembly:"Prince Albert SK",   fri:"2026-04-17",m1:"Brian Hannigan", m2:"Darren Olson",  m3:"Bill Chinnis",    note:"Trevor instead of Bill",visited:false},
+  {assembly:"Prince Albert SK",   fri:"2026-04-17",m1:"Brian Hannigan", m2:"Darren Olson",  m3:"",    note:"Trevor instead of Bill",visited:false},
   {assembly:"High Point NC",      fri:"2026-04-24",m1:"Bill Chinnis",   m2:"Nat Swaan",     m3:"Darrell Smith",   note:"",visited:false},
   {assembly:"Peoria IL",          fri:"2026-05-01",m1:"Wayne Peters",   m2:"Nick Snoke",    m3:"Darrell Smith",   note:"alternatives to Nick/Darrell",visited:false},
   {assembly:"Brooklyn NY",        fri:"2026-05-01",m1:"PJ Mathew",      m2:"Jeff Olson",    m3:"Darren Olson",    note:"",visited:false},
   {assembly:"Poynette WI",        fri:"2026-05-15",m1:"Kelvin Martin",  m2:"Andy Snoke",    m3:"David Luff",      note:"",visited:false},
-  {assembly:"Payette ID",         fri:"2026-05-15",m1:"Trevor Sundbo",  m2:"Brian Hannigan",m3:"David Luff",      note:"",visited:false},
+  {assembly:"Payette ID",         fri:"2026-05-15",m1:"Trevor Sundbo",  m2:"Brian Hannigan",m3:"",      note:"",visited:false},
   {assembly:"Cranbrook BC",       fri:"2026-07-17",m1:"Nick Snoke",     m2:"Dennis Aarrestad",m3:"David Luff",    note:"Wayne instead of David",visited:false},
   {assembly:"Bapaume SK",         fri:"2026-07-17",m1:"Brian Hannigan", m2:"Darren Olson",  m3:"Wayne Peters",    note:"",visited:false},
   {assembly:"Rosetown SK",        fri:"2026-07-24",m1:"Brian Hannigan", m2:"Dennis Aarrestad",m3:"PJ Mathew",     note:"",visited:false},
@@ -1573,11 +1575,11 @@ var SCHEDULE = [
   {assembly:"North Battleford SK",fri:"2026-07-31",m1:"Brian Hannigan", m2:"Trevor Sundbo", m3:"PJ Mathew",       note:"",visited:false},
   {assembly:"Calgary AB",         fri:"2026-07-31",m1:"Darrell Smith",  m2:"Terry Zimmer",  m3:"Jeff Olson",      note:"",visited:false},
   {assembly:"Edmonton AB",        fri:"2026-08-21",m1:"Darrell Smith",  m2:"Terry Zimmer",  m3:"Trevor Sundbo",   note:"",visited:false},
-  {assembly:"Clearwater FL",      fri:"2026-08-21",m1:"Darren Olson",   m2:"Darrell Smith", m3:"Trevor Sundbo",   note:"",visited:false},
+  {assembly:"Clearwater FL",      fri:"2026-08-21",m1:"Darren Olson",   m2:"Darrell Smith", m3:"",   note:"",visited:false},
   {assembly:"Minden NE",          fri:"2026-08-28",m1:"Darren Olson",   m2:"Trevor Sundbo", m3:"Terry Zimmer",    note:"",visited:false},
   {assembly:"Geneva/Genoa IL",    fri:"2026-08-28",m1:"David Luff",     m2:"Jeff Olson",    m3:"Kelvin Martin",   note:"",visited:false},
   {assembly:"Kingsport TN",       fri:"2026-09-04",m1:"David Luff",     m2:"Wayne Peters",  m3:"Dennis Aarrestad",note:"",visited:false},
-  {assembly:"St. Louis MO",       fri:"2026-09-04",m1:"Dennis Aarrestad",m2:"Darrell Smith",m3:"Wayne Peters",    note:"",visited:false},
+  {assembly:"St. Louis MO",       fri:"2026-09-04",m1:"",m2:"Darrell Smith",m3:"",    note:"",visited:false},
   {assembly:"Penticton BC",       fri:"2026-09-11",m1:"Jeff Olson",     m2:"David Luff",    m3:"Wayne Peters",    note:"",visited:false},
   {assembly:"Devlin ON",          fri:"2026-09-11",m1:"Kelvin Martin",  m2:"Andy Snoke",    m3:"Nat Swaan",       note:"",visited:false},
   // June assemblies
@@ -1588,19 +1590,378 @@ var SCHEDULE = [
   {assembly:"Stratford ON",       fri:"2026-09-25",m1:"Kelvin Martin",  m2:"Bill Chinnis",  m3:"PJ Mathew",       note:"",visited:false},
   {assembly:"Toronto ON",         fri:"2026-09-25",m1:"Kelvin Martin",  m2:"Dennis Aarrestad",m3:"Jeff Olson",    note:"",visited:false},
   {assembly:"Minneapolis MN",     fri:"2026-10-02",m1:"Kelvin Martin",  m2:"Nat Swaan",     m3:"Dennis Aarrestad",note:"",visited:false},
-  {assembly:"Park Valley SK",     fri:"2026-10-02",m1:"Nat Swaan",      m2:"Darren Olson",  m3:"Nick Snoke",      note:"",visited:false},
+  {assembly:"Park Valley SK",     fri:"2026-10-02",m1:"",      m2:"Darren Olson",  m3:"Nick Snoke",      note:"",visited:false},
   {assembly:"Easton MD",          fri:"2026-11-06",m1:"Nat Swaan",      m2:"Dennis Aarrestad",m3:"Nick Snoke",    note:"",visited:false},
-  {assembly:"Lynchburg VA",       fri:"2026-11-06",m1:"PJ Mathew",      m2:"Nick Snoke",    m3:"Terry Zimmer",    note:"",visited:false},
+  {assembly:"Lynchburg VA",       fri:"2026-11-06",m1:"PJ Mathew",      m2:"",    m3:"Terry Zimmer",    note:"",visited:false},
   {assembly:"Denton TX",          fri:"2026-11-13",m1:"Terry Zimmer",   m2:"Jeff Olson",    m3:"PJ Mathew",       note:"",visited:false},
-  {assembly:"Checotah OK",        fri:"2026-11-13",m1:"Trevor Sundbo",  m2:"Jeff Olson",    m3:"PJ Mathew",       note:"",visited:false},
+  {assembly:"Checotah OK",        fri:"2026-11-13",m1:"Trevor Sundbo",  m2:"",    m3:"",       note:"",visited:false},
   {assembly:"Winnipeg MB",        fri:"2026-11-27",m1:"Wayne Peters",   m2:"Bill Chinnis",  m3:"Terry Zimmer",    note:"",visited:false},
-  {assembly:"Winkler MB",         fri:"2026-11-27",m1:"Wayne Peters",   m2:"Darrell Smith", m3:"Dennis Aarrestad",note:"",visited:false}
+  {assembly:"Winkler MB",         fri:"2026-11-27",m1:"",   m2:"Darrell Smith", m3:"Dennis Aarrestad",note:"",visited:false}
 ];
 
 var VISIT_HISTORY = [];
 var AVAILABILITY = {};
 var ASSEMBLY_CONTACTS = {};
+
+// Seed contacts from GMI contact list
+(function(){
+  // Add new assemblies not yet in app
+  var newAsms = [
+  {name:"Campden Park",region:"CARIB",country:"VCT",freq:1},
+  {name:"Cassava Alley",region:"CARIB",country:"TTO",freq:1},
+  {name:"Formerly St. Thomas",region:"USE",country:"USA",freq:1},
+  {name:"Hopevale",region:"CARIB",country:"GRN",freq:1},
+  {name:"Lincoln NE",region:"USC",country:"USA",freq:1},
+  {name:"Lloydminster AB",region:"CANPR",country:"CAN",freq:1,archived:true},
+  {name:"Loubiere",region:"CARIB",country:"DMA",freq:1},
+  {name:"Sea View Farm",region:"CARIB",country:"ATG",freq:1},
+  {name:"Spooner's Hill",region:"CARIB",country:"BRB",freq:1}
+  ];
+  var ex={}; for(var i=0;i<ASSEMBLIES.length;i++) ex[ASSEMBLIES[i].name]=true;
+  for(var j=0;j<newAsms.length;j++){if(!ex[newAsms[j].name])ASSEMBLIES.push(newAsms[j]);}
+  // Seed contacts (only if not already set)
+  if(!ASSEMBLY_CONTACTS['Bapaume SK']||ASSEMBLY_CONTACTS['Bapaume SK'].length===0){
+    ASSEMBLY_CONTACTS['Bapaume SK'] = [
+    {name:"Eric Baynes",role:"Elder",phone:"306-883-7116",email:"epbaynes@gmail.com",notes:"Spouse: Pearl"},
+    {name:"Kevin Latus",role:"Elder",phone:"306-883-7588",email:"kevinlatus101@msn.com",notes:""}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Calgary AB']||ASSEMBLY_CONTACTS['Calgary AB'].length===0){
+    ASSEMBLY_CONTACTS['Calgary AB'] = [
+    {name:"Rod Bettcher",role:"Elder",phone:"403-589-8816",email:"rbettcher@shaw.ca",notes:"Spouse: Laura"},
+    {name:"Kelly Hannigan",role:"Deacon",phone:"403-651-4236",email:"kellyghannigan@gmail.com",notes:"Spouse: Victoria"},
+    {name:"Dan Levson",role:"Elder",phone:"403-462-1948",email:"dan@bema.ltd",notes:"Spouse: Evelyn"},
+    {name:"John Levson",role:"Deacon",phone:"403-830-2441",email:"johndlevson@hotmail.com",notes:"Spouse: Nancy"},
+    {name:"Kelvin Paul",role:"Deacon",phone:"403-804-0204",email:"kelvinp@callow.ca",notes:"Spouse: Jane"},
+    {name:"Keith Thornton",role:"Elder",phone:"",email:"",notes:""},
+    {name:"Joe Zielke",role:"Elder",phone:"403-830-6873",email:"joey.zielke@ffca-calgary.com",notes:"Spouse: Elizabeth"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Campden Park']||ASSEMBLY_CONTACTS['Campden Park'].length===0){
+    ASSEMBLY_CONTACTS['Campden Park'] = [
+    {name:"Cosbert Brown",role:"Deacon",phone:"784-528-2927",email:"",notes:""},
+    {name:"Seymour Joseph",role:"Deacon",phone:"784-531-7828",email:"",notes:"Spouse: Gayann"},
+    {name:"Nirisi Marshall",role:"Assistant Elder",phone:"784-533-8694",email:"nirisi.marshall@gmail.com",notes:""},
+    {name:"Derek Maxwell",role:"Elder",phone:"784-495-3860",email:"",notes:"Spouse: Angela"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Cassava Alley']||ASSEMBLY_CONTACTS['Cassava Alley'].length===0){
+    ASSEMBLY_CONTACTS['Cassava Alley'] = [
+    {name:"Cornelius Durant",role:"Deacon",phone:"868-372-3092",email:"corneliusdurand@gmail.com",notes:"Spouse: Cherril"},
+    {name:"Junior Thompson",role:"Elder",phone:"868-462-2930",email:"jatcgt@gmail.com",notes:"Spouse: Claire"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Charlotte NC']||ASSEMBLY_CONTACTS['Charlotte NC'].length===0){
+    ASSEMBLY_CONTACTS['Charlotte NC'] = [
+    {name:"William Chinnis",role:"Elder",phone:"704-560-3322",email:"wchinnis@gmail.com",notes:"Spouse: Pauline"},
+    {name:"Ray Kaufman",role:"Elder",phone:"",email:"lkaufman@comporium.net",notes:"Spouse: Loralee"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Checotah OK']||ASSEMBLY_CONTACTS['Checotah OK'].length===0){
+    ASSEMBLY_CONTACTS['Checotah OK'] = [
+    {name:"Darryl Amundson",role:"Elder",phone:"",email:"amundsonfamilymusic@gmail.com",notes:"Spouse: Christina"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Clearwater FL']||ASSEMBLY_CONTACTS['Clearwater FL'].length===0){
+    ASSEMBLY_CONTACTS['Clearwater FL'] = [
+    {name:"Arthur Lusk",role:"Elder",phone:"813-541-4696",email:"ajlsgm@gmail.com",notes:""}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Cranbrook BC']||ASSEMBLY_CONTACTS['Cranbrook BC'].length===0){
+    ASSEMBLY_CONTACTS['Cranbrook BC'] = [
+    {name:"Barry Bahsler",role:"Elder",phone:"250-919-5440",email:"",notes:"Spouse: Bev"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Denton TX']||ASSEMBLY_CONTACTS['Denton TX'].length===0){
+    ASSEMBLY_CONTACTS['Denton TX'] = [
+    {name:"Roland Bourne",role:"Elder",phone:"817-371-8453",email:"rbournevillas@att.net",notes:"Spouse: Bridget"},
+    {name:"Roland Bourne",role:"",phone:"",email:"rlbournevillas@att.net",notes:""},
+    {name:"Brian Jameson",role:"Elder",phone:"",email:"breljam@aol.com",notes:"Spouse: Theresa"},
+    {name:"Jerry Koltes",role:"Elder",phone:"940-391-1448",email:"jrkoltes@gmail.com",notes:"Spouse: Diane"},
+    {name:"Tim Malmer",role:"Deacon",phone:"",email:"tim.malmer@gmail.com",notes:"Spouse: Leslie"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Devlin ON']||ASSEMBLY_CONTACTS['Devlin ON'].length===0){
+    ASSEMBLY_CONTACTS['Devlin ON'] = [
+    {name:"Dan Tausendfrende",role:"Elder",phone:"807-271-4667",email:"wayfairer77@yahoo.com",notes:""}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Easton MD']||ASSEMBLY_CONTACTS['Easton MD'].length===0){
+    ASSEMBLY_CONTACTS['Easton MD'] = [
+    {name:"Phillip Peerman",role:"Elder",phone:"",email:"pdpeerman@gmail.com",notes:"Spouse: Trisha"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Edmonton AB']||ASSEMBLY_CONTACTS['Edmonton AB'].length===0){
+    ASSEMBLY_CONTACTS['Edmonton AB'] = [
+    {name:"Grant Amundson",role:"Elder",phone:"780-271-4780",email:"gmuns97@gmail.com",notes:"Spouse: Rebekkah"},
+    {name:"Andy Heath",role:"Elder",phone:"",email:"the2heaths@gmail.com",notes:"Spouse: Lindsay"},
+    {name:"Joe Hofer",role:"Deacon",phone:"780-719-9286",email:"",notes:"Spouse: Esther"},
+    {name:"Roland James",role:"Elder",phone:"",email:"rowjames77@gmail.com",notes:"Spouse: Kelsey"},
+    {name:"Lee Smith",role:"Deacon",phone:"780-360-1031",email:"smithyheidiho@gmail.com",notes:"Spouse: Heidi"},
+    {name:"Ernie Smith",role:"Deacon",phone:"",email:"",notes:"Spouse: Grace"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Formerly St. Thomas']||ASSEMBLY_CONTACTS['Formerly St. Thomas'].length===0){
+    ASSEMBLY_CONTACTS['Formerly St. Thomas'] = [
+    {name:"Albert Knight",role:"Elder",phone:"413-345-1508",email:"albertknight654@gmail.com",notes:"Spouse: Juliet"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Geneva/Genoa IL']||ASSEMBLY_CONTACTS['Geneva/Genoa IL'].length===0){
+    ASSEMBLY_CONTACTS['Geneva/Genoa IL'] = [
+    {name:"Kevin Dale",role:"Elder",phone:"815-761-5584",email:"kdalerths@gmail.com",notes:"Spouse: Deneen"},
+    {name:"Doug Olson",role:"Elder",phone:"308-760-0879",email:"dolson2020@gmail.com",notes:"Spouse: Julie"},
+    {name:"Jonathan Olson",role:"Deacon",phone:"",email:"jonolly17@gmail.com",notes:""}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Grand Junction CO']||ASSEMBLY_CONTACTS['Grand Junction CO'].length===0){
+    ASSEMBLY_CONTACTS['Grand Junction CO'] = [
+    {name:"Brandon Snoke",role:"Elder",phone:"",email:"bsnoke@girardis.net",notes:"Spouse: Donna"},
+    {name:"Nick Snoke",role:"Elder",phone:"",email:"nsnoke@globalmissionsinc.org",notes:"Spouse: Lenore"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['High Point NC']||ASSEMBLY_CONTACTS['High Point NC'].length===0){
+    ASSEMBLY_CONTACTS['High Point NC'] = [
+    {name:"David Heath",role:"Deacon",phone:"",email:"ddpackr@gmail.com",notes:"Spouse: Diane"},
+    {name:"Barney Yaskiewicz",role:"Elder",phone:"",email:"bjyas@bellsouth.net",notes:"Spouse: Barbara"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Hopevale']||ASSEMBLY_CONTACTS['Hopevale'].length===0){
+    ASSEMBLY_CONTACTS['Hopevale'] = [
+    {name:"Devon Collins",role:"Elder",phone:"473-458-2006",email:"devron_@hotmail.com",notes:"Spouse: Asher"},
+    {name:"Magnus Felix",role:"Deacon",phone:"473-409-2284",email:"magnusfelix54@gmail.com",notes:"Spouse: Shirley"},
+    {name:"Cardinal Hurdle",role:"Elder",phone:"473-410-7482",email:"hurdlecarmen@gmail.com",notes:"Spouse: Carmen"},
+    {name:"Richard James",role:"Helper",phone:"473-403-6573",email:"richiebee912@hotmail.com",notes:"Spouse: Leisha"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Kingsport TN']||ASSEMBLY_CONTACTS['Kingsport TN'].length===0){
+    ASSEMBLY_CONTACTS['Kingsport TN'] = [
+    {name:"Mike Koehn",role:"Elder",phone:"404-626-3120",email:"koehn5family@gmail.com",notes:"Spouse: Amy"},
+    {name:"Brian Luff",role:"Elder",phone:"",email:"luffbd@gmail.com",notes:"Spouse: Jessica"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Lincoln NE']||ASSEMBLY_CONTACTS['Lincoln NE'].length===0){
+    ASSEMBLY_CONTACTS['Lincoln NE'] = [
+    {name:"David Davidson",role:"Deacon",phone:"",email:"david.a.davidson@gmail.com",notes:"Spouse: Mary Jane"},
+    {name:"John Olson",role:"",phone:"",email:"jomabolu4@gmail.com",notes:"Spouse: Mae"},
+    {name:"Darin Olson",role:"Elder",phone:"402-420-2255",email:"olson.dar@gmail.com",notes:"Spouse: Lynette"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Lloydminster AB']||ASSEMBLY_CONTACTS['Lloydminster AB'].length===0){
+    ASSEMBLY_CONTACTS['Lloydminster AB'] = [
+    {name:"Allan Livingstone",role:"Elder",phone:"780-207-7691",email:"",notes:"Spouse: Jan"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Loubiere']||ASSEMBLY_CONTACTS['Loubiere'].length===0){
+    ASSEMBLY_CONTACTS['Loubiere'] = [
+    {name:"Ephraim Joseph",role:"Elder",phone:"767-285-7229",email:"ephraim_joseph@hotmail.com",notes:"Spouse: Glenda"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Lynchburg VA']||ASSEMBLY_CONTACTS['Lynchburg VA'].length===0){
+    ASSEMBLY_CONTACTS['Lynchburg VA'] = [
+    {name:"Theodore Book",role:"Elder",phone:"",email:"tedlbook@gmail.com",notes:"Spouse: Rita"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Minneapolis MN']||ASSEMBLY_CONTACTS['Minneapolis MN'].length===0){
+    ASSEMBLY_CONTACTS['Minneapolis MN'] = [
+    {name:"Monty Dummer",role:"Elder",phone:"763-341-5503",email:"montynbev@gmail.com",notes:"Spouse: Bev"},
+    {name:"Terry Hoffman",role:"Elder",phone:"612-716-8751",email:"terryahoff@aol.com",notes:"Spouse: Evelyn"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['North Battleford SK']||ASSEMBLY_CONTACTS['North Battleford SK'].length===0){
+    ASSEMBLY_CONTACTS['North Battleford SK'] = [
+    {name:"Mason Hemmerling",role:"Deacon",phone:"306-490-7588",email:"masonjonhemmerling@gmail.com",notes:"Spouse: Renee"},
+    {name:"Dwayne Olson",role:"Elder",phone:"306-481-6360",email:"hunting.fishing@gmail.com",notes:"Spouse: Lise"},
+    {name:"Tom Schmidt",role:"Elder",phone:"306-441-7163",email:"uncletom@sasktel.net",notes:"Spouse: Sharon"},
+    {name:"Isaac Olson",role:"Deacon",phone:"",email:"isaac_olson@yahoo.com",notes:"Spouse: Jessica"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Park Valley SK']||ASSEMBLY_CONTACTS['Park Valley SK'].length===0){
+    ASSEMBLY_CONTACTS['Park Valley SK'] = [
+    {name:"Phillip Aarrestad",role:"Elder",phone:"",email:"philaarr4@gmail.com",notes:"Spouse: Danita"},
+    {name:"Dennis Aarrestad",role:"Elder",phone:"306-469-7035",email:"daarrestad17@gmail.com",notes:"Spouse: Cyndi"},
+    {name:"Norman Aarrestad",role:"Elder",phone:"306-469-4956",email:"normaarrestad@gmail.com",notes:"Spouse: Eileen"},
+    {name:"Harvey Amundson",role:"Elder",phone:"306-724-4915",email:"ruthamundson@hotmail.com",notes:"Spouse: Ruth"},
+    {name:"Ian Gabruch",role:"Deacon",phone:"",email:"ian i.gabruch@gmail.com",notes:""},
+    {name:"Greg Vaadeland",role:"Deacon",phone:"",email:"northwestequest@gmail.com",notes:"Spouse: Laurel"},
+    {name:"Brad Wensley",role:"Elder",phone:"647-894-0015",email:"brad.wensley@gmail.com",notes:"Spouse: Carrie"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Payette ID']||ASSEMBLY_CONTACTS['Payette ID'].length===0){
+    ASSEMBLY_CONTACTS['Payette ID'] = [
+    {name:"John Greif",role:"Elder",phone:"",email:"jsgreif@msn.com",notes:"Spouse: Sue"},
+    {name:"Mike Greif",role:"Elder",phone:"208-739-5560",email:"michaelgreif60@gmail.com",notes:"Spouse: Gwen"},
+    {name:"Tim Zielicke",role:"Elder",phone:"",email:"tzielicke@gmail.com",notes:"Spouse: Jessica"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Penticton BC']||ASSEMBLY_CONTACTS['Penticton BC'].length===0){
+    ASSEMBLY_CONTACTS['Penticton BC'] = [
+    {name:"Eric Amundson",role:"Elder",phone:"250-492-9865",email:"amundson.eric@gmail.com",notes:"Spouse: Kristin"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Peoria IL']||ASSEMBLY_CONTACTS['Peoria IL'].length===0){
+    ASSEMBLY_CONTACTS['Peoria IL'] = [
+    {name:"Randall Snoke",role:"Elder",phone:"",email:"rgsnoke@gmail.com",notes:"Spouse: Wendy"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Portland OR']||ASSEMBLY_CONTACTS['Portland OR'].length===0){
+    ASSEMBLY_CONTACTS['Portland OR'] = [
+    {name:"Chris Cornell",role:"Elder",phone:"503-310-8727",email:"chrislcornell@gmail.com",notes:""},
+    {name:"Lloyd Cornell",role:"Elder",phone:"503-538-4795",email:"",notes:""},
+    {name:"David Wright",role:"Elder",phone:"416-904-0048",email:"dww1015@gmail.com",notes:"Spouse: Edie"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Poynette WI']||ASSEMBLY_CONTACTS['Poynette WI'].length===0){
+    ASSEMBLY_CONTACTS['Poynette WI'] = [
+    {name:"Bob Stenson",role:"Elder",phone:"",email:"bobstenson@gmail.com",notes:"Spouse: Kathy"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Prince Albert SK']||ASSEMBLY_CONTACTS['Prince Albert SK'].length===0){
+    ASSEMBLY_CONTACTS['Prince Albert SK'] = [
+    {name:"Harold Amundson",role:"Elder",phone:"306-714-7142",email:"elinoram2000@hotmail.com",notes:"Spouse: Elinor"},
+    {name:"Murray Hannigan",role:"Deacon",phone:"306-747-7782",email:"hanniganhoney@sasktel.net",notes:"Spouse: Ruby"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Regina SK']||ASSEMBLY_CONTACTS['Regina SK'].length===0){
+    ASSEMBLY_CONTACTS['Regina SK'] = [
+    {name:"Carl Amundson",role:"",phone:"",email:"carl.amundson12@gmail.com",notes:""},
+    {name:"Dale Amundson",role:"Deacon",phone:"306-526-0190",email:"djamund1@gmail.com",notes:"Spouse: Janice"},
+    {name:"Max Amundson",role:"",phone:"",email:"",notes:""},
+    {name:"David Cotcher",role:"Elder",phone:"306-550-9479",email:"cotcher@sasktel.net",notes:"Spouse: Elaine"},
+    {name:"Chris Reed",role:"Elder",phone:"",email:"christopher.reed@sasktel.net",notes:"Spouse: Maryanne"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Rosetown SK']||ASSEMBLY_CONTACTS['Rosetown SK'].length===0){
+    ASSEMBLY_CONTACTS['Rosetown SK'] = [
+    {name:"Vern Dale",role:"Elder",phone:"306-831-9003",email:"vg.dale@sasktel.net",notes:"Spouse: Grace"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Saskatoon SK']||ASSEMBLY_CONTACTS['Saskatoon SK'].length===0){
+    ASSEMBLY_CONTACTS['Saskatoon SK'] = [
+    {name:"Travis Amundson",role:"Deacon",phone:"",email:"travisamundson@gmail.com",notes:"Spouse: Jann"},
+    {name:"Phil Amundson",role:"Elder",phone:"306-371-9339",email:"pamundson@shaw.ca",notes:"Spouse: Vicki"},
+    {name:"Gordon Koshinsky",role:"Elder",phone:"306-955-1781",email:"gordon@koshinsky.com",notes:"Spouse: Margaret"},
+    {name:"Leon Mallow",role:"Deacon",phone:"306-230-9287",email:"mallowleon@gmail.com",notes:"Spouse: Jenny"},
+    {name:"Ken Olson",role:"Deacon",phone:"306-229-8600",email:"kolson@sasktel.net",notes:"Spouse: Marlene"},
+    {name:"Ralph Schalm",role:"Deacon",phone:"",email:"ralphschalm@yahoo.ca",notes:"Spouse: Leti"},
+    {name:"Jerry Smith",role:"Elder",phone:"",email:"glsmith@sasktel.net",notes:"Spouse: Lois"},
+    {name:"Norm Sparrow",role:"Elder",phone:"306-717-0958",email:"sparrowscapes@sasktel.net",notes:"Spouse: Brenda"},
+    {name:"Bryce Sundbo",role:"Elder",phone:"306-227-9593",email:"bsundbo@yahoo.com",notes:"Spouse: Semhar"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Sea View Farm']||ASSEMBLY_CONTACTS['Sea View Farm'].length===0){
+    ASSEMBLY_CONTACTS['Sea View Farm'] = [
+    {name:"Vincent Andrew",role:"Helper",phone:"268-724-7817",email:"vincent.andrew740811@gmail.com",notes:"Spouse: Joyce"},
+    {name:"Clifton Joseph",role:"Deacon",phone:"268-771-9760",email:"cliftonivo@gmail.com",notes:"Spouse: Anita"},
+    {name:"Conrad Joseph",role:"Elder",phone:"268-728-0985",email:"conradjoseph27@gmail.com",notes:"Spouse: Coleen"},
+    {name:"Denfield Mack",role:"Elder",phone:"268-788-5891",email:"tashie6@hotmail.com",notes:"Spouse: Anna-Rose"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Sidney/Carberry MB']||ASSEMBLY_CONTACTS['Sidney/Carberry MB'].length===0){
+    ASSEMBLY_CONTACTS['Sidney/Carberry MB'] = [
+    {name:"Arthur Dornn",role:"Elder",phone:"204-868-0712",email:"adornn@gmail.com",notes:"Spouse: Valerie"},
+    {name:"David Wurtz",role:"Elder",phone:"204-466-2624",email:"dave_wurtz@hotmail.com",notes:"Spouse: Theresa"},
+    {name:"David Jr. Wurtz",role:"",phone:"",email:"lisa@wurtzbros.com",notes:"Spouse: Lisa"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS["Spooner's Hill"]||ASSEMBLY_CONTACTS["Spooner's Hill"].length===0){
+    ASSEMBLY_CONTACTS["Spooner's Hill"] = [
+    {name:"Patrick King",role:"Elder",phone:"246-624-8998",email:"",notes:""},
+    {name:"Ethan Leacock",role:"Elder",phone:"246-268-3604",email:"leacock.ethan45@gmail.com",notes:"Spouse: Beulah"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['St. Louis MO']||ASSEMBLY_CONTACTS['St. Louis MO'].length===0){
+    ASSEMBLY_CONTACTS['St. Louis MO'] = [
+    {name:"Steve Haney",role:"Elder",phone:"",email:"stevedarhaney@outlook.com",notes:"Spouse: Darlene"},
+    {name:"Greg Jeffers",role:"Elder",phone:"636-358-1436",email:"glj333@yahoo.com",notes:"Spouse: Maria"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Stratford ON']||ASSEMBLY_CONTACTS['Stratford ON'].length===0){
+    ASSEMBLY_CONTACTS['Stratford ON'] = [
+    {name:"Steven Levson",role:"Elder",phone:"519-200-7967",email:"steven.levson@gmail.com",notes:"Spouse: Meggan"},
+    {name:"Garry Tyler",role:"Deacon",phone:"",email:"grampagarry.gt@gmail.com",notes:"Spouse: Heather"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Toronto ON']||ASSEMBLY_CONTACTS['Toronto ON'].length===0){
+    ASSEMBLY_CONTACTS['Toronto ON'] = [
+    {name:"Matthew Miller",role:"Deacon",phone:"",email:"millers.geemail@gmail.com",notes:"Spouse: Shannon"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Vancouver BC']||ASSEMBLY_CONTACTS['Vancouver BC'].length===0){
+    ASSEMBLY_CONTACTS['Vancouver BC'] = [
+    {name:"Paul Amundson",role:"Elder",phone:"604-939-4896",email:"amundson.paul@gmail.com",notes:"Spouse: Diane"},
+    {name:"David Hansen",role:"Elder",phone:"",email:"dhfromnv@gmail.com",notes:"Spouse: Kimberly"},
+    {name:"Daryl Martz",role:"Deacon",phone:"",email:"daryl@shelbrook.com",notes:"Spouse: Pat"},
+    {name:"Randall Plett",role:"Deacon",phone:"",email:"rhplett@telus.net",notes:"Spouse: Helen"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Victoria BC']||ASSEMBLY_CONTACTS['Victoria BC'].length===0){
+    ASSEMBLY_CONTACTS['Victoria BC'] = [
+    {name:"Mark Seargeant",role:"Elder",phone:"250-510-6835",email:"",notes:""}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Winkler MB']||ASSEMBLY_CONTACTS['Winkler MB'].length===0){
+    ASSEMBLY_CONTACTS['Winkler MB'] = [
+    {name:"David Klassen",role:"Elder",phone:"204-332-9265",email:"daviddklassen@gmail.com",notes:"Spouse: Aileen"},
+    {name:"Joel Swaan",role:"Deacon",phone:"",email:"mrswaan@gmail.com",notes:"Spouse: Sherri"},
+    {name:"Robert Waldner",role:"Elder",phone:"204-304-6039",email:"waldnerobert@gmail.com",notes:"Spouse: Josie"}
+    ];
+  }
+  if(!ASSEMBLY_CONTACTS['Winnipeg MB']||ASSEMBLY_CONTACTS['Winnipeg MB'].length===0){
+    ASSEMBLY_CONTACTS['Winnipeg MB'] = [
+    {name:"James Dornn",role:"Elder",phone:"204-793-2050",email:"jdornn@gmail.com",notes:"Spouse: Marlene"},
+    {name:"Chris Dornn",role:"Elder",phone:"204-475-2115",email:"",notes:"Spouse: Suzie"},
+    {name:"Eugene Paterson",role:"Elder",phone:"204-430-7744",email:"epaterson3@shaw.ca",notes:"Spouse: Chanda"}
+    ];
+  }
+})();
 var ASSEMBLY_ADDRESS  = {};
+
+// Seed assembly addresses and meeting times
+(function(){
+  var ex={}; for(var i=0;i<ASSEMBLIES.length;i++) ex[ASSEMBLIES[i].name]=true;
+  if(!ex['Montevideo MN']) ASSEMBLIES.push({name:'Montevideo MN',region:'USC',country:'USA',freq:1});
+
+  if(!ASSEMBLY_ADDRESS["Calgary AB"]||!ASSEMBLY_ADDRESS["Calgary AB"].city) ASSEMBLY_ADDRESS["Calgary AB"]={building:"Rosedale Community Hall",street:"901 - 11 Ave NW",city:"Calgary",prov:"AB",country:"CAN",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Edmonton AB"]||!ASSEMBLY_ADDRESS["Edmonton AB"].city) ASSEMBLY_ADDRESS["Edmonton AB"]={building:"Edmonton Local Church",street:"10950 - 135 Street",city:"Edmonton",prov:"AB",country:"CAN",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Penticton BC"]||!ASSEMBLY_ADDRESS["Penticton BC"].city) ASSEMBLY_ADDRESS["Penticton BC"]={city:"Penticton",prov:"BC",country:"CAN",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Vancouver BC"]||!ASSEMBLY_ADDRESS["Vancouver BC"].city) ASSEMBLY_ADDRESS["Vancouver BC"]={building:"Park Lodge Hall",street:"4474 Rupert St.",city:"Vancouver",prov:"BC",country:"CAN",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Victoria BC"]||!ASSEMBLY_ADDRESS["Victoria BC"].city) ASSEMBLY_ADDRESS["Victoria BC"]={building:"Selkirk Montessori School",street:"2970 Jutland Road",city:"Victoria",prov:"BC",country:"CAN",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Sidney/Carberry MB"]||!ASSEMBLY_ADDRESS["Sidney/Carberry MB"].city) ASSEMBLY_ADDRESS["Sidney/Carberry MB"]={building:"Carberry Masonic Hall",street:"Corner of Toronto St & 3rd Ave",city:"Carberry",prov:"MB",country:"CAN",meeting:"10:00 AM"};
+  if(!ASSEMBLY_ADDRESS["Winkler MB"]||!ASSEMBLY_ADDRESS["Winkler MB"].city) ASSEMBLY_ADDRESS["Winkler MB"]={building:"Christian Assembly on Royal Crescent",street:"269 Royal Crescent",city:"Winkler",prov:"MB",country:"CAN",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Winnipeg MB"]||!ASSEMBLY_ADDRESS["Winnipeg MB"].city) ASSEMBLY_ADDRESS["Winnipeg MB"]={building:"Surgeon Creek Community Centre",street:"210 Rita St.",city:"Winnipeg",prov:"MB",country:"CAN",meeting:"10:00 AM"};
+  if(!ASSEMBLY_ADDRESS["Devlin ON"]||!ASSEMBLY_ADDRESS["Devlin ON"].city) ASSEMBLY_ADDRESS["Devlin ON"]={building:"Gospel Lighthouse",street:"1323 Hall Rd.",city:"La Vallee",prov:"ON",country:"CAN",meeting:"10:00 AM"};
+  if(!ASSEMBLY_ADDRESS["Stratford ON"]||!ASSEMBLY_ADDRESS["Stratford ON"].city) ASSEMBLY_ADDRESS["Stratford ON"]={building:"St. Ambrose School",street:"181 Louise St.",city:"Stratford",prov:"ON",country:"CAN",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Toronto ON"]||!ASSEMBLY_ADDRESS["Toronto ON"].city) ASSEMBLY_ADDRESS["Toronto ON"]={building:"Online",city:"Toronto",prov:"ON",country:"CAN",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Bapaume SK"]||!ASSEMBLY_ADDRESS["Bapaume SK"].city) ASSEMBLY_ADDRESS["Bapaume SK"]={building:"Church at Bapaume",city:"Bapaume",prov:"SK",country:"CAN",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["North Battleford SK"]||!ASSEMBLY_ADDRESS["North Battleford SK"].city) ASSEMBLY_ADDRESS["North Battleford SK"]={building:"Cloud Room - Sharon Schools",street:"802 Airport Road",city:"North Battleford",prov:"SK",country:"CAN",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Park Valley SK"]||!ASSEMBLY_ADDRESS["Park Valley SK"].city) ASSEMBLY_ADDRESS["Park Valley SK"]={building:"Park Valley Local Church",street:"53.700753, -106.797933",city:"Park Valley",prov:"SK",country:"CAN",meeting:"10:00 AM"};
+  if(!ASSEMBLY_ADDRESS["Prince Albert SK"]||!ASSEMBLY_ADDRESS["Prince Albert SK"].city) ASSEMBLY_ADDRESS["Prince Albert SK"]={building:"Prince Albert Gospel Assembly",street:"Corner of 25 St. & 5 Ave E",city:"Prince Albert",prov:"SK",country:"CAN",meeting:"10:00 AM"};
+  if(!ASSEMBLY_ADDRESS["Regina SK"]||!ASSEMBLY_ADDRESS["Regina SK"].city) ASSEMBLY_ADDRESS["Regina SK"]={building:"Regina Fellowship Assembly",street:"1301 Victoria Ave.",city:"Regina",prov:"SK",country:"CAN",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Rosetown SK"]||!ASSEMBLY_ADDRESS["Rosetown SK"].city) ASSEMBLY_ADDRESS["Rosetown SK"]={building:"Rosetown Calvary Tabernacle",street:"116 - 5 Ave. E",city:"Rosetown",prov:"SK",country:"CAN",meeting:"11:00 AM"};
+  if(!ASSEMBLY_ADDRESS["Saskatoon SK"]||!ASSEMBLY_ADDRESS["Saskatoon SK"].city) ASSEMBLY_ADDRESS["Saskatoon SK"]={building:"Church at Saskatoon",street:"1701 Avenue D North",city:"Saskatoon",prov:"SK",country:"CAN",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Grand Junction CO"]||!ASSEMBLY_ADDRESS["Grand Junction CO"].city) ASSEMBLY_ADDRESS["Grand Junction CO"]={building:"Hampton Inn Downtown",street:"205 Main St.",city:"Grand Junction",prov:"CO",country:"USA",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Clearwater FL"]||!ASSEMBLY_ADDRESS["Clearwater FL"].city) ASSEMBLY_ADDRESS["Clearwater FL"]={city:"Clearwater",prov:"FL",country:"USA",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Payette ID"]||!ASSEMBLY_ADDRESS["Payette ID"].city) ASSEMBLY_ADDRESS["Payette ID"]={building:"The Payette Church",street:"510 - 3 Street N.",city:"Payette",prov:"ID",country:"USA",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Geneva/Genoa IL"]||!ASSEMBLY_ADDRESS["Geneva/Genoa IL"].city) ASSEMBLY_ADDRESS["Geneva/Genoa IL"]={building:"J6 Polymers",street:"601 Derby Line Rd.",city:"Genoa",prov:"IL",country:"USA",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Easton MD"]||!ASSEMBLY_ADDRESS["Easton MD"].city) ASSEMBLY_ADDRESS["Easton MD"]={building:"Easton Utilities",street:"201 N. Washington Street",city:"Easton",prov:"MD",country:"USA",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Minneapolis MN"]||!ASSEMBLY_ADDRESS["Minneapolis MN"].city) ASSEMBLY_ADDRESS["Minneapolis MN"]={building:"Church at Minneapolis",street:"9418 Saratoga Lane N.",city:"Maple Grove",prov:"MN",country:"USA",meeting:"10:00 AM"};
+  if(!ASSEMBLY_ADDRESS["Montevideo MN"]||!ASSEMBLY_ADDRESS["Montevideo MN"].city) ASSEMBLY_ADDRESS["Montevideo MN"]={building:"Old Carnegie Library",street:"125 3rd Street North",city:"Montevideo",prov:"MN",country:"USA",meeting:"10:00 AM"};
+  if(!ASSEMBLY_ADDRESS["St. Louis MO"]||!ASSEMBLY_ADDRESS["St. Louis MO"].city) ASSEMBLY_ADDRESS["St. Louis MO"]={city:"St. Louis",prov:"MO",country:"USA",meeting:"10:00 AM"};
+  if(!ASSEMBLY_ADDRESS["Minden NE"]||!ASSEMBLY_ADDRESS["Minden NE"].city) ASSEMBLY_ADDRESS["Minden NE"]={city:"Minden",prov:"NE",country:"USA",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Brooklyn NY"]||!ASSEMBLY_ADDRESS["Brooklyn NY"].city) ASSEMBLY_ADDRESS["Brooklyn NY"]={city:"Brooklyn",prov:"NY",country:"USA",meeting:"8:00 AM"};
+  if(!ASSEMBLY_ADDRESS["Charlotte NC"]||!ASSEMBLY_ADDRESS["Charlotte NC"].city) ASSEMBLY_ADDRESS["Charlotte NC"]={city:"Charlotte",prov:"NC",country:"USA",meeting:"10:00 AM"};
+  if(!ASSEMBLY_ADDRESS["High Point NC"]||!ASSEMBLY_ADDRESS["High Point NC"].city) ASSEMBLY_ADDRESS["High Point NC"]={city:"High Point",prov:"NC",country:"USA",meeting:"10:00 AM"};
+  if(!ASSEMBLY_ADDRESS["Portland OR"]||!ASSEMBLY_ADDRESS["Portland OR"].city) ASSEMBLY_ADDRESS["Portland OR"]={building:"Home Church",city:"Portland",prov:"OR",country:"USA",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Kingsport TN"]||!ASSEMBLY_ADDRESS["Kingsport TN"].city) ASSEMBLY_ADDRESS["Kingsport TN"]={building:"Online",city:"Kingsport",prov:"TN",country:"USA",meeting:"10:00 AM"};
+  if(!ASSEMBLY_ADDRESS["Denton TX"]||!ASSEMBLY_ADDRESS["Denton TX"].city) ASSEMBLY_ADDRESS["Denton TX"]={building:"Online",city:"Denton",prov:"TX",country:"USA",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Lynchburg VA"]||!ASSEMBLY_ADDRESS["Lynchburg VA"].city) ASSEMBLY_ADDRESS["Lynchburg VA"]={building:"Disciples of Christ: Regional Office",street:"1290 Enterprise Drive",city:"Lynchburg",prov:"VA",country:"USA",meeting:"10:00 AM"};
+  if(!ASSEMBLY_ADDRESS["Poynette WI"]||!ASSEMBLY_ADDRESS["Poynette WI"].city) ASSEMBLY_ADDRESS["Poynette WI"]={building:"Bob & Kathy Stenson's House",street:"N4986 Beach Garden Rd",city:"Portage",prov:"WI",country:"USA",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Lloydminster AB"]||!ASSEMBLY_ADDRESS["Lloydminster AB"].city) ASSEMBLY_ADDRESS["Lloydminster AB"]={city:"Lloydminster",prov:"AB",country:"CAN",meeting:"10:30 AM"};
+  if(!ASSEMBLY_ADDRESS["Peoria IL"]||!ASSEMBLY_ADDRESS["Peoria IL"].city) ASSEMBLY_ADDRESS["Peoria IL"]={city:"Peoria",prov:"IL",country:"USA"};
+})();
+
+
+
 var ASSEMBLY_REPORTS  = {};
 var currentAsmName = null;
 var asmSortCol = 'name'; var asmSortDir = 1;
@@ -3273,13 +3634,14 @@ function openAssemblyDetail(asmName) {
 function renderAddressView() {
   var a=ASSEMBLY_ADDRESS[currentAsmName];
   var el=document.getElementById('asm-addr-display');
-  if(!a||(!a.street&&!a.city)){el.innerHTML='<span style="color:var(--text-muted)">No address saved yet. Click Edit to add.</span>';return;}
+  if(!a||(!a.street&&!a.city&&!a.building)){el.innerHTML='<span style="color:var(--text-muted)">No address saved yet. Click Edit to add.</span>';return;}
   var html='';
+  if(a.building)html+='<div style="font-size:12px;color:var(--text-muted);margin-bottom:2px">'+a.building+'</div>';
   if(a.street)html+='<div style="font-weight:500;font-size:13px">'+a.street+'</div>';
   var cityLine=[a.city,a.prov,a.postal].filter(Boolean).join(', ');
   if(cityLine)html+='<div style="font-size:13px">'+cityLine+'</div>';
   if(a.country)html+='<div style="font-size:13px">'+(a.country==='CAN'?'Canada':'USA')+'</div>';
-  if(a.meeting)html+='<div style="font-size:12px;color:var(--text-muted);margin-top:6px">\ud83d\udd50 '+a.meeting+'</div>';
+  if(a.meeting)html+='<div style="font-size:12px;color:var(--text-muted);margin-top:6px">\ud83d\udd50 Sunday '+a.meeting+'</div>';
   el.innerHTML=html;
 }
 
@@ -3290,6 +3652,7 @@ function toggleAddressEdit() {
   if(isOpen){form.style.display='none';view.style.display='block';document.getElementById('asm-addr-btn').textContent='Edit';}
   else{
     var a=ASSEMBLY_ADDRESS[currentAsmName]||{};
+    document.getElementById('addr-building').value=a.building||'';
     document.getElementById('addr-street').value=a.street||'';
     document.getElementById('addr-city').value=a.city||'';
     document.getElementById('addr-prov').value=a.prov||'';
@@ -3303,6 +3666,7 @@ function toggleAddressEdit() {
 
 function saveAddress() {
   ASSEMBLY_ADDRESS[currentAsmName]={
+    building:document.getElementById('addr-building').value,
     street:document.getElementById('addr-street').value,
     city:document.getElementById('addr-city').value,
     prov:document.getElementById('addr-prov').value,
