@@ -5458,8 +5458,8 @@ function trUpdateBudget() {
   var transport = 0, mileageRate = 0, dist = 0;
   if (mode === 'drive') {
     dist = parseFloat(document.getElementById('tr-distance').value) || 0;
-    mileageRate = unit === 'mi' ? 0.67 : 0.55;
-    transport = dist * 2 * mileageRate * (spouse ? 1 : 1); // mileage same with/without spouse
+    mileageRate = unit === 'mi' ? 0.65 : 0.55;
+    transport = dist * 2 * mileageRate;
   } else {
     transport = parseFloat(document.getElementById('tr-flight').value) || 0;
     if (spouse) transport *= 2;
@@ -5473,9 +5473,11 @@ function trUpdateBudget() {
   var linesEl = document.getElementById('tr-budget-lines');
   var totalEl = document.getElementById('tr-budget-total');
 
+  var fmtRate = function(n){ return sym + (n||0).toFixed(2); };
+
   var lines = '';
   if (mode === 'drive') {
-    lines += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text-muted)">Driving ('+(Math.round(dist))+' '+unit+' each way, '+fmt(mileageRate)+'/'+unit+' return)</span><span>'+fmt(transport)+'</span></div>';
+    lines += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text-muted)">Driving ('+Math.round(dist)+' '+unit+' each way @ '+fmtRate(mileageRate)+'/'+unit+' return)</span><span>'+fmt(transport)+'</span></div>';
   } else {
     lines += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text-muted)">Flight'+(spouse?' × 2 (with spouse)':'')+'</span><span>'+fmt(transport)+'</span></div>';
   }
@@ -5522,6 +5524,7 @@ function submitTravelRequest() {
   var overseerLines = (prof.overseers||'').trim().split('\n').map(function(l){return l.trim();}).filter(Boolean);
   var b = window._trBudget || {total:0,currency:'CAD',sym:'CA$'};
   var fmt = function(n){ return b.sym + Math.round(n||0).toLocaleString(); };
+  var fmtRate = function(n){ return b.sym + (n||0).toFixed(2); };
 
   var text = 'TRAVEL REQUEST\n';
   text += '==============\n\n';
@@ -5536,7 +5539,7 @@ function submitTravelRequest() {
   if (mode==='fly') {
     text += 'Flight'+(spouse?' (×2)':'')+':             ' + fmt(b.transport) + '\n';
   } else {
-    text += 'Driving (' + Math.round(b.dist||0) + ' ' + b.unit + ' × 2, ' + fmt(b.mileageRate) + '/'+b.unit+'):  ' + fmt(b.transport) + '\n';
+    text += 'Driving (' + Math.round(b.dist||0) + ' ' + b.unit + ' each way @ ' + b.sym + (b.mileageRate||0).toFixed(2) + '/'+b.unit+' return):  ' + fmt(b.transport) + '\n';
   }
   text += 'Hotel (' + b.nights + ' nights @ ' + fmt(b.hotelRate||130) + '):   ' + fmt(b.hotel) + '\n';
   text += 'Meals (' + b.days + ' days @ ' + fmt(b.mealRate||65) + (spouse?' ×2 (with spouse)':'') + '):    ' + fmt(b.meals) + '\n';
