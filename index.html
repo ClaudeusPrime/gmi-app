@@ -172,9 +172,16 @@ textarea{min-height:80px;resize:vertical}
   .sidebar-logo p{display:none}
   .sidebar-nav{display:flex;flex-direction:row;padding:0;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;border-top:1px solid rgba(255,255,255,.08);scrollbar-width:none}
   .sidebar-nav::-webkit-scrollbar{display:none}
-  .sidebar-logo svg{max-height:36px!important;width:auto!important}
+  .minister-card-info{flex:1;min-width:0;display:flex;align-items:center;gap:0}
+.minister-card-name{flex:0 0 200px;min-width:0}
+.minister-card-divider{flex:0 0 1px;align-self:stretch;background:var(--border);margin:0 14px}
+.minister-card-role{flex:0 0 180px;min-width:0}
   .sidebar-logo{padding:.4rem .75rem!important}
   .nav-section{display:none}
+  .minister-card-info{flex-wrap:wrap;gap:2px}
+  .minister-card-name{flex:0 0 100%}
+  .minister-card-divider{display:none}
+  .minister-card-role{flex:0 0 100%;padding-top:2px}
   .nav-item{flex-direction:column;gap:2px;padding:8px 12px;font-size:9px;border-left:none;border-bottom:3px solid transparent;white-space:nowrap;flex-shrink:0;min-width:56px;align-items:center}
   .nav-item svg{width:18px;height:18px}
   .nav-item.active{border-bottom-color:#fff;border-left-color:transparent;background:rgba(255,255,255,.1)}
@@ -2862,16 +2869,16 @@ function renderMinisters() {
       // Collapsed row
       + '<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer" onclick="toggleMinisterRow(\'mr-'+i+'\')">'
       + '<div style="width:36px;height:36px;border-radius:50%;background:'+color+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0">'+initials+'</div>'
-      + '<div style="flex:1;min-width:0;display:flex;align-items:center;gap:0">'
-      + '<div style="flex:0 0 200px;min-width:0">'
+      + '<div class="minister-card-info">'
+      + '<div class="minister-card-name">'
       + '<div style="font-size:14px;font-weight:500;color:var(--navy-dark)">'+m.name+'</div>'
       + '<div style="font-size:12px;color:var(--text-muted)">'+(m.city?(m.city+(m.state?', '+m.state:'')):'')+'</div>'
       + '</div>'
-      + '<div style="flex:0 0 1px;align-self:stretch;background:var(--border);margin:0 12px"></div>'
-      + '<div style="flex:0 0 180px;min-width:0">'
+      + (prof.role||prof.spouse ? '<div class="minister-card-divider"></div>'
+      + '<div class="minister-card-role">'
       + (prof.role?'<div style="font-size:13px;color:var(--navy-dark)">'+prof.role+'</div>':'')
       + (prof.spouse?'<div style="font-size:12px;color:var(--text-muted)">Spouse: '+prof.spouse+'</div>':'')
-      + '</div>'
+      + '</div>' : '')
       + '</div>'
       + regionBadge(m.region)
       + (prof.phone||prof.email ? '<span style="font-size:10px;font-weight:600;color:var(--blue);background:var(--blue-light);padding:1px 6px;border-radius:8px;border:1px solid #85B7EB">info</span>' : '')
