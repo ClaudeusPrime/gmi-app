@@ -152,6 +152,54 @@ textarea{min-height:80px;resize:vertical}
 .asm-detail-grid > div{min-width:0;overflow:hidden}
 .asm-detail-grid > div .card > div[style*="padding:0"]{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
+/* ── Global search ────────────────────────────────────────── */
+#gs-trigger{display:flex;align-items:center;gap:8px;padding:6px 14px;background:var(--gray);border:1px solid var(--border);border-radius:20px;font-size:13px;color:var(--text-muted);cursor:pointer;transition:all .15s;white-space:nowrap}
+#gs-trigger:hover{background:#eeeee8;border-color:#ccc}
+#gs-trigger kbd{font-size:10px;background:var(--white);border:1px solid var(--border);border-radius:4px;padding:1px 5px;color:var(--text-muted)}
+#gs-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:500;align-items:flex-start;justify-content:center;padding-top:80px}
+#gs-overlay.open{display:flex}
+#gs-box{background:var(--white);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.18);width:100%;max-width:560px;overflow:hidden}
+#gs-input-row{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border)}
+#gs-input-row svg{width:18px;height:18px;flex-shrink:0;color:var(--text-muted)}
+#gs-q{flex:1;border:none;outline:none;font-size:16px;font-family:Arial,sans-serif;background:transparent;color:var(--text)}
+#gs-results{max-height:360px;overflow-y:auto}
+.gs-section{padding:6px 0}
+.gs-section-label{padding:6px 18px;font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em}
+.gs-item{display:flex;align-items:center;gap:12px;padding:9px 18px;cursor:pointer;transition:background .1s}
+.gs-item:hover,.gs-item.gs-active{background:var(--blue-light)}
+.gs-item-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.gs-item-name{font-size:13px;font-weight:500;color:var(--navy-dark)}
+.gs-item-sub{font-size:11px;color:var(--text-muted)}
+#gs-empty{padding:1.5rem 18px;text-align:center;font-size:13px;color:var(--text-muted)}
+
+/* ── Dashboard enhancements ───────────────────────────────── */
+.dash-donut-wrap svg circle[onclick]:hover{opacity:.75;transition:opacity .15s}
+.dash-donut-wrap{display:flex;align-items:center;gap:20px}
+.dash-donut-legend{display:flex;flex-direction:column;gap:6px}
+.dash-legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted)}
+.dash-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dash-wb-bar{height:8px;border-radius:4px;background:var(--blue);transition:width .4s}
+.dash-wb-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.dash-wb-name{font-size:12px;width:130px;flex-shrink:0;color:var(--navy-dark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dash-wb-track{flex:1;height:8px;background:var(--gray);border-radius:4px;overflow:hidden;position:relative}
+.dash-wb-fill{height:100%;border-radius:4px;background:var(--blue);transition:width .4s}
+.dash-wb-val{font-size:11px;color:var(--text-muted);width:20px;text-align:right;flex-shrink:0}
+.dash-region-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
+.dash-region-row:last-child{border-bottom:none}
+.dash-region-pips{display:flex;gap:3px}
+.dash-region-pip{width:12px;height:12px;border-radius:3px}
+.dash-pip-done{background:var(--green)}
+.dash-pip-due{background:#e8f0fe;border:1px solid #85B7EB}
+.dash-pip-over{background:var(--red-light);border:1px solid #F09595}
+.unassigned-banner{background:#FFF3CD;border:1px solid #EF9F27;border-radius:10px;padding:12px 16px;margin-bottom:1.25rem;display:flex;align-items:center;gap:12px}
+.unassigned-banner svg{width:18px;height:18px;flex-shrink:0;color:#BA7517}
+.camp-mini-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.camp-mini-item:last-child{border-bottom:none}
+.camp-mini-dot{width:10px;height:10px;border-radius:50%;background:#C9A0F0;margin-top:3px;flex-shrink:0}
+.activity-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);margin-top:4px;flex-shrink:0}
+
 /* Toast */
 .toast{position:fixed;bottom:2rem;right:2rem;background:var(--navy-dark);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;z-index:1000;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;max-width:calc(100vw - 4rem)}
 .toast.show{opacity:1;transform:translateY(0)}
@@ -163,6 +211,12 @@ textarea{min-height:80px;resize:vertical}
 @media(max-width:900px){
   #panel-church-reports .cr-cta{flex-direction:column!important;align-items:stretch!important}
   #panel-church-reports .cr-cta-controls{width:100%!important;min-width:unset!important}
+}
+@media(max-width:700px){
+  #panel-dashboard > div[style*="grid-template-columns:2fr 1fr"],
+  #panel-dashboard > div[style*="grid-template-columns:1fr 320px"]{
+    grid-template-columns:1fr!important;
+  }
 }
 @media(max-width:768px){
   .app{flex-direction:column}
@@ -324,6 +378,10 @@ textarea{min-height:80px;resize:vertical}
     <span class="page-title" id="page-title">Dashboard</span>
     <div style="display:flex;align-items:center;gap:12px">
       <div id="admin-badge" style="display:none;background:var(--navy);color:#fff;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500">&#128274; Admin</div>
+      <div id="gs-trigger" onclick="openGlobalSearch()" title="Search (/)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search&nbsp;<kbd>/</kbd>
+      </div>
       <button class="btn btn-sm" onclick="showPanel('settings')" style="font-size:11px">&#9881; Settings</button>
       <span class="top-badge">GMI</span>
     </div>
@@ -332,42 +390,134 @@ textarea{min-height:80px;resize:vertical}
 
     <!-- DASHBOARD -->
     <div class="panel active" id="panel-dashboard">
+
+      <!-- Unassigned visits banner -->
+      <div id="dash-unassigned-banner" class="unassigned-banner" style="display:none"></div>
+
+      <!-- Metrics row -->
       <div class="metrics-grid">
-        <div class="metric-card"><div class="metric-label">Assemblies</div><div class="metric-value">38</div><div class="metric-sub">across 6 regions</div></div>
-        <div class="metric-card"><div class="metric-label">Ministers</div><div class="metric-value">15</div><div class="metric-sub">CAN + USA</div></div>
-        <div class="metric-card"><div class="metric-label">2026 visits planned</div><div class="metric-value" id="m-visits">38</div><div class="metric-sub" id="m-visited-sub">0 confirmed visited</div></div>
-        <div class="metric-card"><div class="metric-label">Conflicts</div><div class="metric-value" id="m-conflicts" style="color:var(--red)">&#8212;</div><div class="metric-sub">double-bookings</div></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">Upcoming visits &#8212; next 8 weekends</span><span style="font-size:11px;color:var(--text-muted)">Click any row to edit or cancel</span></div>
-        <div style="padding:0"><table><thead><tr><th>Weekend</th><th>Assembly</th><th>Region</th><th>Ministers</th><th>Status</th><th></th></tr></thead><tbody id="upcoming-tbody"></tbody></table></div>
-      </div>
-      <!-- Inline edit for upcoming visit -->
-      <div id="dash-edit-card" class="card" style="display:none;border-color:var(--blue);max-width:600px">
-        <div class="card-header" style="background:var(--blue-light)">
-          <span class="card-title" id="dash-edit-title" style="color:var(--navy-dark)">Edit visit</span>
-          <button class="btn btn-sm" onclick="closeDashEdit()">&#10005;</button>
+        <div class="metric-card" onclick="showPanel('ministers');showPanel('assemblies')" style="cursor:pointer" onmouseover="this.style.background='var(--gray)'" onmouseout="this.style.background=''">
+          <div class="metric-label">Roster</div>
+          <div class="metric-value"><span id="m-assemblies">38</span> / <span id="m-ministers" style="font-size:20px">15</span></div>
+          <div class="metric-sub">assemblies / ministers</div>
         </div>
-        <div class="card-body">
-          <input type="hidden" id="dash-edit-idx">
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px">
-            <div><label class="form-label">Minister 1</label><select id="dash-m1"><option value="">&#8212; none &#8212;</option></select></div>
-            <div><label class="form-label">Minister 2</label><select id="dash-m2"><option value="">&#8212; none &#8212;</option></select></div>
-            <div><label class="form-label">Minister 3</label><select id="dash-m3"><option value="">&#8212; none &#8212;</option></select></div>
-            <div><label class="form-label">Minister 4 <span style="font-size:11px;color:var(--text-muted)">(optional)</span></label><select id="dash-m4"><option value="">&#8212; none &#8212;</option></select></div>
-          </div>
-          <div class="form-group"><label class="form-label">Note</label><input type="text" id="dash-note" placeholder="e.g. substitution reason, travel change..."></div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-primary" onclick="saveDashEdit()">Save changes</button>
-            <button class="btn" id="dash-cancel-btn" onclick="toggleCancelVisit()">&#10007; Cancel this visit</button>
-            <button class="btn" onclick="closeDashEdit()">Close</button>
+        <div class="metric-card" onclick="donutNav('upcoming')" style="cursor:pointer" onmouseover="this.style.background='var(--gray)'" onmouseout="this.style.background=''">
+          <div class="metric-label">2026 local church schedule completion</div>
+          <div id="dash-donut-wrap" class="dash-donut-wrap" style="margin-top:4px">
+            <div style="font-size:12px;color:var(--text-muted)">Loading...</div>
           </div>
         </div>
+        <div class="metric-card" id="m-conflicts-card" onclick="showPanel('conflicts')" style="cursor:pointer" onmouseover="this.style.background='var(--gray)'" onmouseout="this.style.background=''">
+          <div class="metric-label">Conflicts</div>
+          <div class="metric-value" id="m-conflicts" style="color:var(--red)">&#8212;</div>
+          <div class="metric-sub">double-bookings &rarr;</div>
+        </div>
+        <div class="metric-card" style="grid-column:span 1;min-width:0;cursor:pointer" onclick="openActivityModal()" onmouseover="this.style.background='var(--gray)'" onmouseout="this.style.background=''">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div class="metric-label" style="margin:0">Recent activity</div>
+            <span style="font-size:10px;color:var(--blue)">View all &#8594;</span>
+          </div>
+          <div id="dash-activity-metric" style="max-height:110px;overflow:hidden"></div>
+        </div>
       </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">Conflicts &amp; substitution notes</span></div>
-        <div class="card-body" id="dashboard-conflicts"></div>
-      </div>
+
+      <!-- TOP ROW: upcoming visits + upcoming camps side by side -->
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;align-items:start;margin-bottom:1.25rem">
+
+        <!-- Upcoming visits -->
+        <div>
+          <div class="card">
+            <div class="card-header" style="flex-wrap:wrap;gap:8px">
+              <span class="card-title">Upcoming visits &#8212; next 8 weekends</span>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto">
+                <select id="dash-region-filter" style="font-size:12px;padding:4px 8px;width:auto" onchange="filterUpcomingByRegion()">
+                  <option value="">All regions</option>
+                  <option value="CANPR">Canada Prairies</option>
+                  <option value="CANPC">Canada Pacific</option>
+                  <option value="CANON">Canada Ontario</option>
+                  <option value="USE">US East</option>
+                  <option value="USC">US Central</option>
+                  <option value="USPC">US Pacific</option>
+                  <option value="CARIB">Caribbean (CAR)</option>
+                </select>
+                <span style="font-size:11px;color:var(--text-muted)">Click row to edit</span>
+              </div>
+            </div>
+            <div style="padding:0"><table><thead><tr><th>Weekend</th><th>Assembly</th><th>Region</th><th>Ministers</th><th>Status</th><th></th></tr></thead><tbody id="upcoming-tbody"></tbody></table></div>
+          </div>
+
+          <!-- Inline edit -->
+          <div id="dash-edit-card" class="card" style="display:none;border-color:var(--blue)">
+            <div class="card-header" style="background:var(--blue-light)">
+              <span class="card-title" id="dash-edit-title" style="color:var(--navy-dark)">Edit visit</span>
+              <button class="btn btn-sm" onclick="closeDashEdit()">&#10005;</button>
+            </div>
+            <div class="card-body">
+              <input type="hidden" id="dash-edit-idx">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px">
+                <div><label class="form-label">Minister 1</label><select id="dash-m1"><option value="">&#8212; none &#8212;</option></select></div>
+                <div><label class="form-label">Minister 2</label><select id="dash-m2"><option value="">&#8212; none &#8212;</option></select></div>
+                <div><label class="form-label">Minister 3</label><select id="dash-m3"><option value="">&#8212; none &#8212;</option></select></div>
+                <div><label class="form-label">Minister 4 <span style="font-size:11px;color:var(--text-muted)">(optional)</span></label><select id="dash-m4"><option value="">&#8212; none &#8212;</option></select></div>
+              </div>
+              <div class="form-group"><label class="form-label">Note</label><input type="text" id="dash-note" placeholder="e.g. substitution reason, travel change..."></div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn btn-primary" onclick="saveDashEdit()">Save changes</button>
+                <button class="btn" id="dash-cancel-btn" onclick="toggleCancelVisit()">&#10007; Cancel this visit</button>
+                <button class="btn" onclick="closeDashEdit()">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming camps -->
+        <div class="card" style="height:fit-content">
+          <div class="card-header">
+            <span class="card-title">Upcoming camps</span>
+            <button class="btn btn-sm" onclick="showPanel('camps')" style="font-size:11px">View all &#8594;</button>
+          </div>
+          <div class="card-body" id="dash-camps-body" style="padding:.75rem 1.25rem">
+            <div style="font-size:12px;color:var(--text-muted)">Loading...</div>
+          </div>
+        </div>
+
+      </div><!-- end top row -->
+
+      <!-- BOTTOM: left = conflicts, right = insight widgets -->
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:1.25rem;align-items:start">
+
+        <!-- LEFT: schedule conflicts -->
+        <div>
+          <div class="card" style="max-width:560px">
+            <div class="card-header"><span class="card-title">Schedule conflicts</span></div>
+            <div class="card-body" id="dashboard-conflicts"></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: insight widgets -->
+        <div style="display:flex;flex-direction:column;gap:1.25rem">
+
+          <!-- Minister workload -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">Minister workload 2026</span></div>
+            <div class="card-body" id="dash-workload-body" style="padding:1rem 1.25rem">
+              <div style="font-size:12px;color:var(--text-muted)">Loading...</div>
+            </div>
+          </div>
+
+          <!-- Region coverage -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Region coverage 2026</span>
+            </div>
+            <div class="card-body" style="padding:.75rem 1.25rem">
+              <div id="dash-region-legend" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;font-size:11px;color:var(--text-muted)"></div>
+              <div id="dash-region-body"><div style="font-size:12px;color:var(--text-muted)">Loading...</div></div>
+            </div>
+          </div>
+
+        </div><!-- end right column -->
+      </div><!-- end bottom grid -->
     </div>
 
     <!-- SCHEDULE (multi-year) -->
@@ -380,7 +530,7 @@ textarea{min-height:80px;resize:vertical}
           <button onclick="switchScheduleYear(2029)" id="yr-btn-2029" style="padding:7px 14px;font-size:13px;font-weight:500;border:none;background:var(--white);color:var(--text-muted);cursor:pointer">2029</button>
           <button onclick="switchScheduleYear(2030)" id="yr-btn-2030" style="padding:7px 14px;font-size:13px;font-weight:500;border:none;background:var(--white);color:var(--text-muted);cursor:pointer">2030</button>
         </div>
-        <select id="f26-region" onchange="renderActiveSchedule()"><option value="">All regions</option><option value="CANPR">Canada Prairies</option><option value="CANPC">Canada Pacific</option><option value="CANON">Canada Ontario</option><option value="USE">US East</option><option value="USC">US Central</option><option value="USPC">US Pacific</option><option value="CARIB">International</option></select>
+        <select id="f26-region" onchange="renderActiveSchedule()"><option value="">All regions</option><option value="CANPR">Canada Prairies</option><option value="CANPC">Canada Pacific</option><option value="CANON">Canada Ontario</option><option value="USE">US East</option><option value="USC">US Central</option><option value="USPC">US Pacific</option><option value="CARIB">Caribbean (CAR)</option></select>
         <select id="f26-minister" onchange="renderActiveSchedule()"><option value="">All ministers</option></select>
         <select id="f26-status" onchange="renderActiveSchedule()"><option value="">All statuses</option><option value="visited">Visited</option><option value="upcoming">Upcoming</option><option value="cancelled">Cancelled</option></select>
       </div>
@@ -503,7 +653,7 @@ textarea{min-height:80px;resize:vertical}
                 <option value="USE">US East</option>
                 <option value="USC">US Central</option>
                 <option value="USPC">US Pacific</option>
-                <option value="CARIB">International</option>
+                <option value="CARIB">Caribbean (CAR)</option>
               </select>
             </div>
           </div>
@@ -529,8 +679,8 @@ textarea{min-height:80px;resize:vertical}
     <!-- ASSEMBLIES -->
     <div class="panel" id="panel-assemblies">
       <div class="filter-bar">
-        <select id="f-asm-region" onchange="renderAssemblies()"><option value="">All regions</option><option>Canada Prairies</option><option>Canada Pacific</option><option>Canada Ontario</option><option>US East</option><option>US Central</option><option>US Pacific</option><option value="CARIB">Caribbean</option></select>
-        <select id="f-asm-country" onchange="renderAssemblies()"><option value="">CAN &amp; USA</option><option>CAN</option><option>USA</option></select>
+        <select id="f-asm-region" onchange="renderAssemblies()"><option value="">All regions</option><option value="CANPR">Canada Prairies</option><option value="CANPC">Canada Pacific</option><option value="CANON">Canada Ontario</option><option value="USE">US East</option><option value="USC">US Central</option><option value="USPC">US Pacific</option><option value="CARIB">Caribbean (CAR)</option></select>
+        <select id="f-asm-country" onchange="renderAssemblies()"><option value="">All countries</option><option value="CAN">CAN</option><option value="USA">USA</option><option value="ATG">Antigua</option><option value="BRB">Barbados</option><option value="DMA">Dominica</option><option value="GRN">Grenada</option><option value="GUY">Guyana</option><option value="TTO">Trinidad</option><option value="VCT">St. Vincent</option></select>
         <button class="btn btn-primary btn-sm" onclick="openAddAssembly()" style="margin-left:auto">+ Add assembly</button>
       </div>
 
@@ -556,7 +706,7 @@ textarea{min-height:80px;resize:vertical}
                 <option value="USE">US East</option>
                 <option value="USC">US Central</option>
                 <option value="USPC">US Pacific</option>
-                <option value="CARIB">Caribbean</option>
+                <option value="CARIB">Caribbean (CAR)</option>
               </select>
             </div>
             <div class="form-group">
@@ -747,7 +897,7 @@ textarea{min-height:80px;resize:vertical}
           <span class="card-title">Availability Grid</span>
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
             <select id="ag-year" onchange="renderAvailGrid()"><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select>
-            <select id="ag-region" onchange="renderAvailGrid()"><option value="">All regions</option><option value="CANPR">Canada Prairies</option><option value="CANPC">Canada Pacific</option><option value="CANON">Canada Ontario</option><option value="USE">US East</option><option value="USC">US Central</option><option value="USPC">US Pacific</option><option value="CARIB">International</option></select>
+            <select id="ag-region" onchange="renderAvailGrid()"><option value="">All regions</option><option value="CANPR">Canada Prairies</option><option value="CANPC">Canada Pacific</option><option value="CANON">Canada Ontario</option><option value="USE">US East</option><option value="USC">US Central</option><option value="USPC">US Pacific</option><option value="CARIB">Caribbean (CAR)</option></select>
             <select id="ag-month" onchange="renderAvailGrid()"><option value="">All 52 weeks</option><option value="01">January</option><option value="02">February</option><option value="03">March</option><option value="04">April</option><option value="05">May</option><option value="06">June</option><option value="07">July</option><option value="08">August</option><option value="09">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option></select>
             <button class="btn btn-sm" onclick="toggleAvailLegend()" id="ag-legend-btn" style="font-size:11px">&#9432; Show legend</button>
           </div>
@@ -2046,7 +2196,7 @@ function getWeekendsForYear(year) {
 function regionBadge(r) {
   var names={
     'CANPR':'Canada Prairies','CANPC':'Canada Pacific','CANON':'Canada Ontario',
-    'USE':'US East','USC':'US Central','USPC':'US Pacific','CARIB':'Caribbean'
+    'USE':'US East','USC':'US Central','USPC':'US Pacific','CARIB':'Caribbean (CAR)'
   };
   return '<span class="badge badge-'+r.toLowerCase()+'">'+(names[r]||r)+'</span>';
 }
@@ -2193,11 +2343,14 @@ function detectConflicts() { return _detectConflictsBase(); }
 // ── Dashboard ─────────────────────────────────────────────
 function renderDashboard() {
   var visited=0; for(var i=0;i<SCHEDULE.length;i++){if(SCHEDULE[i].visited)visited++;}
-  document.getElementById('m-visits').textContent=SCHEDULE.length;
-  document.getElementById('m-visited-sub').textContent=visited+' confirmed visited';
+  var mVisits=document.getElementById('m-visits'); if(mVisits) mVisits.textContent=SCHEDULE.length;
+  var mVisitedSub=document.getElementById('m-visited-sub'); if(mVisitedSub) mVisitedSub.textContent=visited+' confirmed visited';
   var conflicts=detectConflicts();
   conflicts.sort(function(a,b){return a.minister.localeCompare(b.minister);});
   document.getElementById('m-conflicts').textContent=conflicts.length;
+  // Update roster counts live
+  var asmEl=document.getElementById('m-assemblies'); if(asmEl) asmEl.textContent=ASSEMBLIES.filter(function(a){return !a.archived;}).length;
+  var minEl=document.getElementById('m-ministers'); if(minEl) minEl.textContent=MINISTERS.length;
 
   var today=new Date().toISOString().split('T')[0];
   var upcoming=[];
@@ -3802,8 +3955,16 @@ function renderAddressView() {
   if(a.street)html+='<div style="font-weight:500;font-size:13px">'+a.street+'</div>';
   var cityLine=[a.city,a.prov,a.postal].filter(Boolean).join(', ');
   if(cityLine)html+='<div style="font-size:13px">'+cityLine+'</div>';
-  if(a.country)html+='<div style="font-size:13px">'+(a.country==='CAN'?'Canada':'USA')+'</div>';
+  if(a.country)html+='<div style="font-size:13px">'+(a.country==='CAN'?'Canada':a.country==='USA'?'USA':a.country)+'</div>';
   if(a.meeting)html+='<div style="font-size:12px;color:var(--text-muted);margin-top:6px">\ud83d\udd50 Sunday '+a.meeting+'</div>';
+  // Google Maps link
+  var queryParts=[a.street,a.city,a.prov,a.postal,a.country].filter(Boolean);
+  if(queryParts.length){
+    var mapsUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(queryParts.join(' '));
+    html+='<div style="margin-top:10px"><a href="'+mapsUrl+'" target="_blank" rel="noopener" style="font-size:12px;color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;gap:5px">'
+      +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>'
+      +'Open in Google Maps</a></div>';
+  }
   el.innerHTML=html;
 }
 
@@ -5707,7 +5868,7 @@ function renderBudget() {
     +'<div style="height:8px;background:var(--gray);border-radius:4px"><div style="height:8px;background:var(--blue);border-radius:4px;width:'+Math.round(flyCost/Math.max(totalCost,1)*100)+'%"></div></div></div>';
   document.getElementById('bgt-sum-mode').innerHTML=modeHtml;
 
-  var regNames={'CANPR':'Canada Prairies','CANPC':'Canada Pacific','CANON':'Canada Ontario','USE':'US East','USC':'US Central','USPC':'US Pacific','CARIB':'Caribbean'};
+  var regNames={'CANPR':'Canada Prairies','CANPC':'Canada Pacific','CANON':'Canada Ontario','USE':'US East','USC':'US Central','USPC':'US Pacific','CARIB':'Caribbean (CAR)'};
   var regHtml='';
   var regSorted=Object.keys(regionCosts).sort(function(a,b){return regionCosts[b]-regionCosts[a];});
   for(var ri=0;ri<regSorted.length;ri++){
@@ -7110,6 +7271,635 @@ renderDashboard();
 renderSchedule(2026);
 initHashRouting();
 updateSchedLock();
+
+// ══════════════════════════════════════════════════════════
+// DASHBOARD ENHANCEMENTS
+// ══════════════════════════════════════════════════════════
+
+// ── Activity Log (localStorage-backed) ───────────────────
+var ACTIVITY_LOG = (function(){
+  try {
+    var stored = localStorage.getItem('gmi_activity_log');
+    return stored ? JSON.parse(stored) : [];
+  } catch(e) { return []; }
+})();
+
+var ACTIVITY_ICONS = {
+  visited:   '✅',
+  cancelled: '🚫',
+  restored:  '↩️',
+  edit:      '✏️',
+  minister:  '👤',
+  assembly:  '🏛',
+  archive:   '📦',
+  camp:      '⛺',
+  report:    '📝',
+  proposal:  '📋',
+  conflict:  '⚠️',
+  address:   '📍',
+  contact:   '📞'
+};
+
+function logActivity(type, msg) {
+  var d = new Date();
+  var mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var ts = mon[d.getMonth()]+' '+d.getDate()+', '
+    +('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
+  ACTIVITY_LOG.unshift({type:type, msg:msg, ts:ts});
+  if (ACTIVITY_LOG.length > 50) ACTIVITY_LOG = ACTIVITY_LOG.slice(0, 50);
+  try { localStorage.setItem('gmi_activity_log', JSON.stringify(ACTIVITY_LOG)); } catch(e) {}
+  renderActivityFeed();
+}
+
+// ── Hook all write operations to emit activity ────────────
+(function(){
+
+  // Schedule: mark visited
+  var _origToggleVisited = toggleVisited;
+  toggleVisited = function(idx){
+    _origToggleVisited(idx);
+    if (SCHEDULE[idx]) logActivity('visited', 'Visit marked visited: ' + SCHEDULE[idx].assembly);
+  };
+
+  // Schedule: cancel/restore from dashboard
+  var _origToggleCancelVisit = toggleCancelVisit;
+  toggleCancelVisit = function(){
+    var idx = parseInt(document.getElementById('dash-edit-idx').value);
+    var wasCancelled = !isNaN(idx) && SCHEDULE[idx] && SCHEDULE[idx].cancelled;
+    _origToggleCancelVisit();
+    if (!isNaN(idx) && SCHEDULE[idx]) {
+      logActivity(SCHEDULE[idx].cancelled ? 'cancelled' : 'restored',
+        (SCHEDULE[idx].cancelled ? 'Visit cancelled: ' : 'Visit restored: ') + SCHEDULE[idx].assembly);
+    }
+  };
+
+  // Schedule: edit visit from dashboard
+  var _origSaveDashEdit = saveDashEdit;
+  saveDashEdit = function(){
+    var idx = parseInt(document.getElementById('dash-edit-idx').value);
+    _origSaveDashEdit();
+    if (!isNaN(idx) && SCHEDULE[idx]) logActivity('edit', 'Visit updated: ' + SCHEDULE[idx].assembly);
+  };
+
+  // Schedule: inline row edit
+  var _origSaveSchedRowEdit = saveSchedRowEdit;
+  saveSchedRowEdit = function(idx){
+    _origSaveSchedRowEdit(idx);
+    if (SCHEDULE[idx]) logActivity('edit', 'Schedule row edited: ' + SCHEDULE[idx].assembly);
+  };
+
+  // Ministers: add/edit
+  var _origSaveMinister = saveMinister;
+  saveMinister = function(){
+    var idx = parseInt(document.getElementById('mf-idx').value);
+    var first = document.getElementById('mf-first').value.trim();
+    var last  = document.getElementById('mf-last').value.trim();
+    var name  = first + ' ' + last;
+    _origSaveMinister();
+    logActivity('minister', (idx >= 0 ? 'Minister updated: ' : 'Minister added: ') + name);
+  };
+
+  // Ministers: remove
+  var _origRemoveMinister = removeMinister;
+  removeMinister = function(idx){
+    var name = MINISTERS[idx] ? MINISTERS[idx].name : 'unknown';
+    _origRemoveMinister(idx);
+    logActivity('minister', 'Minister removed: ' + name);
+  };
+
+  // Assemblies: add/edit
+  var _origSaveAssemblyForm = saveAssemblyForm;
+  saveAssemblyForm = function(){
+    var idx  = parseInt(document.getElementById('asm-form-idx').value);
+    var name = document.getElementById('asm-form-name').value.trim();
+    _origSaveAssemblyForm();
+    logActivity('assembly', (idx >= 0 ? 'Assembly updated: ' : 'Assembly added: ') + name);
+  };
+
+  // Assemblies: archive/restore
+  var _origToggleArchive = toggleArchiveAssembly;
+  toggleArchiveAssembly = function(){
+    var asm = null;
+    for (var i=0;i<ASSEMBLIES.length;i++){if(ASSEMBLIES[i].name===currentAsmName){asm=ASSEMBLIES[i];break;}}
+    var wasArchived = asm && asm.archived;
+    _origToggleArchive();
+    logActivity('archive', (wasArchived ? 'Assembly restored: ' : 'Assembly archived: ') + currentAsmName);
+  };
+
+  // Address saved
+  var _origSaveAddress = saveAddress;
+  saveAddress = function(){
+    _origSaveAddress();
+    logActivity('address', 'Address updated: ' + currentAsmName);
+  };
+
+  // Contacts
+  var _origSaveContact = saveContact;
+  saveContact = function(){
+    _origSaveContact();
+    logActivity('contact', 'Contact updated for: ' + currentAsmName);
+  };
+
+  // Church reports
+  var _origSaveReport = saveReport;
+  saveReport = function(){
+    var isEdit = editingReportIdx >= 0;
+    var author = document.getElementById('rpt-author').value;
+    _origSaveReport();
+    logActivity('report', (isEdit ? 'Report updated' : 'New report submitted') + ' — ' + currentAsmName + (author ? ' by ' + author : ''));
+  };
+
+  // Camps: add/edit
+  var _origSaveCamp = saveCamp;
+  saveCamp = function(){
+    var idx  = parseInt(document.getElementById('camp-edit-idx').value);
+    var name = document.getElementById('camp-name').value.trim();
+    _origSaveCamp();
+    logActivity('camp', (idx >= 0 ? 'Camp updated: ' : 'Camp added: ') + name);
+  };
+
+  // Camps: delete
+  var _origDeleteCamp = deleteCamp;
+  deleteCamp = function(idx){
+    var name = CAMPS[idx] ? CAMPS[idx].name : 'unknown';
+    _origDeleteCamp(idx);
+    logActivity('camp', 'Camp removed: ' + name);
+  };
+
+  // Proposals: approve/decline
+  var _origUpdateProposalStatus = updateProposalStatus;
+  updateProposalStatus = function(id, status){
+    var p = null; for(var i=0;i<PROPOSALS.length;i++){if(PROPOSALS[i].id===id){p=PROPOSALS[i];break;}}
+    _origUpdateProposalStatus(id, status);
+    if (p) logActivity('proposal', 'Proposal ' + status.toLowerCase() + ': ' + (p.minister||'') + ' → ' + (p.assembly||p.camp||''));
+  };
+
+})();
+
+// ── Global Search ─────────────────────────────────────────
+var gsActiveIdx = -1;
+
+function openGlobalSearch() {
+  document.getElementById('gs-overlay').classList.add('open');
+  document.getElementById('gs-q').value = '';
+  document.getElementById('gs-results').innerHTML = '<div id="gs-empty" style="display:none">No results found</div>';
+  gsActiveIdx = -1;
+  setTimeout(function(){ document.getElementById('gs-q').focus(); }, 50);
+}
+
+function closeGlobalSearch() {
+  document.getElementById('gs-overlay').classList.remove('open');
+}
+
+document.addEventListener('keydown', function(e){
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+    e.preventDefault(); openGlobalSearch();
+  }
+  if (e.key === 'Escape') closeGlobalSearch();
+});
+
+function gsSearch() {
+  var q = (document.getElementById('gs-q').value || '').trim().toLowerCase();
+  var res = document.getElementById('gs-results');
+  gsActiveIdx = -1;
+  if (!q) { res.innerHTML = '<div id="gs-empty" style="display:none"></div>'; return; }
+
+  var items = [];
+
+  // Ministers
+  for (var i=0; i<MINISTERS.length; i++) {
+    var m = MINISTERS[i];
+    if (m.name.toLowerCase().indexOf(q) >= 0) {
+      var prof = MINISTER_PROFILES[m.name] || {};
+      items.push({type:'minister', label:m.name, sub:(prof.role||'Minister')+' · '+(m.city||'')+(m.state?', '+m.state:''), icon:'👤', bg:'#E6F1FB', action:'minister:'+m.name});
+    }
+  }
+
+  // Assemblies
+  for (var i=0; i<ASSEMBLIES.length; i++) {
+    var a = ASSEMBLIES[i];
+    if (a.name.toLowerCase().indexOf(q) >= 0) {
+      var regionNames = {CANPR:'Canada Prairies',CANPC:'Canada Pacific',CANON:'Canada Ontario',USE:'US East',USC:'US Central',USPC:'US Pacific',CARIB:'Caribbean'};
+      items.push({type:'assembly', label:a.name, sub:regionNames[a.region]||a.region, icon:'🏛', bg:'#EAF3DE', action:'assembly:'+a.name});
+    }
+  }
+
+  // Camps
+  for (var i=0; i<CAMPS.length; i++) {
+    var c = CAMPS[i];
+    if (c.name.toLowerCase().indexOf(q) >= 0 || (c.location||'').toLowerCase().indexOf(q) >= 0) {
+      items.push({type:'camp', label:c.name, sub:c.start+(c.location?' · '+c.location:''), icon:'⛺', bg:'#F0E6FF', action:'camp:'+i});
+    }
+  }
+
+  // Schedule entries (assembly name match)
+  var schedMatches = {};
+  for (var i=0; i<SCHEDULE.length; i++) {
+    var s = SCHEDULE[i];
+    if (s.assembly.toLowerCase().indexOf(q) >= 0 || [s.m1,s.m2,s.m3,s.m4].join(' ').toLowerCase().indexOf(q) >= 0) {
+      if (!schedMatches[s.assembly]) schedMatches[s.assembly] = 0;
+      schedMatches[s.assembly]++;
+    }
+  }
+
+  if (!items.length) {
+    res.innerHTML = '<div id="gs-empty" style="padding:1.5rem 18px;text-align:center;font-size:13px;color:var(--text-muted)">No results for &ldquo;'+q+'&rdquo;</div>';
+    return;
+  }
+
+  // Group by type
+  var groups = [{key:'minister',label:'Ministers'},{key:'assembly',label:'Assemblies'},{key:'camp',label:'Camps'}];
+  var html = '';
+  for (var g=0; g<groups.length; g++) {
+    var grp = groups[g];
+    var grpItems = items.filter(function(x){return x.type===grp.key;});
+    if (!grpItems.length) continue;
+    html += '<div class="gs-section"><div class="gs-section-label">'+grp.label+'</div>';
+    for (var j=0; j<grpItems.length && j<5; j++) {
+      var it = grpItems[j];
+      html += '<div class="gs-item" data-action="'+it.action+'" onclick="gsGo(\''+it.action+'\')">'
+        +'<div class="gs-item-icon" style="background:'+it.bg+'">'+it.icon+'</div>'
+        +'<div><div class="gs-item-name">'+it.label+'</div><div class="gs-item-sub">'+it.sub+'</div></div>'
+        +'</div>';
+    }
+    html += '</div>';
+  }
+  res.innerHTML = html;
+}
+
+function gsKey(e) {
+  var items = document.querySelectorAll('.gs-item');
+  if (e.key === 'ArrowDown') {
+    gsActiveIdx = Math.min(gsActiveIdx+1, items.length-1);
+    items.forEach(function(el,i){ el.classList.toggle('gs-active', i===gsActiveIdx); });
+    e.preventDefault();
+  } else if (e.key === 'ArrowUp') {
+    gsActiveIdx = Math.max(gsActiveIdx-1, 0);
+    items.forEach(function(el,i){ el.classList.toggle('gs-active', i===gsActiveIdx); });
+    e.preventDefault();
+  } else if (e.key === 'Enter') {
+    if (gsActiveIdx >= 0 && items[gsActiveIdx]) {
+      gsGo(items[gsActiveIdx].getAttribute('data-action'));
+    }
+  } else if (e.key === 'Escape') {
+    closeGlobalSearch();
+  }
+}
+
+function gsGo(action) {
+  closeGlobalSearch();
+  var parts = action.split(':');
+  var type = parts[0]; var val = parts.slice(1).join(':');
+  if (type === 'minister') {
+    showPanel('ministers');
+    setTimeout(function(){ renderMinistersKeepOpen(val); }, 60);
+  } else if (type === 'assembly') {
+    showPanel('assemblies');
+    setTimeout(function(){
+      for (var i=0;i<ASSEMBLIES.length;i++){
+        if (ASSEMBLIES[i].name===val){ openAssemblyDetail(i); break; }
+      }
+    }, 60);
+  } else if (type === 'camp') {
+    showPanel('camps');
+  }
+}
+
+// ── Dashboard additions: patched renderDashboard ──────────
+var _origRenderDashboardBase = renderDashboard;
+renderDashboard = function() {
+  _origRenderDashboardBase();
+  renderDashboardExtras();
+};
+
+function renderDashboardExtras() {
+  renderUnassignedBanner();
+  renderDonut();
+  renderWorkloadBars();
+  renderRegionCoverage();
+  renderUpcomingCampsWidget();
+  renderActivityFeed();
+  renderUpcomingRegionFilter();
+}
+
+// ── 1. Unassigned-weekends banner ─────────────────────────
+function renderUnassignedBanner() {
+  var el = document.getElementById('dash-unassigned-banner');
+  if (!el) return;
+  var today = new Date().toISOString().split('T')[0];
+  var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var unassigned = [];
+  for (var i=0; i<SCHEDULE.length; i++) {
+    var s = SCHEDULE[i];
+    if (s.cancelled || s.visited) continue;
+    if (s.fri < today) continue;
+    if (!s.m1 && !s.m2) unassigned.push(s);
+  }
+  if (!unassigned.length) { el.style.display='none'; return; }
+  unassigned.sort(function(a,b){return a.fri.localeCompare(b.fri);});
+  var wk=null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===unassigned[0].fri){wk=allWk[w];break;}}
+  el.style.display='flex';
+  el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+    +'<div style="flex:1;min-width:0">'
+    +'<div style="font-size:13px;font-weight:600;color:#633806">'+unassigned.length+' upcoming visit'+(unassigned.length!==1?'s':'')+' with no minister assigned</div>'
+    +'<div style="font-size:12px;color:#7B4D00;margin-top:2px">Earliest: <strong>'+unassigned[0].assembly+'</strong> — '+(wk?wk.label:unassigned[0].fri)+'</div>'
+    +'</div>'
+    +'<button class="btn btn-sm" onclick="showPanel(\'schedule\')" style="flex-shrink:0;font-size:12px;color:#633806;border-color:#EF9F27">Open Schedule &#8594;</button>';
+}
+
+// ── 2. Schedule completion donut ──────────────────────────
+function renderDonut() {
+  var el = document.getElementById('dash-donut-wrap');
+  if (!el) return;
+  var visited=0, cancelled=0, upcoming=0;
+  var year2026 = SCHEDULE.filter(function(s){return s.fri.startsWith('2026');});
+  for (var i=0;i<year2026.length;i++) {
+    if (year2026[i].cancelled) cancelled++;
+    else if (year2026[i].visited) visited++;
+    else upcoming++;
+  }
+  var total = year2026.length || 1;
+  var vPct = visited/total, uPct = upcoming/total, cPct = cancelled/total;
+  var r=28, cx=34, cy=34, circumference=2*Math.PI*r;
+  function arc(pct,offset) {
+    return 'stroke-dasharray:'+(pct*circumference)+' '+circumference+';stroke-dashoffset:'+(-(offset)*circumference);
+  }
+  var vOff=0, uOff=vPct, cOff=vPct+uPct;
+  el.innerHTML = '<svg width="68" height="68" viewBox="0 0 68 68" style="flex-shrink:0;transform:rotate(-90deg)">'
+    +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#eee" stroke-width="8"/>'
+    +(visited>0?'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#1A5C24" stroke-width="8" onclick="donutNav(\'visited\')" style="'+arc(vPct,vOff)+';cursor:pointer"/>':'')
+    +(upcoming>0?'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#2E5EA3" stroke-width="8" onclick="donutNav(\'upcoming\')" style="'+arc(uPct,uOff)+';cursor:pointer"/>':'')
+    +(cancelled>0?'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#ccc" stroke-width="8" onclick="donutNav(\'cancelled\')" style="'+arc(cPct,cOff)+';cursor:pointer"/>':'')
+    +'<text x="34" y="38" text-anchor="middle" font-size="12" font-weight="700" fill="#0F2347" onclick="donutNav(\'upcoming\')" style="transform:rotate(90deg);transform-origin:34px 34px;cursor:pointer">'
+    +Math.round(visited/total*100)+'%'
+    +'</text>'
+    +'</svg>'
+    +'<div class="dash-donut-legend">'
+    +'<div class="dash-legend-item" onclick="donutNav(\'visited\')" style="cursor:pointer;padding:3px 6px;border-radius:6px" onmouseover="this.style.background=\'var(--green-light)\'" onmouseout="this.style.background=\'\'"><div class="dash-legend-dot" style="background:#1A5C24"></div>'+visited+' visited</div>'
+    +'<div class="dash-legend-item" onclick="donutNav(\'upcoming\')" style="cursor:pointer;padding:3px 6px;border-radius:6px" onmouseover="this.style.background=\'var(--blue-light)\'" onmouseout="this.style.background=\'\'"><div class="dash-legend-dot" style="background:#2E5EA3"></div>'+upcoming+' upcoming</div>'
+    +(cancelled?'<div class="dash-legend-item" onclick="donutNav(\'cancelled\')" style="cursor:pointer;padding:3px 6px;border-radius:6px" onmouseover="this.style.background=\'var(--gray)\'" onmouseout="this.style.background=\'\'"><div class="dash-legend-dot" style="background:#ccc"></div>'+cancelled+' cancelled</div>':'')
+    +'<div style="font-size:10px;color:var(--text-muted);margin-top:6px;padding-left:6px">Click to open schedule</div>'
+    +'</div>';
+}
+
+function donutNav(status) {
+  showPanel('schedule');
+  setTimeout(function() {
+    var yearSel = document.getElementById('yr-btn-2026');
+    if (yearSel) switchScheduleYear(2026);
+    var statusSel = document.getElementById('f26-status');
+    if (statusSel) { statusSel.value = status; renderActiveSchedule(); }
+  }, 60);
+}
+
+// ── 3. Minister workload bars ─────────────────────────────
+function renderWorkloadBars() {
+  var el = document.getElementById('dash-workload-body');
+  if (!el) return;
+  var counts = {};
+  for (var i=0;i<MINISTERS.length;i++) counts[MINISTERS[i].name]=0;
+  var year2026 = SCHEDULE.filter(function(s){return s.fri.startsWith('2026')&&!s.cancelled;});
+  for (var i=0;i<year2026.length;i++) {
+    var s = year2026[i];
+    [s.m1,s.m2,s.m3,s.m4].forEach(function(m){ if(m&&counts[m]!==undefined) counts[m]++; });
+  }
+  var names = Object.keys(counts).sort(function(a,b){return counts[b]-counts[a];});
+  var maxVal = Math.max(1, counts[names[0]]||1);
+  var total = 0; var n = names.length||1;
+  names.forEach(function(nm){ total+=counts[nm]; });
+  var avg = total/n;
+  var html = '';
+  for (var i=0;i<names.length;i++) {
+    var nm = names[i]; var v = counts[nm];
+    var pct = Math.round(v/maxVal*100);
+    var isHigh = v > avg*1.25; var isLow = v < avg*0.75 && v>0;
+    var color = isHigh?'#7B0000':isLow?'#7B4D00':'#2E5EA3';
+    html += '<div class="dash-wb-row" title="'+nm+': '+v+' visits (avg '+avg.toFixed(1)+')">'
+      +'<div class="dash-wb-name">'+nm.split(' ')[0]+' '+nm.split(' ').slice(1).join(' ')+'</div>'
+      +'<div class="dash-wb-track"><div class="dash-wb-fill" style="width:'+pct+'%;background:'+color+'"></div></div>'
+      +'<div class="dash-wb-val" style="color:'+color+'">'+v+'</div>'
+      +'</div>';
+  }
+  html += '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">Avg: '+avg.toFixed(1)+' visits · <span style="color:#7B0000">&#9632;</span> above avg &nbsp;<span style="color:#7B4D00">&#9632;</span> below avg</div>';
+  el.innerHTML = html;
+}
+
+// ── 4. Region coverage table ──────────────────────────────
+function renderRegionCoverage() {
+  var el = document.getElementById('dash-region-body');
+  if (!el) return;
+  var regionNames = {CANPR:'Canada Prairies',CANPC:'Canada Pacific',CANON:'Canada Ontario',USE:'US East',USC:'US Central',USPC:'US Pacific',CARIB:'Caribbean'};
+  var order = ['CANPR','CANPC','CANON','USE','USC','USPC','CARIB'];
+  var today = new Date().toISOString().split('T')[0];
+  var html = '';
+  for (var ri=0;ri<order.length;ri++) {
+    var region = order[ri];
+    var asms = ASSEMBLIES.filter(function(a){return a.region===region&&!a.archived;});
+    if (!asms.length) continue;
+    var totalTarget=0, totalDone=0, totalPips=[];
+    for (var ai=0;ai<asms.length;ai++) {
+      var a = asms[ai];
+      var freq = parseInt(a.freq)||1;
+      var done = SCHEDULE.filter(function(s){return s.assembly===a.name&&s.fri.startsWith('2026')&&s.visited;}).length;
+      var overdue = done < freq && SCHEDULE.filter(function(s){return s.assembly===a.name&&s.fri.startsWith('2026')&&!s.cancelled&&s.fri>=today;}).length===0;
+      totalTarget+=freq; totalDone+=done;
+      for (var f=0;f<freq;f++) {
+        if (f<done) totalPips.push('done');
+        else if (overdue) totalPips.push('over');
+        else totalPips.push('due');
+      }
+    }
+    var pips = totalPips.slice(0,12).map(function(p){ return '<div class="dash-region-pip dash-pip-'+p+'"></div>'; }).join('');
+    if (totalPips.length>12) pips += '<span style="font-size:10px;color:var(--text-muted)">+more</span>';
+    html += '<div class="dash-region-row" onclick="regionNav(\''+region+'\')" style="cursor:pointer" onmouseover="this.style.background=\'var(--blue-light)\'" onmouseout="this.style.background=\'\'">'
+      +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--navy-dark)">'+regionNames[region]+'</div>'
+      +'<div style="font-size:11px;color:var(--text-muted)">'+asms.length+' assemblies &middot; '+totalDone+'/'+totalTarget+' target visits</div>'
+      +'</div>'
+      +'<div class="dash-region-pips">'+pips+'</div>'
+      +'<span style="font-size:11px;color:var(--blue);margin-left:6px;white-space:nowrap">&#8594;</span>'
+      +'</div>';
+  }
+  el.innerHTML = html||'<div style="font-size:12px;color:var(--text-muted)">No assembly data.</div>';
+  var legendEl = document.getElementById('dash-region-legend');
+  if (legendEl) legendEl.innerHTML = '<span class="dash-legend-item"><span class="dash-legend-dot" style="background:#1A5C24;width:10px;height:10px;border-radius:2px;display:inline-block"></span>&nbsp;Visited</span>&nbsp;&nbsp;'
+    +'<span class="dash-legend-item"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#e8f0fe;border:1px solid #85B7EB"></span>&nbsp;Scheduled</span>&nbsp;&nbsp;'
+    +'<span class="dash-legend-item"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--red-light);border:1px solid #F09595"></span>&nbsp;Overdue</span>';
+}
+
+function regionNav(region) {
+  showPanel('schedule');
+  setTimeout(function() {
+    switchScheduleYear(2026);
+    var regionSel = document.getElementById('f26-region');
+    if (regionSel) { regionSel.value = region; renderActiveSchedule(); }
+  }, 60);
+}
+
+// ── 5. Upcoming camps widget ──────────────────────────────
+function renderUpcomingCampsWidget() {
+  var el = document.getElementById('dash-camps-body');
+  if (!el) return;
+  var today = new Date().toISOString().split('T')[0];
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var upcoming = CAMPS.filter(function(c){return c.start && c.end >= today;})
+    .sort(function(a,b){return a.start.localeCompare(b.start);})
+    .slice(0,4);
+  if (!upcoming.length) { el.innerHTML='<div style="font-size:12px;color:var(--text-muted)">No upcoming camps.</div>'; return; }
+  var html='';
+  for (var i=0;i<upcoming.length;i++) {
+    var c=upcoming[i];
+    var s=new Date(c.start+'T12:00:00'); var e=new Date(c.end+'T12:00:00');
+    var dateLabel = months[s.getMonth()]+' '+s.getDate()+'&ndash;'+months[e.getMonth()]+' '+e.getDate();
+    var isActive = today >= c.start && today <= c.end;
+    html += '<div class="camp-mini-item">'
+      +'<div class="camp-mini-dot" style="'+(isActive?'background:#1A5C24':'')+'"></div>'
+      +'<div style="min-width:0"><div style="font-size:13px;font-weight:500;color:#5B1A8B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+c.name+'</div>'
+      +'<div style="font-size:11px;color:var(--text-muted)">'+dateLabel+(c.location?' &middot; '+c.location:'')+'</div>'
+      +(isActive?'<div style="font-size:11px;color:#1A5C24;font-weight:600">&#9679; In progress</div>':'')
+      +'</div></div>';
+  }
+  el.innerHTML=html;
+}
+
+// ── 6. Activity feed ──────────────────────────────────────
+function renderActivityFeed() {
+  var targets = [
+    {id:'dash-activity-metric', limit:6},
+    {id:'activity-modal-body',  limit:50}
+  ];
+  targets.forEach(function(t) {
+    var el = document.getElementById(t.id);
+    if (!el) return;
+    if (!ACTIVITY_LOG.length) {
+      el.innerHTML = '<div style="font-size:11px;color:var(--text-muted);padding:4px 0">No activity yet — changes you make will appear here.</div>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < Math.min(ACTIVITY_LOG.length, t.limit); i++) {
+      var a = ACTIVITY_LOG[i];
+      var icon = ACTIVITY_ICONS[a.type] || '•';
+      html += '<div style="display:flex;gap:7px;padding:5px 0;border-bottom:1px solid var(--border);font-size:11px;line-height:1.4">'
+        + '<span style="flex-shrink:0;font-size:12px">' + icon + '</span>'
+        + '<div style="flex:1;min-width:0">'
+        + '<div style="color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + a.msg + '</div>'
+        + '<div style="color:var(--text-muted);margin-top:1px">' + a.ts + '</div>'
+        + '</div></div>';
+    }
+    el.innerHTML = html;
+  });
+}
+
+function openActivityModal() {
+  renderActivityFeed();
+  var el = document.getElementById('activity-modal-overlay');
+  if (el) el.style.display = 'flex';
+}
+
+function closeActivityModal() {
+  var el = document.getElementById('activity-modal-overlay');
+  if (el) el.style.display = 'none';
+}
+
+function clearActivityLog() {
+  if (!confirm('Clear all activity history?')) return;
+  ACTIVITY_LOG = [];
+  try { localStorage.removeItem('gmi_activity_log'); } catch(e) {}
+  renderActivityFeed();
+  showToast('Activity log cleared');
+}
+
+// ── 7. Region filter for upcoming visits table ────────────
+function renderUpcomingRegionFilter() {
+  var sel = document.getElementById('dash-region-filter');
+  if (!sel) return;
+}
+
+function filterUpcomingByRegion() {
+  var regionF = (document.getElementById('dash-region-filter')||{}).value||'';
+  var rows = document.querySelectorAll('#upcoming-tbody tr');
+  rows.forEach(function(tr){
+    if (!regionF) { tr.style.display=''; return; }
+    var r = tr.getAttribute('data-region')||'';
+    tr.style.display = (r===regionF) ? '' : 'none';
+  });
+}
+
+// ── 8. Mark visited from dashboard table ─────────────────
+function dashMarkVisited(schedIdx) {
+  if (SCHEDULE[schedIdx]) {
+    SCHEDULE[schedIdx].visited = true;
+    SCHEDULE[schedIdx].cancelled = false;
+    VISIT_HISTORY.push({assembly:SCHEDULE[schedIdx].assembly,fri:SCHEDULE[schedIdx].fri,
+      ministers:[SCHEDULE[schedIdx].m1,SCHEDULE[schedIdx].m2,SCHEDULE[schedIdx].m3].filter(Boolean),
+      note:SCHEDULE[schedIdx].note,source:'schedule'});
+    logActivity('visited', 'Visit marked visited: ' + SCHEDULE[schedIdx].assembly);
+    renderDashboard(); renderSchedule(activeScheduleYear); renderHistory(); renderMinisters(); renderAssemblies();
+    showToast('Visit marked as visited');
+  }
+}
+
+// ── Patch renderDashboard upcoming table to add region data + mark-visited ──
+var _origRenderDashboardMain = renderDashboard;
+renderDashboard = function() {
+  _origRenderDashboardBase();
+  renderDashboardExtras();
+  var tbody = document.getElementById('upcoming-tbody');
+  if (!tbody) return;
+  var rows = tbody.querySelectorAll('tr');
+  rows.forEach(function(tr) {
+    var cells = tr.querySelectorAll('td');
+    if (!cells[1]) return;
+    var asmName = cells[1].textContent.trim();
+    var asm = null; for(var a=0;a<ASSEMBLIES.length;a++){if(ASSEMBLIES[a].name===asmName){asm=ASSEMBLIES[a];break;}}
+    if (asm) tr.setAttribute('data-region', asm.region||'');
+    var schedIdx = -1;
+    for (var i=0;i<SCHEDULE.length;i++){
+      if (SCHEDULE[i].assembly===asmName && !SCHEDULE[i].visited && !SCHEDULE[i].cancelled) { schedIdx=i; break; }
+    }
+    var lastCell = cells[cells.length-1];
+    if (lastCell && schedIdx>=0 && !SCHEDULE[schedIdx].visited) {
+      lastCell.innerHTML = '<div style="display:flex;gap:6px;justify-content:flex-end">'
+        +'<button class="btn btn-sm" style="font-size:11px;color:var(--green);border-color:var(--green-light)" onclick="event.stopPropagation();dashMarkVisited('+schedIdx+')">&#10003; Visited</button>'
+        +'<span style="font-size:11px;color:var(--blue);cursor:pointer">Edit &#8594;</span>'
+        +'</div>';
+    }
+  });
+};
+
+// ── Wire up region filter ─────────────────────────────────
+(function(){
+  var sel = document.getElementById('dash-region-filter');
+  if (sel) sel.addEventListener('change', filterUpcomingByRegion);
+})();
+
+// Initial render of extras
+renderDashboardExtras();
+renderActivityFeed();
 </script>
+
+<!-- Activity Log Modal -->
+<div id="activity-modal-overlay" onclick="if(event.target===this)closeActivityModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:500;align-items:center;justify-content:center;padding:2rem">
+  <div style="background:var(--white);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.18);width:100%;max-width:560px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border);flex-shrink:0">
+      <span style="font-size:15px;font-weight:600;color:var(--navy-dark)">Recent activity</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn btn-sm" onclick="clearActivityLog()" style="font-size:11px;color:var(--red);border-color:var(--red-light)">Clear log</button>
+        <button class="btn btn-sm" onclick="closeActivityModal()" style="font-size:13px;line-height:1">&#10005;</button>
+      </div>
+    </div>
+    <div id="activity-modal-body" style="overflow-y:auto;padding:.75rem 1.25rem;flex:1"></div>
+  </div>
+</div>
+
+<!-- Global Search Overlay -->
+<div id="gs-overlay" onclick="if(event.target===this)closeGlobalSearch()">
+  <div id="gs-box">
+    <div id="gs-input-row">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="gs-q" placeholder="Search ministers, assemblies, or camps..." autocomplete="off" oninput="gsSearch()" onkeydown="gsKey(event)">
+    </div>
+    <div id="gs-results"><div id="gs-empty"></div></div>
+  </div>
+</div>
 </body>
 </html>
