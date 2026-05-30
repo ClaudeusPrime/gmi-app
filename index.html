@@ -291,6 +291,9 @@ textarea{min-height:80px;resize:vertical}
   .card-header{padding:.6rem .75rem}
   .card-body{padding:.6rem}
 }
+.camp-sched-row{background:#F3EEFF;border-left:3px solid #8B5CF6}
+.camp-sched-row:hover{background:#EDE9FE!important}
+
 /* Dash stat pills */
 .dash-stat{background:var(--white);border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow-sm);border-radius:var(--radius-lg);padding:1rem 1.25rem;display:flex;align-items:center;gap:12px;transition:box-shadow .2s,transform .2s}
 .dash-stat:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
@@ -298,9 +301,8 @@ textarea{min-height:80px;resize:vertical}
 .dash-stat-value{font-size:26px;font-weight:700;color:var(--navy-dark);line-height:1}
 .dash-stat-label{font-size:11px;color:var(--text-muted);font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
 
-/* Avatar */
+/* Minister avatar */
 .minister-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:16px;font-weight:600;color:#fff;background:var(--navy);margin-bottom:10px;flex-shrink:0}
-
 </style>
 </head>
 <body>
@@ -374,9 +376,7 @@ textarea{min-height:80px;resize:vertical}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Church Reports
     </div>
     <div class="nav-section">Admin</div>
-    <div class="nav-item" onclick="showPanel('settings')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings
-    </div>
+
     <div class="nav-item" onclick="showPanel('budget')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Travel Budget
     </div>
@@ -401,7 +401,7 @@ textarea{min-height:80px;resize:vertical}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         Search&nbsp;<kbd>/</kbd>
       </div>
-      <button class="btn btn-sm" onclick="showPanel('settings')" style="font-size:11px">&#9881; Settings</button>
+
       <span class="top-badge">GMI</span>
     </div>
   </div>
@@ -587,8 +587,7 @@ textarea{min-height:80px;resize:vertical}
         <div class="card" style="max-width:520px">
           <div class="card-header"><span class="card-title" id="sched-locked-title">Schedule</span><span style="font-size:11px;color:var(--text-muted)">&#128274; Admin only</span></div>
           <div class="card-body">
-            <div style="font-size:13px;color:var(--text-muted);margin-bottom:1rem">Schedule editing and auto-generation requires admin access. Enable admin mode in Settings to continue.</div>
-            <button class="btn btn-primary" onclick="showPanel('settings')">&#9881; Go to Settings</button>
+            <div style="font-size:13px;color:var(--text-muted);margin-bottom:1rem">Schedule editing and auto-generation requires admin access.</div>
           </div>
         </div>
       </div>
@@ -608,46 +607,7 @@ textarea{min-height:80px;resize:vertical}
     </div>
 
     <!-- SETTINGS -->
-    <div class="panel" id="panel-settings">
-      <div class="card" style="max-width:480px">
-        <div class="card-header"><span class="card-title">Settings</span></div>
-        <div class="card-body">
-          <div style="margin-bottom:1.5rem">
-            <div style="font-size:14px;font-weight:600;color:var(--navy-dark);margin-bottom:6px">Admin mode</div>
-            <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Admin mode unlocks Schedule 2027 editing and auto-generation. Enter your PIN to enable.</div>
-            <div id="admin-locked-view">
-              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-                <input type="password" id="admin-pin-input" placeholder="Enter admin PIN" style="width:180px;max-width:100%" onkeydown="if(event.key==='Enter')toggleAdminMode()">
-                <button class="btn btn-primary" onclick="toggleAdminMode()">Unlock</button>
-              </div>
-              <div id="admin-pin-error" style="font-size:12px;color:var(--red);margin-top:6px;display:none">Incorrect PIN. Try again.</div>
-            </div>
-            <div id="admin-unlocked-view" style="display:none">
-              <div style="background:var(--green-light);border:1px solid var(--green);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-                <span style="font-size:13px;color:var(--green);font-weight:500">&#10003; Admin mode active &#8212; Schedule 2027 unlocked</span>
-                <button class="btn btn-sm" onclick="lockAdmin()" style="color:var(--red);border-color:var(--red-light)">Lock</button>
-              </div>
-            </div>
-          </div>
-          <div style="border-top:1px solid var(--border);padding-top:1.25rem">
-            <div style="font-size:14px;font-weight:600;color:var(--navy-dark);margin-bottom:6px">Change admin PIN</div>
-            <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Default PIN is <strong>1234</strong>. Change it to something only you know.</div>
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-              <input type="password" id="new-pin-input" placeholder="New PIN" style="width:130px;max-width:100%">
-              <input type="password" id="new-pin-confirm" placeholder="Confirm PIN" style="width:130px;max-width:100%">
-              <button class="btn btn-primary" onclick="setNewPin()">Save PIN</button>
-            </div>
-            <div id="pin-save-msg" style="font-size:12px;margin-top:6px;display:none"></div>
-          </div>
-          <div style="border-top:1px solid var(--border);padding-top:1.25rem;margin-top:1.25rem">
-            <div style="font-size:14px;font-weight:600;color:var(--navy-dark);margin-bottom:6px">Minister availability link</div>
-            <div style="font-size:13px;color:var(--text-muted);margin-bottom:10px">Share this link with ministers so they can submit their availability directly. It opens straight to the availability form.</div>
-            <div style="background:var(--gray);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;font-family:monospace;word-break:break-all;margin-bottom:8px" id="avail-link-display"></div>
-            <button class="btn btn-sm btn-primary" onclick="copyAvailLink()">Copy link</button>
-          </div>
-        </div>
-      </div>
-    </div>
+
 
     <!-- CONFLICTS -->
     <div class="panel" id="panel-conflicts">
@@ -2508,6 +2468,18 @@ function renderSchedule(year) {
   var html='';
   for(var wi=0;wi<weekends.length;wi++){
     var wk=weekends[wi];
+
+    // Find camps that overlap this fri–sun window
+    var wkSat=wk.fri.replace(/(\d{4}-\d{2}-)(\d{2})/,function(m,p,d){var n=new Date(wk.fri+'T12:00:00');n.setDate(n.getDate()+1);return n.toISOString().split('T')[0];});
+    var wkSun=wk.fri.replace(/(\d{4}-\d{2}-)(\d{2})/,function(m,p,d){var n=new Date(wk.fri+'T12:00:00');n.setDate(n.getDate()+2);return n.toISOString().split('T')[0];});
+    var yearStr=String(year);
+    var campsThisWeek=CAMPS.filter(function(c){
+      if(!c.start||!c.end) return false;
+      // camp overlaps if it starts on or before sun and ends on or after fri
+      return c.start<=wkSun && c.end>=wk.fri && (c.start.startsWith(yearStr)||c.end.startsWith(yearStr));
+    });
+
+    // Filter visits
     var visits=[];
     for(var si=0;si<SCHEDULE.length;si++){
       var s=SCHEDULE[si]; if(s.fri!==wk.fri) continue;
@@ -2517,7 +2489,9 @@ function renderSchedule(year) {
       if(statusF==='upcoming'&&(s.visited||s.cancelled))continue;
       visits.push({s:s,idx:si});
     }
-    if((regionF||ministerF||statusF)&&!visits.length) continue;
+    // If filtering, skip weekends with nothing relevant (but still show if camps present)
+    if((regionF||ministerF||statusF)&&!visits.length&&!campsThisWeek.length) continue;
+
     var visitsHtml='';
     if(visits.length){
       for(var vi=0;vi<visits.length;vi++){
@@ -2563,9 +2537,25 @@ function renderSchedule(year) {
         +(adminUnlocked?' <button class="btn btn-sm" style="font-size:11px;color:var(--blue);border-color:var(--blue-light)" data-fri="'+wk.fri+'" data-year="'+year+'" onclick="schedAddRow(this)">+ Add visit</button>':'')
         +'</div>';
     }
+
+    // Camp rows — rendered after visits, visually distinct
+    var campsHtml='';
+    for(var ci=0;ci<campsThisWeek.length;ci++){
+      var c=campsThisWeek[ci];
+      var cs=new Date(c.start+'T12:00:00'); var ce=new Date(c.end+'T12:00:00');
+      var dateLabel=months[cs.getMonth()]+' '+cs.getDate()+'\u2013'+months[ce.getMonth()]+' '+ce.getDate();
+      var mins=(c.ministers||[]).join(' \u00b7 ');
+      campsHtml+='<div class="visit-row camp-sched-row" onclick="showPanel(\'camps\')" style="background:#F3EEFF;border-left:3px solid #8B5CF6;cursor:pointer" title="Click to open Camps">'
+        +'<span style="display:inline-flex;align-items:center;justify-content:center;min-width:56px;font-size:10px;font-weight:600;color:#6D28D9;background:#EDE9FE;padding:2px 6px;border-radius:10px;white-space:nowrap">&#9653; CAMP</span>'
+        +'<span class="visit-assembly" style="color:#5B21B6">'+c.name+'</span>'
+        +'<span class="visit-ministers">'+dateLabel+(c.location?' &middot; '+c.location:'')+'</span>'
+        +(mins?'<span class="visit-ministers" style="color:#7C3AED">'+mins+'</span>':'')
+        +'</div>';
+    }
+
     html+='<div class="weekend-row">'
       +'<div class="weekend-date"><div class="fri">'+wk.label+'</div><div class="sat-sun">'+year+'</div></div>'
-      +'<div class="weekend-visits">'+visitsHtml
+      +'<div class="weekend-visits">'+visitsHtml+campsHtml
       +(adminUnlocked&&visits.length?'<div style="margin-top:4px"><button class="btn btn-sm" style="font-size:11px;color:var(--blue);border-color:var(--blue-light)" data-fri="'+wk.fri+'" data-year="'+year+'" onclick="schedAddRow(this)">+ Add visit</button></div>':'')
       +'</div></div>';
   }
@@ -2811,6 +2801,7 @@ function applyCampConflictRemoveFromCamp(btn) {
   var mIdx = mins.indexOf(minister);
   if (mIdx >= 0) mins.splice(mIdx, 1);
   CAMPS[campIdx].ministers = mins;
+  persistCamps();
   renderConflicts();
   renderDashboard();
   if (typeof renderCamps === 'function') renderCamps();
@@ -3451,6 +3442,7 @@ function applyKeepAssembly(btn) {
   var mIdx = mins.indexOf(minister);
   if (mIdx >= 0) mins.splice(mIdx, 1);
   CAMPS[campIdx].ministers = mins;
+  persistCamps();
   renderMinistersKeepOpen(minister);
   renderConflicts(); renderDashboard(); renderAvailGrid();
   if (typeof renderCamps==='function') renderCamps();
@@ -4603,7 +4595,7 @@ function showPanel(id) {
     'conflicts':'Conflicts','ministers':'Ministers','assemblies':'Assemblies',
     'assembly-detail':'Assembly Detail','history':'Visit History',
     'church-reports':'Church Reports','proposals':'Travel Proposal','calendar':'Calendar','travel-request':'Travel Request',
-    'settings':'Settings','budget':'Travel Budget','form-availability':'Availability Form'
+    'budget':'Travel Budget','form-availability':'Availability Form'
   };
   document.getElementById('page-title').textContent=navMap[id]||id;
   var navItems=document.querySelectorAll('.nav-item');
@@ -5588,13 +5580,7 @@ function generateSchedule2027() { activeScheduleYear=2027; generateScheduleForYe
 // ── URL hash — shareable availability link ────────────────
 function initHashRouting() {
   var hash = window.location.hash.replace('#','');
-  if (hash === 'availability') {
-    showPanel('form-availability');
-  }
-  var link = document.getElementById('avail-link-display');
-  if (link) {
-    link.textContent = window.location.href.split('#')[0] + '#availability';
-  }
+  if (hash === 'availability') showPanel('form-availability');
 }
 
 function copyAvailLink() {
@@ -5610,52 +5596,12 @@ function copyAvailLink() {
   }
 }
 
-// ── Admin mode ────────────────────────────────────────────
+// ── Admin mode (always unlocked until database auth added) ─
 var ADMIN_PIN = '1234';
-var adminUnlocked = false;
-
-function toggleAdminMode() {
-  var input = document.getElementById('admin-pin-input');
-  var error = document.getElementById('admin-pin-error');
-  if (input.value === ADMIN_PIN) {
-    adminUnlocked = true;
-    document.getElementById('admin-locked-view').style.display = 'none';
-    document.getElementById('admin-unlocked-view').style.display = 'block';
-    document.getElementById('admin-badge').style.display = 'inline-block';
-    error.style.display = 'none';
-    input.value = '';
-    // Refresh 2027 panel if currently showing
-    updateSchedLock();
-    showToast('Admin mode enabled');
-  } else {
-    error.style.display = 'block';
-    input.value = '';
-  }
-}
-
-function lockAdmin() {
-  adminUnlocked = false;
-  document.getElementById('admin-locked-view').style.display = 'block';
-  document.getElementById('admin-unlocked-view').style.display = 'none';
-  document.getElementById('admin-badge').style.display = 'none';
-  updateSched2027Lock();
-  showToast('Admin mode locked');
-}
-
-function setNewPin() {
-  var p1 = document.getElementById('new-pin-input').value;
-  var p2 = document.getElementById('new-pin-confirm').value;
-  var msg = document.getElementById('pin-save-msg');
-  if (!p1) { msg.style.display='block'; msg.style.color='var(--red)'; msg.textContent='Please enter a PIN.'; return; }
-  if (p1 !== p2) { msg.style.display='block'; msg.style.color='var(--red)'; msg.textContent='PINs do not match.'; return; }
-  ADMIN_PIN = p1;
-  document.getElementById('new-pin-input').value = '';
-  document.getElementById('new-pin-confirm').value = '';
-  msg.style.display = 'block';
-  msg.style.color = 'var(--green)';
-  msg.textContent = 'PIN saved successfully.';
-  setTimeout(function(){msg.style.display='none';}, 3000);
-}
+var adminUnlocked = true;
+function toggleAdminMode() {}
+function lockAdmin() {}
+function setNewPin() {}
 
 function updateSched2027Lock() {
   document.getElementById('sched-locked-view').style.display = adminUnlocked ? 'none' : 'block';
@@ -7013,8 +6959,33 @@ var CAMPS = [
   {name:"North Battleford YP (Dec/Jan)", start:"2026-12-31", end:"2027-01-03", location:"North Battleford, SK", ministers:["Brian Hannigan","Nat Swaan","Darren Olson","Kelvin Martin","Dennis Aarrestad"], airport:"", contact:"", notes:"", done:false}
 ];
 
-
-// ── Camp rendering ────────────────────────────────────────
+// ── Camp persistence ──────────────────────────────────────
+function persistCamps() {
+  try {
+    // Strip future-year seed templates before saving, keep only real camps
+    var toSave = CAMPS.filter(function(c){ return !c._seed; });
+    localStorage.setItem('gmi_camps', JSON.stringify(toSave));
+  } catch(e) {}
+}
+(function() {
+  try {
+    var saved = localStorage.getItem('gmi_camps');
+    if (saved) {
+      var parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length) {
+        // Discard if data contains seed entries (corrupted from old bug)
+        var hasSeeds = parsed.some(function(c){ return c._seed; });
+        var hasDupes = parsed.filter(function(c){ return c.start && c.start.startsWith('2026'); }).length > 22;
+        if (hasSeeds || hasDupes) {
+          localStorage.removeItem('gmi_camps');
+        } else {
+          CAMPS.length = 0;
+          for (var i = 0; i < parsed.length; i++) CAMPS.push(parsed[i]);
+        }
+      }
+    }
+  } catch(e) { localStorage.removeItem('gmi_camps'); }
+})();
 
 function renderCamps() {
   var today = new Date().toISOString().split('T')[0];
@@ -7025,12 +6996,12 @@ function renderCamps() {
   var titleEl = document.getElementById('camps-card-title');
   if (titleEl) titleEl.textContent = (yearF ? yearF : 'All Years') + ' Camp Schedule';
 
-  var camps = CAMPS.slice().sort(function(a,b){return a.start.localeCompare(b.start);});
+  var camps = CAMPS.map(function(c,i){return {c:c,i:i};}).sort(function(a,b){return (a.c.start||'').localeCompare(b.c.start||'');});
 
   // Metrics
   var total = camps.length;
-  var upcoming = camps.filter(function(c){return c.end >= today;}).length;
-  var assignments = camps.reduce(function(sum,c){return sum+(c.ministers||[]).length;},0);
+  var upcoming = camps.filter(function(x){return x.c.end >= today;}).length;
+  var assignments = camps.reduce(function(sum,x){return sum+(x.c.ministers||[]).length;},0);
   var conflicts = detectCampConflicts();
 
   var totalEl = document.getElementById('camp-m-total');
@@ -7062,12 +7033,12 @@ function renderCamps() {
   }
 
   // Filter
-  if (yearF) camps = camps.filter(function(c){
-    if (c.start) return c.start.startsWith(yearF) || c.end.startsWith(yearF);
-    return c._year === yearF;
+  if (yearF) camps = camps.filter(function(x){
+    if (x.c.start) return x.c.start.startsWith(yearF) || x.c.end.startsWith(yearF);
+    return x.c._year === yearF;
   });
-  if (statusF === 'upcoming') camps = camps.filter(function(c){return c.end >= today;});
-  else if (statusF === 'done') camps = camps.filter(function(c){return c.end < today;});
+  if (statusF === 'upcoming') camps = camps.filter(function(x){return x.c.end >= today;});
+  else if (statusF === 'done') camps = camps.filter(function(x){return x.c.end < today;});
 
   var el = document.getElementById('camps-list');
   if (!el) return;
@@ -7075,10 +7046,10 @@ function renderCamps() {
 
   var html = '';
   for (var i = 0; i < camps.length; i++) {
-    var camp = camps[i];
+    var camp = camps[i].c;
+    var realIdx = camps[i].i;
     var isDone = camp.end && camp.end < today;
     var hasDates = !!(camp.start && camp.end);
-    var realIdx = CAMPS.indexOf(camp);
 
     // Format dates
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -7178,7 +7149,7 @@ function saveCamp() {
   var name = document.getElementById('camp-cf-name').value.trim();
   var start = document.getElementById('camp-cf-start').value;
   var end = document.getElementById('camp-cf-end').value;
-  if (!name || !start || !end) { showToast('Please fill in name, start and end date'); return; }
+  if (!name) { showToast('Please enter a camp name'); return; }
 
   var ministers = [];
   var cbs = document.querySelectorAll('#cf-ministers-grid input:checked');
@@ -7195,9 +7166,11 @@ function saveCamp() {
   };
 
   var idx = parseInt(document.getElementById('camp-edit-idx').value);
+  if (isNaN(idx)) idx = -1;
   if (idx >= 0) CAMPS[idx] = camp;
   else CAMPS.push(camp);
 
+  persistCamps();
   closeCampForm();
   renderCamps();
   renderDashboard();
@@ -7206,27 +7179,19 @@ function saveCamp() {
 
 // Seed blank camp templates for 2027-2030 based on 2026 camps
 function seedFutureCamps() {
-  var baseCamps = CAMPS.filter(function(c){ return c.start.startsWith('2026'); });
+  var baseCamps = CAMPS.filter(function(c){ return c.start && c.start.startsWith('2026'); });
   var futureYears = ['2027','2028','2029','2030'];
+  // Remove any existing seed entries first to avoid duplicates on re-run
+  for (var i = CAMPS.length - 1; i >= 0; i--) {
+    if (CAMPS[i]._seed) CAMPS.splice(i, 1);
+  }
   futureYears.forEach(function(yr) {
     baseCamps.forEach(function(c) {
-      var exists = CAMPS.some(function(x){
-        return x.name === c.name && x._year === yr;
+      CAMPS.push({
+        name: c.name, start: '', end: '', _year: yr, _seed: true,
+        location: c.location || '', ministers: [],
+        airport: c.airport || '', contact: '', notes: '', done: false
       });
-      if (!exists) {
-        CAMPS.push({
-          name: c.name,
-          start: '',
-          end: '',
-          _year: yr,
-          location: c.location || '',
-          ministers: [],
-          airport: c.airport || '',
-          contact: '',
-          notes: '',
-          done: false
-        });
-      }
     });
   });
 }
@@ -7234,6 +7199,7 @@ function seedFutureCamps() {
 function deleteCamp(idx) {
   if (!confirm('Remove this camp?')) return;
   CAMPS.splice(idx, 1);
+  persistCamps();
   renderCamps();
   renderDashboard();
   showToast('Camp removed');
@@ -7474,7 +7440,7 @@ function logActivity(type, msg) {
   var _origSaveCamp = saveCamp;
   saveCamp = function(){
     var idx  = parseInt(document.getElementById('camp-edit-idx').value);
-    var name = document.getElementById('camp-name').value.trim();
+    var name = document.getElementById('camp-cf-name').value.trim();
     _origSaveCamp();
     logActivity('camp', (idx >= 0 ? 'Camp updated: ' : 'Camp added: ') + name);
   };
@@ -7745,46 +7711,63 @@ function renderWorkloadBars() {
   el.innerHTML = html;
 }
 
-// ── 4. Region coverage table ──────────────────────────────
+// ── 4. Region coverage progress bars ─────────────────────
 function renderRegionCoverage() {
   var el = document.getElementById('dash-region-body');
   if (!el) return;
   var regionNames = {CANPR:'Canada Prairies',CANPC:'Canada Pacific',CANON:'Canada Ontario',USE:'US East',USC:'US Central',USPC:'US Pacific',CARIB:'Caribbean'};
+  var regionShort = {CANPR:'CANPR',CANPC:'CANPC',CANON:'CANON',USE:'USE',USC:'USC',USPC:'USPC',CARIB:'CAR'};
   var order = ['CANPR','CANPC','CANON','USE','USC','USPC','CARIB'];
   var today = new Date().toISOString().split('T')[0];
-  var html = '';
+  var rows = [];
   for (var ri=0;ri<order.length;ri++) {
     var region = order[ri];
     var asms = ASSEMBLIES.filter(function(a){return a.region===region&&!a.archived;});
     if (!asms.length) continue;
-    var totalTarget=0, totalDone=0, totalPips=[];
+    var totalTarget=0, totalDone=0, hasOverdue=false;
     for (var ai=0;ai<asms.length;ai++) {
       var a = asms[ai];
       var freq = parseInt(a.freq)||1;
       var done = SCHEDULE.filter(function(s){return s.assembly===a.name&&s.fri.startsWith('2026')&&s.visited;}).length;
-      var overdue = done < freq && SCHEDULE.filter(function(s){return s.assembly===a.name&&s.fri.startsWith('2026')&&!s.cancelled&&s.fri>=today;}).length===0;
-      totalTarget+=freq; totalDone+=done;
-      for (var f=0;f<freq;f++) {
-        if (f<done) totalPips.push('done');
-        else if (overdue) totalPips.push('over');
-        else totalPips.push('due');
-      }
+      var scheduled = SCHEDULE.filter(function(s){return s.assembly===a.name&&s.fri.startsWith('2026')&&!s.cancelled&&s.fri>=today;}).length;
+      if (done < freq && scheduled === 0) hasOverdue = true;
+      totalTarget += freq;
+      totalDone += Math.min(done, freq);
     }
-    var pips = totalPips.slice(0,12).map(function(p){ return '<div class="dash-region-pip dash-pip-'+p+'"></div>'; }).join('');
-    if (totalPips.length>12) pips += '<span style="font-size:10px;color:var(--text-muted)">+more</span>';
-    html += '<div class="dash-region-row" onclick="regionNav(\''+region+'\')" style="cursor:pointer" onmouseover="this.style.background=\'var(--blue-light)\'" onmouseout="this.style.background=\'\'">'
-      +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--navy-dark)">'+regionNames[region]+'</div>'
-      +'<div style="font-size:11px;color:var(--text-muted)">'+asms.length+' assemblies &middot; '+totalDone+'/'+totalTarget+' target visits</div>'
+    rows.push({region:region, name:regionNames[region], short:regionShort[region], done:totalDone, target:totalTarget, asms:asms.length, overdue:hasOverdue});
+  }
+
+  var html = '';
+  for (var i=0;i<rows.length;i++) {
+    var r = rows[i];
+    var pct = r.target > 0 ? Math.round(r.done / r.target * 100) : 0;
+    var barColor = r.overdue ? '#A32D2D' : pct >= 80 ? '#1A5C24' : pct >= 40 ? '#2E5EA3' : '#7B4D00';
+    var bgColor  = r.overdue ? '#FCEBEB' : pct >= 80 ? '#EAF3DE' : pct >= 40 ? '#E6F1FB' : '#FFF3CD';
+    var label    = r.overdue ? 'Overdue' : pct === 100 ? 'Complete' : pct >= 80 ? 'On track' : pct >= 40 ? 'In progress' : 'Behind';
+    html += '<div onclick="regionNav(\''+r.region+'\')" style="padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer" '
+      +'onmouseover="this.style.background=\'var(--gray)\'" onmouseout="this.style.background=\'\'">'
+      // Top line: name + fraction
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+      +'<div style="font-size:13px;font-weight:500;color:var(--navy-dark)">'+r.name+'</div>'
+      +'<div style="display:flex;align-items:center;gap:8px">'
+      +'<span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px;background:'+bgColor+';color:'+barColor+'">'+label+'</span>'
+      +'<span style="font-size:13px;font-weight:600;color:var(--navy-dark)">'+r.done+'<span style="font-weight:400;color:var(--text-muted)">/'+r.target+'</span></span>'
       +'</div>'
-      +'<div class="dash-region-pips">'+pips+'</div>'
-      +'<span style="font-size:11px;color:var(--blue);margin-left:6px;white-space:nowrap">&#8594;</span>'
+      +'</div>'
+      // Progress bar
+      +'<div style="height:6px;background:#EEEEE8;border-radius:3px;overflow:hidden">'
+      +'<div style="height:100%;width:'+pct+'%;background:'+barColor+';border-radius:3px;transition:width .4s"></div>'
+      +'</div>'
+      // Bottom line: assembly count
+      +'<div style="font-size:11px;color:var(--text-muted);margin-top:4px">'+r.asms+' assembl'+(r.asms===1?'y':'ies')+'</div>'
       +'</div>';
   }
-  el.innerHTML = html||'<div style="font-size:12px;color:var(--text-muted)">No assembly data.</div>';
+  if (!rows.length) html = '<div style="font-size:12px;color:var(--text-muted)">No assembly data.</div>';
+  el.innerHTML = html;
+
+  // Clear legend — no longer needed with inline labels
   var legendEl = document.getElementById('dash-region-legend');
-  if (legendEl) legendEl.innerHTML = '<span class="dash-legend-item"><span class="dash-legend-dot" style="background:#1A5C24;width:10px;height:10px;border-radius:2px;display:inline-block"></span>&nbsp;Visited</span>&nbsp;&nbsp;'
-    +'<span class="dash-legend-item"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#e8f0fe;border:1px solid #85B7EB"></span>&nbsp;Scheduled</span>&nbsp;&nbsp;'
-    +'<span class="dash-legend-item"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--red-light);border:1px solid #F09595"></span>&nbsp;Overdue</span>';
+  if (legendEl) legendEl.innerHTML = '';
 }
 
 function regionNav(region) {
