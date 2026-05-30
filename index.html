@@ -6,6 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>GMI Travel — Scheduling System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='42' rx='22' ry='17' fill='%23FFCF00'/%3E%3Cellipse cx='32' cy='26' rx='10' ry='12' fill='%23FFCF00'/%3E%3Cellipse cx='40' cy='18' rx='14' ry='12' fill='%23FFCF00'/%3E%3Cellipse cx='52' cy='21' rx='7' ry='4' fill='%23FF8C00'/%3E%3Cline x1='45' y1='21' x2='59' y2='21' stroke='%23E07800' stroke-width='1'/%3E%3Ccircle cx='44' cy='14' r='3' fill='%231A1A1A'/%3E%3Ccircle cx='45' cy='13' r='1' fill='%23fff'/%3E%3Crect x='35' y='10' width='11' height='7' rx='3.5' fill='%231A1A1A'/%3E%3Crect x='36' y='11' width='9' height='5' rx='2.5' fill='%232255AA' opacity='.85'/%3E%3Crect x='47' y='10' width='11' height='7' rx='3.5' fill='%231A1A1A'/%3E%3Crect x='48' y='11' width='9' height='5' rx='2.5' fill='%232255AA' opacity='.85'/%3E%3Cline x1='46' y1='13.5' x2='47' y2='13.5' stroke='%231A1A1A' stroke-width='1.5'/%3E%3Cellipse cx='32' cy='57' rx='26' ry='4' fill='%23AAD4F5' opacity='.5'/%3E%3C/svg%3E">
 <link rel="shortcut icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
 
@@ -13,21 +16,26 @@
 :root{
   --navy:#1A3A6B;--navy-dark:#0F2347;--blue:#2E5EA3;--blue-light:#E6F1FB;
   --green:#1A5C24;--green-light:#EAF3DE;--amber:#7B4D00;--amber-light:#FFF3CD;
-  --red:#7B0000;--red-light:#FDDEDE;--gray:#F5F5F0;--border:#E0DDD5;
+  --red:#7B0000;--red-light:#FDDEDE;--gray:#F4F4EF;--border:#E0DDD5;
   --text:#1A1A18;--text-muted:#666660;--white:#FFFFFF;
   --canpr:#DDE8F5;--canpr-t:#1A3A6B;--canpc:#D4EEE2;--canpc-t:#0F4D2E;
   --canon:#FFF0D4;--canon-t:#7B4400;--use:#EDE9F7;--use-t:#3A1A6B;
   --usc:#FDEAEA;--usc-t:#6B1A1A;--uspc:#E8F7E9;--uspc-t:#1A6B1E;
+  --font:'Inter',system-ui,sans-serif;
+  --radius-sm:6px;--radius-md:10px;--radius-lg:14px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:0 4px 12px rgba(0,0,0,.08),0 1px 3px rgba(0,0,0,.05);
+  --gold:#FFCF00;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:var(--gray);color:var(--text);min-height:100vh}
-h1,h2,h3{font-family:Arial,sans-serif}
+body{font-family:var(--font);background:var(--gray);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font)}
 
 /* Layout */
 .app{display:flex;min-height:100vh;padding-bottom:env(safe-area-inset-bottom)}
-.sidebar{width:220px;min-width:220px;background:var(--navy-dark);flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:100}
+.sidebar{width:220px;min-width:220px;background:linear-gradient(160deg,#0A1B38 0%,#1A3A6B 100%);flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:100}
 .main{flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0;width:0;overflow-x:hidden}
-.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;min-width:0}
+.topbar{background:var(--white);border-bottom:1px solid rgba(0,0,0,.06);box-shadow:0 1px 4px rgba(0,0,0,.06);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;min-width:0}
 .content{padding:2rem;flex:1;min-width:0}
 
 /* Sidebar */
@@ -36,14 +44,14 @@ h1,h2,h3{font-family:Arial,sans-serif}
 .sidebar-logo p{font-size:11px;color:rgba(255,255,255,.4)}
 .sidebar-nav{padding:1rem 0;flex:1}
 .nav-section{padding:.25rem 1.25rem;font-size:10px;font-weight:600;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em;margin:1rem 0 .25rem}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 1.25rem;font-size:13px;color:rgba(255,255,255,.65);cursor:pointer;transition:all .15s;border-left:3px solid transparent}
-.nav-item:hover{color:#fff;background:rgba(255,255,255,.06)}
-.nav-item.active{color:#fff;background:rgba(255,255,255,.1);border-left-color:#fff}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 1.25rem;font-size:13px;color:rgba(255,255,255,.65);cursor:pointer;transition:all .18s;border-left:3px solid transparent;border-radius:0 6px 6px 0;margin-right:8px}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.07)}
+.nav-item.active{color:#fff;background:rgba(255,207,0,.12);border-left-color:var(--gold)}
 .nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:.7}
 .nav-item.active svg{opacity:1}
 
 /* Topbar */
-.page-title{font-family:Arial,sans-serif;font-size:20px;color:var(--navy-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.page-title{font-family:var(--font);font-size:18px;font-weight:600;color:var(--navy-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .top-badge{background:var(--blue-light);color:var(--navy);font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500;flex-shrink:0}
 
 /* Panels */
@@ -51,24 +59,26 @@ h1,h2,h3{font-family:Arial,sans-serif}
 
 /* Metrics */
 .metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.5rem}
-.metric-card{background:var(--white);border-radius:12px;padding:1.25rem;border:1px solid var(--border);min-width:0;text-align:center}
-.metric-label{font-size:11px;color:var(--text-muted);font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
-.metric-value{font-size:28px;font-family:Arial,sans-serif;color:var(--navy-dark)}
-.metric-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+.metric-card{background:var(--white);border-radius:var(--radius-lg);padding:1.25rem;border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow-sm);min-width:0;text-align:center;transition:box-shadow .2s,transform .2s;cursor:default}
+.metric-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.metric-label{font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.metric-value{font-size:30px;font-family:var(--font);font-weight:700;color:var(--navy-dark);line-height:1}
+.metric-sub{font-size:11px;color:var(--text-muted);margin-top:4px}
 
 /* Cards */
-.card{background:var(--white);border-radius:12px;border:1px solid var(--border);margin-bottom:1.5rem;overflow:visible;min-width:0}
+.card{background:var(--white);border-radius:var(--radius-lg);border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow-sm);margin-bottom:1.5rem;overflow:visible;min-width:0}
 .card-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;min-width:0}
-.card-title{font-size:15px;font-weight:600;color:var(--navy-dark)}
+.card-title{font-size:14px;font-weight:600;color:var(--navy-dark)}
 .card-body{padding:1.25rem;min-width:0;overflow-x:hidden}
 
 /* Tables */
 .card > div[style*="padding:0"]{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{text-align:left;padding:10px 12px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);background:var(--gray);white-space:nowrap;cursor:pointer;user-select:none}
-td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;transition:background .12s}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--gray)}
+tr:hover td{background:#F0F3F8}
+tr:hover td:first-child{border-left:2px solid var(--blue);padding-left:10px}
 
 /* Badges */
 .badge{display:inline-block;font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px}
@@ -87,10 +97,11 @@ tr:hover td{background:var(--gray)}
 .badge-camp-done{background:var(--green-light);color:var(--green)}
 
 /* Buttons */
-button,.btn{font-family:Arial,sans-serif;font-size:13px;font-weight:500;border-radius:8px;padding:8px 16px;border:1px solid var(--border);background:var(--white);color:var(--text);cursor:pointer;transition:all .15s}
-button:hover,.btn:hover{background:var(--gray)}
+button,.btn{font-family:var(--font);font-size:13px;font-weight:500;border-radius:var(--radius-md);padding:8px 16px;border:1px solid var(--border);background:var(--white);color:var(--text);cursor:pointer;transition:all .15s}
+button:hover,.btn:hover{background:var(--gray);border-color:#ccc}
+button:active,.btn:active{transform:translateY(1px)}
 .btn-primary{background:var(--navy);color:#fff;border-color:var(--navy)}
-.btn-primary:hover{background:var(--navy-dark)}
+.btn-primary:hover{background:var(--navy-dark);border-color:var(--navy-dark)}
 .btn-success{background:var(--green);color:#fff;border-color:var(--green)}
 .btn-sm{font-size:12px;padding:5px 10px}
 
@@ -98,17 +109,17 @@ button:hover,.btn:hover{background:var(--gray)}
 .form-group{margin-bottom:1.25rem}
 .form-label{display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px}
 .form-hint{font-size:11px;color:var(--text-muted);margin-bottom:6px;display:block}
-select,input[type=text],input[type=date],input[type=number],textarea{width:100%;max-width:100%;font-family:Arial,sans-serif;font-size:13px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--white);color:var(--text);outline:none;transition:border-color .15s}
+select,input[type=text],input[type=date],input[type=number],textarea{width:100%;max-width:100%;font-family:var(--font);font-size:13px;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--white);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 input[type=number]{-moz-appearance:textfield}
-select:focus,input:focus,textarea:focus{border-color:var(--blue)}
+select:focus,input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(46,94,163,.15)}
 textarea{min-height:80px;resize:vertical}
-.form-section{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.25rem}
+.form-section{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.25rem}
 .form-section-title{font-size:14px;font-weight:600;color:var(--navy-dark);margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
 .form-num{width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .form-num-green{background:var(--green)}
 .checkbox-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px}
-.checkbox-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;color:var(--text);transition:all .15s}
+.checkbox-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:12px;color:var(--text);transition:all .15s}
 .checkbox-item:hover{border-color:var(--blue);background:var(--blue-light)}
 .checkbox-item input{width:14px;height:14px;cursor:pointer;flex-shrink:0;accent-color:var(--navy)}
 .checkbox-item.checked{border-color:var(--navy);background:var(--blue-light)}
@@ -140,7 +151,7 @@ textarea{min-height:80px;resize:vertical}
 /* Minister cards */
 .minister-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
 .minister-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.25rem;min-width:0}
-.minister-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Arial,sans-serif;font-size:16px;color:#fff;background:var(--navy);margin-bottom:10px;flex-shrink:0}
+.minister-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:16px;font-weight:600;color:#fff;background:var(--navy);margin-bottom:10px;flex-shrink:0}
 .minister-name{font-size:15px;font-weight:600;color:var(--navy-dark);margin-bottom:2px}
 .minister-loc{font-size:12px;color:var(--text-muted);margin-bottom:8px}
 .minister-stats{display:flex;gap:12px;flex-wrap:wrap}
@@ -201,8 +212,8 @@ textarea{min-height:80px;resize:vertical}
 .activity-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);margin-top:4px;flex-shrink:0}
 
 /* Toast */
-.toast{position:fixed;bottom:2rem;right:2rem;background:var(--navy-dark);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;z-index:1000;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;max-width:calc(100vw - 4rem)}
-.toast.show{opacity:1;transform:translateY(0)}
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--navy-dark);color:#fff;padding:12px 18px 12px 16px;border-radius:var(--radius-md);border-left:4px solid var(--gold);font-size:13px;z-index:1000;opacity:0;transform:translateX(20px);transition:opacity .25s,transform .25s;pointer-events:none;max-width:calc(100vw - 4rem);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.toast.show{opacity:1;transform:translateX(0)}
 
 /* Responsive */
 @media(max-width:1050px){
@@ -211,12 +222,10 @@ textarea{min-height:80px;resize:vertical}
 @media(max-width:900px){
   #panel-church-reports .cr-cta{flex-direction:column!important;align-items:stretch!important}
   #panel-church-reports .cr-cta-controls{width:100%!important;min-width:unset!important}
+  #panel-dashboard > div[style*="grid-template-columns:1fr 1fr 280px"]{grid-template-columns:1fr!important}
 }
 @media(max-width:700px){
-  #panel-dashboard > div[style*="grid-template-columns:2fr 1fr"],
-  #panel-dashboard > div[style*="grid-template-columns:1fr 320px"]{
-    grid-template-columns:1fr!important;
-  }
+  #panel-dashboard > div[style*="grid-template-columns:repeat(4,1fr)"]{grid-template-columns:repeat(2,1fr)!important}
 }
 @media(max-width:768px){
   .app{flex-direction:column}
@@ -238,7 +247,7 @@ textarea{min-height:80px;resize:vertical}
   .minister-card-role{flex:0 0 100%;padding-top:2px}
   .nav-item{flex-direction:column;gap:2px;padding:8px 12px;font-size:9px;border-left:none;border-bottom:3px solid transparent;white-space:nowrap;flex-shrink:0;min-width:56px;align-items:center}
   .nav-item svg{width:18px;height:18px}
-  .nav-item.active{border-bottom-color:#fff;border-left-color:transparent;background:rgba(255,255,255,.1)}
+  .nav-item.active{border-bottom-color:var(--gold);border-left-color:transparent;background:rgba(255,207,0,.1)}
   .main{width:100%;min-width:0}
   .content{padding:.75rem}
   .topbar{padding:0 .75rem;height:50px}
@@ -282,6 +291,16 @@ textarea{min-height:80px;resize:vertical}
   .card-header{padding:.6rem .75rem}
   .card-body{padding:.6rem}
 }
+/* Dash stat pills */
+.dash-stat{background:var(--white);border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow-sm);border-radius:var(--radius-lg);padding:1rem 1.25rem;display:flex;align-items:center;gap:12px;transition:box-shadow .2s,transform .2s}
+.dash-stat:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.dash-stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dash-stat-value{font-size:26px;font-weight:700;color:var(--navy-dark);line-height:1}
+.dash-stat-label{font-size:11px;color:var(--text-muted);font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+
+/* Avatar */
+.minister-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:16px;font-weight:600;color:#fff;background:var(--navy);margin-bottom:10px;flex-shrink:0}
+
 </style>
 </head>
 <body>
@@ -394,42 +413,60 @@ textarea{min-height:80px;resize:vertical}
       <!-- Unassigned visits banner -->
       <div id="dash-unassigned-banner" class="unassigned-banner" style="display:none"></div>
 
-      <!-- Metrics row -->
-      <div class="metrics-grid">
-        <div class="metric-card" onclick="showPanel('ministers');showPanel('assemblies')" style="cursor:pointer" onmouseover="this.style.background='var(--gray)'" onmouseout="this.style.background=''">
-          <div class="metric-label">Roster</div>
-          <div class="metric-value"><span id="m-assemblies">38</span> / <span id="m-ministers" style="font-size:20px">15</span></div>
-          <div class="metric-sub">assemblies / ministers</div>
-        </div>
-        <div class="metric-card" onclick="donutNav('upcoming')" style="cursor:pointer" onmouseover="this.style.background='var(--gray)'" onmouseout="this.style.background=''">
-          <div class="metric-label">2026 local church schedule completion</div>
-          <div id="dash-donut-wrap" class="dash-donut-wrap" style="margin-top:4px">
-            <div style="font-size:12px;color:var(--text-muted)">Loading...</div>
+      <!-- STAT ROW: 4 tight stat pills -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.25rem">
+
+        <div class="dash-stat" onclick="showPanel('ministers')" style="cursor:pointer">
+          <div class="dash-stat-icon" style="background:#EAF3DE;color:#1A5C24">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div>
+            <div class="dash-stat-value"><span id="m-ministers">—</span></div>
+            <div class="dash-stat-label">Ministers</div>
           </div>
         </div>
-        <div class="metric-card" id="m-conflicts-card" onclick="showPanel('conflicts')" style="cursor:pointer" onmouseover="this.style.background='var(--gray)'" onmouseout="this.style.background=''">
-          <div class="metric-label">Conflicts</div>
-          <div class="metric-value" id="m-conflicts" style="color:var(--red)">&#8212;</div>
-          <div class="metric-sub">double-bookings &rarr;</div>
-        </div>
-        <div class="metric-card" style="grid-column:span 1;min-width:0;cursor:pointer" onclick="openActivityModal()" onmouseover="this.style.background='var(--gray)'" onmouseout="this.style.background=''">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <div class="metric-label" style="margin:0">Recent activity</div>
-            <span style="font-size:10px;color:var(--blue)">View all &#8594;</span>
+
+        <div class="dash-stat" onclick="showPanel('assemblies')" style="cursor:pointer">
+          <div class="dash-stat-icon" style="background:#E6F1FB;color:#185FA5">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           </div>
-          <div id="dash-activity-metric" style="max-height:110px;overflow:hidden"></div>
+          <div>
+            <div class="dash-stat-value"><span id="m-assemblies">—</span></div>
+            <div class="dash-stat-label">Assemblies</div>
+          </div>
         </div>
-      </div>
 
-      <!-- TOP ROW: upcoming visits + upcoming camps side by side -->
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;align-items:start;margin-bottom:1.25rem">
+        <div class="dash-stat" onclick="donutNav('upcoming')" style="cursor:pointer">
+          <div class="dash-stat-icon" style="background:#E6F1FB;color:#185FA5">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+          </div>
+          <div>
+            <div class="dash-stat-value" id="dash-stat-upcoming">—</div>
+            <div class="dash-stat-label">Visits left 2026</div>
+          </div>
+        </div>
 
-        <!-- Upcoming visits -->
-        <div>
+        <div class="dash-stat" id="m-conflicts-card" onclick="showPanel('conflicts')" style="cursor:pointer">
+          <div class="dash-stat-icon" id="dash-conflict-icon" style="background:#FDDEDE;color:#7B0000">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div>
+            <div class="dash-stat-value" id="m-conflicts" style="color:var(--red)">—</div>
+            <div class="dash-stat-label">Conflicts</div>
+          </div>
+        </div>
+
+      </div><!-- end stat row -->
+
+      <!-- MAIN GRID: 3 columns -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 280px;gap:1.25rem;align-items:start">
+
+        <!-- COL 1: Upcoming visits table -->
+        <div style="grid-column:span 2">
           <div class="card">
-            <div class="card-header" style="flex-wrap:wrap;gap:8px">
-              <span class="card-title">Upcoming visits &#8212; next 8 weekends</span>
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto">
+            <div class="card-header">
+              <span class="card-title">Upcoming visits — next 8 weekends</span>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                 <select id="dash-region-filter" style="font-size:12px;padding:4px 8px;width:auto" onchange="filterUpcomingByRegion()">
                   <option value="">All regions</option>
                   <option value="CANPR">Canada Prairies</option>
@@ -455,10 +492,10 @@ textarea{min-height:80px;resize:vertical}
             <div class="card-body">
               <input type="hidden" id="dash-edit-idx">
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px">
-                <div><label class="form-label">Minister 1</label><select id="dash-m1"><option value="">&#8212; none &#8212;</option></select></div>
-                <div><label class="form-label">Minister 2</label><select id="dash-m2"><option value="">&#8212; none &#8212;</option></select></div>
-                <div><label class="form-label">Minister 3</label><select id="dash-m3"><option value="">&#8212; none &#8212;</option></select></div>
-                <div><label class="form-label">Minister 4 <span style="font-size:11px;color:var(--text-muted)">(optional)</span></label><select id="dash-m4"><option value="">&#8212; none &#8212;</option></select></div>
+                <div><label class="form-label">Minister 1</label><select id="dash-m1"><option value="">— none —</option></select></div>
+                <div><label class="form-label">Minister 2</label><select id="dash-m2"><option value="">— none —</option></select></div>
+                <div><label class="form-label">Minister 3</label><select id="dash-m3"><option value="">— none —</option></select></div>
+                <div><label class="form-label">Minister 4 <span style="font-size:11px;color:var(--text-muted)">(optional)</span></label><select id="dash-m4"><option value="">— none —</option></select></div>
               </div>
               <div class="form-group"><label class="form-label">Note</label><input type="text" id="dash-note" placeholder="e.g. substitution reason, travel change..."></div>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -468,34 +505,26 @@ textarea{min-height:80px;resize:vertical}
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Upcoming camps -->
-        <div class="card" style="height:fit-content">
-          <div class="card-header">
-            <span class="card-title">Upcoming camps</span>
-            <button class="btn btn-sm" onclick="showPanel('camps')" style="font-size:11px">View all &#8594;</button>
-          </div>
-          <div class="card-body" id="dash-camps-body" style="padding:.75rem 1.25rem">
-            <div style="font-size:12px;color:var(--text-muted)">Loading...</div>
-          </div>
-        </div>
-
-      </div><!-- end top row -->
-
-      <!-- BOTTOM: left = conflicts, right = insight widgets -->
-      <div style="display:grid;grid-template-columns:1fr 320px;gap:1.25rem;align-items:start">
-
-        <!-- LEFT: schedule conflicts -->
-        <div>
-          <div class="card" style="max-width:560px">
+          <!-- Conflicts (inline, under table) -->
+          <div class="card" id="dash-conflicts-card">
             <div class="card-header"><span class="card-title">Schedule conflicts</span></div>
             <div class="card-body" id="dashboard-conflicts"></div>
           </div>
         </div>
 
-        <!-- RIGHT: insight widgets -->
+        <!-- COL 3: sidebar widgets stacked -->
         <div style="display:flex;flex-direction:column;gap:1.25rem">
+
+          <!-- 2026 progress donut -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">2026 schedule progress</span></div>
+            <div class="card-body" style="padding:1rem 1.25rem">
+              <div id="dash-donut-wrap" class="dash-donut-wrap">
+                <div style="font-size:12px;color:var(--text-muted)">Loading...</div>
+              </div>
+            </div>
+          </div>
 
           <!-- Minister workload -->
           <div class="card">
@@ -507,17 +536,37 @@ textarea{min-height:80px;resize:vertical}
 
           <!-- Region coverage -->
           <div class="card">
-            <div class="card-header">
-              <span class="card-title">Region coverage 2026</span>
-            </div>
+            <div class="card-header"><span class="card-title">Region coverage 2026</span></div>
             <div class="card-body" style="padding:.75rem 1.25rem">
               <div id="dash-region-legend" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;font-size:11px;color:var(--text-muted)"></div>
               <div id="dash-region-body"><div style="font-size:12px;color:var(--text-muted)">Loading...</div></div>
             </div>
           </div>
 
-        </div><!-- end right column -->
-      </div><!-- end bottom grid -->
+          <!-- Upcoming camps -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Upcoming camps</span>
+              <button class="btn btn-sm" onclick="showPanel('camps')" style="font-size:11px">View all →</button>
+            </div>
+            <div class="card-body" id="dash-camps-body" style="padding:.75rem 1.25rem">
+              <div style="font-size:12px;color:var(--text-muted)">Loading...</div>
+            </div>
+          </div>
+
+          <!-- Activity feed -->
+          <div class="card" style="cursor:pointer" onclick="openActivityModal()">
+            <div class="card-header">
+              <span class="card-title">Recent activity</span>
+              <span style="font-size:11px;color:var(--blue)">View all →</span>
+            </div>
+            <div class="card-body" style="padding:.75rem 1.25rem">
+              <div id="dash-activity-metric"></div>
+            </div>
+          </div>
+
+        </div><!-- end sidebar widgets -->
+      </div><!-- end main grid -->
     </div>
 
     <!-- SCHEDULE (multi-year) -->
@@ -2343,17 +2392,26 @@ function detectConflicts() { return _detectConflictsBase(); }
 // ── Dashboard ─────────────────────────────────────────────
 function renderDashboard() {
   var visited=0; for(var i=0;i<SCHEDULE.length;i++){if(SCHEDULE[i].visited)visited++;}
-  var mVisits=document.getElementById('m-visits'); if(mVisits) mVisits.textContent=SCHEDULE.length;
-  var mVisitedSub=document.getElementById('m-visited-sub'); if(mVisitedSub) mVisitedSub.textContent=visited+' confirmed visited';
   var conflicts=detectConflicts();
   conflicts.sort(function(a,b){return a.minister.localeCompare(b.minister);});
-  document.getElementById('m-conflicts').textContent=conflicts.length;
+  document.getElementById('m-conflicts').textContent=conflicts.length||'✓';
+  if(!conflicts.length){
+    document.getElementById('m-conflicts').style.color='var(--green)';
+    var icon=document.getElementById('dash-conflict-icon');
+    if(icon){icon.style.background='#EAF3DE';icon.style.color='#1A5C24';}
+  }
   // Update roster counts live
   var asmEl=document.getElementById('m-assemblies'); if(asmEl) asmEl.textContent=ASSEMBLIES.filter(function(a){return !a.archived;}).length;
   var minEl=document.getElementById('m-ministers'); if(minEl) minEl.textContent=MINISTERS.length;
 
   var today=new Date().toISOString().split('T')[0];
   var upcoming=[];
+  for(var i=0;i<SCHEDULE.length;i++){
+    if(SCHEDULE[i].fri>=today&&!SCHEDULE[i].cancelled&&!SCHEDULE[i].visited) upcoming.push(SCHEDULE[i]);
+  }
+  var upcomingEl=document.getElementById('dash-stat-upcoming'); if(upcomingEl) upcomingEl.textContent=upcoming.length;
+
+  upcoming=[];
   for(var i=0;i<SCHEDULE.length;i++){
     if(SCHEDULE[i].fri>=today) upcoming.push(SCHEDULE[i]);
   }
@@ -2384,14 +2442,17 @@ function renderDashboard() {
       +'<td>'+(asm?regionBadge(asm.region):'')+'</td>'
       +'<td style="font-size:12px;color:var(--text-muted)">'+[s.m1,s.m2,s.m3,s.m4].filter(Boolean).join(', ')+'</td>'
       +'<td>'+statusBadge+'</td>'
-      +'<td style="text-align:right"><span style="font-size:11px;color:var(--blue)">Edit &#8594;</span></td>';
+      +'<td style="text-align:right"><span style="font-size:11px;color:var(--blue)">Edit →</span></td>';
     tbody.appendChild(tr);
   }
 
   var cb=document.getElementById('dashboard-conflicts');
+  var conflictsCard=document.getElementById('dash-conflicts-card');
   if(!conflicts.length){
-    cb.innerHTML='<div style="padding:1rem;color:var(--text-muted);font-size:13px">No conflicts detected.</div>';
+    if(conflictsCard) conflictsCard.style.display='none';
+    if(cb) cb.innerHTML='<div style="padding:1rem;color:var(--text-muted);font-size:13px">No conflicts detected.</div>';
   } else {
+    if(conflictsCard) conflictsCard.style.display='';
     var allWk=WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
     var html='<div style="padding:1.25rem">'
       +'<div style="font-size:13px;color:var(--text-muted);margin-bottom:10px">'+conflicts.length+' conflict'+(conflicts.length!==1?'s':'')+' — click any to open that minister and resolve.</div>';
@@ -2410,7 +2471,7 @@ function renderDashboard() {
         +'<div style="font-size:13px;font-weight:600;color:var(--red)">'+c.minister+'</div>'
         +'<div style="font-size:12px;color:var(--text-muted)">'+(wk?wk.label:c.fri)+' — '+desc+'</div>'
         +'</div>'
-        +'<span style="font-size:11px;color:var(--red);font-weight:500;white-space:nowrap">Open &#8594;</span>'
+        +'<span style="font-size:11px;color:var(--red);font-weight:500;white-space:nowrap">Open →</span>'
         +'</div>';
     }
     html+='</div>';
@@ -3007,7 +3068,7 @@ function renderMinisters() {
     var vh = VISIT_HISTORY.filter(function(h){return(h.ministers||[]).indexOf(m.name)>=0;});
     if (vh.length) lastVisit = fmtDate(vh.sort(function(a,b){return b.fri.localeCompare(a.fri);})[0].fri);
     var unavail = (AVAILABILITY[m.name]||[]).length;
-    var colors = ['#1A3A6B','#1A5C24','#7B0000','#7B4D00','#2E5EA3','#0F4D2E'];
+    var colors = ['#1A3A6B','#1A5C24','#7B0000','#7B4D00','#2E5EA3','#0F4D2E','#5B1A8B','#185FA5'];
     var initials = m.name.split(' ').map(function(w){return w[0];}).join('');
     var color = colors[realIdx % colors.length];
 
