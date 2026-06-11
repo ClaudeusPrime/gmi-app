@@ -310,6 +310,7 @@ textarea{min-height:80px;resize:vertical}
 <aside class="sidebar">
   <div class="sidebar-logo" style="padding:12px 16px 8px;cursor:pointer" onclick="showPanel('dashboard')" title="Go to dashboard">
     <svg width="100%" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+      <g id="duck-group" style="cursor:pointer">
       <!-- Duck body -->
       <ellipse cx="38" cy="54" rx="22" ry="17" fill="#FFCF00"/>
       <!-- Duck neck -->
@@ -342,6 +343,7 @@ textarea{min-height:80px;resize:vertical}
       <ellipse cx="54" cy="18" rx="1.5" ry="0.8" fill="#fff" opacity="0.4"/>
       <!-- Water -->
       <ellipse cx="38" cy="69" rx="26" ry="4" fill="#AAD4F5" opacity="0.45"/>
+      </g>
       <!-- GMI text -->
       <text x="76" y="36" font-family="Arial,sans-serif" font-size="26" font-weight="700" fill="#ffffff" letter-spacing="-0.5">GMI</text>
       <text x="78" y="56" font-family="Arial,sans-serif" font-size="14" font-weight="400" fill="#AAC8F0" letter-spacing="2">TRAVEL</text>
@@ -351,50 +353,63 @@ textarea{min-height:80px;resize:vertical}
     </svg>
   </div>
   <nav class="sidebar-nav">
-    <div class="nav-item active" onclick="showPanel('dashboard')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard
+    <div class="nav-item" onclick="showPanel('form-availability')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>My Availability
+    </div>
+    <div class="nav-item" onclick="showPanel('report-conflict')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Report a Conflict
     </div>
     <div class="nav-section">Schedule</div>
-    <div class="nav-item" onclick="showPanel('schedule')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Schedule
-    </div>
-    <div class="nav-item" onclick="showPanel('avail-grid')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Availability grid
+    <div class="nav-item active" onclick="showPanel('calendar')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendar
     </div>
     <div class="nav-item" onclick="showPanel('camps')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l4-8 4 4 4-6 4 10"/><path d="M3 20h18"/></svg>Camps
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l4-8 4 4 4-6 4 10"/><path d="M3 20h18"/></svg>Camp Schedule
     </div>
-    <div class="nav-section">People</div>
-    <div class="nav-item" onclick="showPanel('ministers')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Ministers
+    <div class="nav-item" onclick="showPanel('local-church-schedule')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Local Church Schedule
     </div>
+    <div class="nav-item" onclick="showPanel('travel-request')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>Travel Request
+    </div>
+    <div class="nav-section">Records</div>
     <div class="nav-item" onclick="showPanel('assemblies')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Assemblies
     </div>
-    <div class="nav-section">Records</div>
     <div class="nav-item" onclick="showPanel('church-reports')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Church Reports
     </div>
     <div class="nav-section">Admin</div>
-
+    <div class="nav-item" onclick="showPanel('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard
+    </div>
+    <div class="nav-item" onclick="showPanel('avail-grid')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Availability Grid
+    </div>
+    <div class="nav-item" onclick="showPanel('ministers')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Ministries
+    </div>
+    <div class="nav-item" onclick="showPanel('schedule')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Schedule
+    </div>
+    <div class="nav-item" onclick="showPanel('schedule-conflicts')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Schedule Conflicts <span id="nav-conflict-badge" style="display:none;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px"></span>
+    </div>
+    <div class="nav-item" onclick="showPanel('pending-requests')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Pending Requests <span id="nav-requests-badge" style="display:none;background:var(--amber);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px"></span>
+    </div>
     <div class="nav-item" onclick="showPanel('budget')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Travel Budget
     </div>
-    <div class="nav-item" onclick="showPanel('proposals')">
+    <div class="nav-item" onclick="showPanel('proposals')" style="display:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Travel Proposal
-    </div>
-    <div class="nav-item" onclick="showPanel('calendar')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendar
-    </div>
-    <div class="nav-item" onclick="showPanel('travel-request')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>Travel Request
     </div>
   </nav>
 </aside>
 
 <div class="main">
   <div class="topbar">
-    <span class="page-title" id="page-title">Dashboard</span>
+    <span class="page-title" id="page-title">Calendar</span>
     <div style="display:flex;align-items:center;gap:12px">
       <div id="admin-badge" style="display:none;background:var(--navy);color:#fff;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500">&#128274; Admin</div>
       <div id="gs-trigger" onclick="openGlobalSearch()" title="Search (/)">
@@ -621,6 +636,35 @@ textarea{min-height:80px;resize:vertical}
       <div class="card">
         <div class="card-header"><span class="card-title">Substitution notes</span></div>
         <div style="padding:0"><table><thead><tr><th>Assembly</th><th>Weekend</th><th>Ministers assigned</th><th>Note</th></tr></thead><tbody id="subs-tbody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- SCHEDULE CONFLICTS -->
+    <div class="panel" id="panel-schedule-conflicts">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Schedule Conflicts</span>
+          <button class="btn btn-sm" onclick="showPanel('schedule-conflicts')">&#8635; Refresh</button>
+        </div>
+        <div id="sc-body" style="padding:0"></div>
+      </div>
+    </div>
+
+    <!-- PENDING TRAVEL REQUESTS -->
+    <div class="panel" id="panel-pending-requests">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Pending Travel Requests</span>
+          <button class="btn btn-sm" onclick="renderPendingRequests()">&#8635; Refresh</button>
+        </div>
+        <div id="ptr-body" style="padding:0"></div>
+      </div>
+      <!-- Resolved requests -->
+      <div class="card" style="margin-top:1.25rem">
+        <div class="card-header">
+          <span class="card-title" style="font-size:13px;color:var(--text-muted)">Resolved Requests</span>
+        </div>
+        <div id="ptr-resolved" style="padding:0"></div>
       </div>
     </div>
 
@@ -1367,22 +1411,15 @@ textarea{min-height:80px;resize:vertical}
               <option value="2030">2030</option>
             </select>
             <select id="cal-view" onchange="renderCalendar()" style="font-size:12px;padding:4px 8px;width:auto">
-              <option value="bulletin">Bulletin list</option>
-              <option value="itinerary">Minister itinerary</option>
+              <option value="assembly">Assembly Visit</option>
+              <option value="camps">Camp</option>
+              <option value="bulletin">Yearly Overview</option>
+              <option value="itinerary">Minister Itinerary</option>
             </select>
             <select id="cal-minister" onchange="renderCalendar()" style="font-size:12px;padding:4px 8px;width:auto">
               <option value="">All ministers</option>
             </select>
           </div>
-        </div>
-        <!-- Read-only notice -->
-        <div style="background:var(--blue-light);border-bottom:1px solid #85B7EB;padding:8px 1.25rem;font-size:11px;color:var(--navy);display:flex;align-items:center;gap:8px">
-          <span>&#128274;</span> Read-only view — updates automatically when the admin makes changes
-        </div>
-        <!-- Legend -->
-        <div style="display:flex;gap:16px;align-items:center;padding:8px 1.25rem;border-bottom:1px solid var(--border);flex-wrap:wrap">
-          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted)"><div style="width:10px;height:10px;border-radius:2px;background:var(--blue-light);border:1px solid #85B7EB"></div>Assembly visit</div>
-          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted)"><div style="width:10px;height:10px;border-radius:2px;background:#EEEDFE;border:1px solid #AFA9EC"></div>Camp</div>
         </div>
         <div id="cal-body" style="padding:0"></div>
       </div>
@@ -1426,6 +1463,16 @@ textarea{min-height:80px;resize:vertical}
             <!-- Assembly fields -->
             <div id="tr-assembly-fields">
               <div class="form-group">
+                <label class="form-label">Year <span style="color:var(--red)">*</span></label>
+                <select id="tr-assembly-year" onchange="trFilterWeekendsByYear()" style="margin-bottom:8px">
+                  <option value="2026">2026</option>
+                  <option value="2027">2027</option>
+                  <option value="2028">2028</option>
+                  <option value="2029">2029</option>
+                  <option value="2030">2030</option>
+                </select>
+              </div>
+              <div class="form-group">
                 <label class="form-label">Assembly <span style="color:var(--red)">*</span></label>
                 <select id="tr-assembly"><option value="">Select assembly...</option></select>
               </div>
@@ -1448,6 +1495,16 @@ textarea{min-height:80px;resize:vertical}
             </div>
             <!-- Camp fields -->
             <div id="tr-camp-fields" style="display:none">
+              <div class="form-group">
+                <label class="form-label">Year <span style="color:var(--red)">*</span></label>
+                <select id="tr-camp-year" onchange="trFilterCampsByYear()" style="margin-bottom:8px">
+                  <option value="2026">2026</option>
+                  <option value="2027">2027</option>
+                  <option value="2028">2028</option>
+                  <option value="2029">2029</option>
+                  <option value="2030">2030</option>
+                </select>
+              </div>
               <div class="form-group">
                 <label class="form-label">Camp <span style="color:var(--red)">*</span></label>
                 <select id="tr-camp"><option value="">Select camp...</option></select>
@@ -1494,11 +1551,11 @@ textarea{min-height:80px;resize:vertical}
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
               <div class="form-group">
                 <label class="form-label">Hotel nights</label>
-                <input type="number" id="tr-nights" value="2" min="0" oninput="trUpdateBudget()">
+                <input type="number" id="tr-nights" value="0" min="0" oninput="trUpdateBudget()">
               </div>
               <div class="form-group">
                 <label class="form-label">Meal days</label>
-                <input type="number" id="tr-days" value="3" min="0" oninput="trUpdateBudget()">
+                <input type="number" id="tr-days" value="0" min="0" oninput="trUpdateBudget()">
               </div>
             </div>
             <div class="form-group">
@@ -1569,18 +1626,40 @@ textarea{min-height:80px;resize:vertical}
     <!-- FORM: AVAILABILITY -->
     <div class="panel" id="panel-form-availability">
       <div style="max-width:640px">
+        <!-- Submitted banner (hidden until submit) -->
+        <div id="av-submitted-banner" style="display:none;background:#D4EDDA;border:1px solid #98D4A3;border-radius:10px;padding:14px 18px;margin-bottom:1.25rem;display:none;align-items:center;gap:10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1A5C24" stroke-width="2" style="width:20px;height:20px;flex-shrink:0"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div>
+            <div style="font-weight:600;color:#1A5C24;font-size:14px">Availability submitted</div>
+            <div style="font-size:12px;color:#1A5C24;opacity:.8" id="av-submitted-name"></div>
+          </div>
+        </div>
         <div class="form-section"><div class="form-section-title"><span class="form-num">1</span>Your name</div><select id="av-name"><option value="">Select your name...</option></select></div>
-        <div class="form-section"><div class="form-section-title"><span class="form-num">2</span>Weekends NOT available in 2026</div><span class="form-hint">Check every weekend you cannot travel.</span><div id="av-2026-grid"></div></div>
-        <div class="form-section"><div class="form-section-title"><span class="form-num">3</span>Weekends NOT available in 2027</div><span class="form-hint">2027 planning underway &#8212; update anytime.</span><div id="av-2027-grid"></div></div>
-        <div class="form-section"><div class="form-section-title"><span class="form-num">4</span>Travel preference</div>
+        <div class="form-section">
+          <div class="form-section-title"><span class="form-num">2</span>Weekends NOT available
+            <select id="av-year-select" onchange="renderAvailYearGrid()" style="margin-left:10px;font-size:13px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-weight:600;color:var(--navy)">
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+              <option value="2029">2029</option>
+              <option value="2030">2030</option>
+            </select>
+          </div>
+          <span class="form-hint">Check every weekend you cannot travel.</span>
+          <div id="av-year-grid"></div>
+        </div>
+        <div class="form-section"><div class="form-section-title"><span class="form-num">3</span>Travel preference</div>
           <div class="radio-group">
             <label class="radio-item"><input type="radio" name="travel" value="anywhere"> Yes, anywhere</label>
             <label class="radio-item"><input type="radio" name="travel" value="nearby"> Yes, prefer nearby</label>
             <label class="radio-item"><input type="radio" name="travel" value="region"> Home region only</label>
           </div>
         </div>
-        <div class="form-section"><div class="form-section-title"><span class="form-num">5</span>Notes for admin</div><textarea id="av-notes" placeholder="Health, family commitments, preferred assemblies..."></textarea></div>
-        <button class="btn btn-primary" style="width:100%;padding:12px" onclick="submitAvailability()">Submit availability</button>
+        <div class="form-section"><div class="form-section-title"><span class="form-num">4</span>Notes for admin</div><textarea id="av-notes" placeholder="Health, family commitments, preferred assemblies..."></textarea></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" style="flex:1;padding:12px" onclick="clearAvailabilityForm()">Clear all</button>
+          <button class="btn btn-primary" style="flex:2;padding:12px" onclick="submitAvailability()">Submit availability</button>
+        </div>
       </div>
     </div>
 
@@ -1606,6 +1685,76 @@ textarea{min-height:80px;resize:vertical}
           </div>
         </div>
         <button class="btn btn-success" style="width:100%;padding:12px;background:var(--green)" onclick="submitVisit()">Submit visit record</button>
+      </div>
+    </div>
+
+    <!-- REPORT A CONFLICT -->
+    <div class="panel" id="panel-report-conflict">
+      <div style="max-width:580px">
+        <div id="rc-submitted-banner" style="display:none;background:#D4EDDA;border:1px solid #98D4A3;border-radius:10px;padding:14px 18px;margin-bottom:1.25rem;align-items:center;gap:10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1A5C24" stroke-width="2" style="width:20px;height:20px;flex-shrink:0"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div>
+            <div style="font-weight:600;color:#1A5C24;font-size:14px">Conflict report submitted</div>
+            <div style="font-size:12px;color:#1A5C24;opacity:.8">Your admin has been notified and will follow up with you.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Report a Scheduling Conflict</span></div>
+          <div style="padding:1.25rem">
+            <div class="form-group" style="margin-bottom:1rem">
+              <label class="form-label">Your name</label>
+              <select id="rc-minister"><option value="">Select your name...</option></select>
+            </div>
+            <div class="form-group" style="margin-bottom:1rem">
+              <label class="form-label">Weekend</label>
+              <select id="rc-weekend"><option value="">Select weekend...</option></select>
+            </div>
+            <div class="form-group" style="margin-bottom:1rem">
+              <label class="form-label">Assembly / Camp</label>
+              <input type="text" id="rc-assembly" placeholder="e.g. Rosetown SK or Summer Camp 2026">
+            </div>
+            <div class="form-group" style="margin-bottom:1rem">
+              <label class="form-label">What is the conflict?</label>
+              <select id="rc-type" style="margin-bottom:8px">
+                <option value="double-booked">I am double-booked that weekend</option>
+                <option value="unavailable">I am unavailable that weekend</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:1.5rem">
+              <label class="form-label">Additional notes</label>
+              <textarea id="rc-notes" placeholder="Any details that will help the admin resolve this..." style="min-height:80px"></textarea>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn" style="flex:1" onclick="clearConflictReport()">Clear</button>
+              <button class="btn btn-primary" style="flex:2" onclick="submitConflictReport()">Submit Report</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOCAL CHURCH SCHEDULE -->
+    <div class="panel" id="panel-local-church-schedule">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap">
+        <div style="display:flex;background:var(--white);border:1px solid var(--border);border-radius:8px;overflow:hidden" id="lcs-year-tabs">
+          <button onclick="switchLCSYear(2026)" id="lcs-yr-btn-2026" style="padding:7px 14px;font-size:13px;font-weight:600;border:none;background:var(--navy);color:#fff;cursor:pointer">2026</button>
+          <button onclick="switchLCSYear(2027)" id="lcs-yr-btn-2027" style="padding:7px 14px;font-size:13px;font-weight:500;border:none;background:var(--white);color:var(--text-muted);cursor:pointer">2027</button>
+          <button onclick="switchLCSYear(2028)" id="lcs-yr-btn-2028" style="padding:7px 14px;font-size:13px;font-weight:500;border:none;background:var(--white);color:var(--text-muted);cursor:pointer">2028</button>
+          <button onclick="switchLCSYear(2029)" id="lcs-yr-btn-2029" style="padding:7px 14px;font-size:13px;font-weight:500;border:none;background:var(--white);color:var(--text-muted);cursor:pointer">2029</button>
+          <button onclick="switchLCSYear(2030)" id="lcs-yr-btn-2030" style="padding:7px 14px;font-size:13px;font-weight:500;border:none;background:var(--white);color:var(--text-muted);cursor:pointer">2030</button>
+        </div>
+        <select id="lcs-region" onchange="renderLocalChurchSchedule()"><option value="">All regions</option><option value="CANPR">Canada Prairies</option><option value="CANPC">Canada Pacific</option><option value="CANON">Canada Ontario</option><option value="USE">US East</option><option value="USC">US Central</option><option value="USPC">US Pacific</option><option value="CARIB">Caribbean (CAR)</option></select>
+        <select id="lcs-minister" onchange="renderLocalChurchSchedule()"><option value="">All ministers</option></select>
+        <select id="lcs-status" onchange="renderLocalChurchSchedule()"><option value="">All statuses</option><option value="visited">Visited</option><option value="upcoming">Upcoming</option><option value="cancelled">Cancelled</option></select>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title" id="lcs-year-title">Local Church Visitation Schedule 2026</span>
+          
+        </div>
+        <div style="padding:0"><div id="lcs-current"></div></div>
       </div>
     </div>
 
@@ -1688,24 +1837,24 @@ textarea{min-height:80px;resize:vertical}
 <script>
 // ── Data ─────────────────────────────────────────────────
 var MINISTERS = [
-  {name:"Andy Snoke",      city:"Grand Junction", state:"CO", country:"USA", region:"USC"},
-  {name:"Bill Chinnis",    city:"Charlotte",      state:"NC", country:"USA", region:"USE"},
-  {name:"Brian Hannigan",  city:"North Battleford",state:"SK",country:"CAN", region:"CANPR"},
-  {name:"Darrell Smith",   city:"Edmonton",       state:"AB", country:"CAN", region:"CANPR"},
-  {name:"Darren Olson",    city:"North Battleford",state:"SK",country:"CAN", region:"CANPR"},
-  {name:"David Luff",      city:"Kingsport",      state:"TN", country:"USA", region:"USE"},
-  {name:"Dennis Aarrestad",city:"Park Valley",    state:"SK", country:"CAN", region:"CANPR"},
-  {name:"Jeff Olson",      city:"Grand Junction", state:"CO", country:"USA", region:"USC"},
-  {name:"Kelvin Martin",   city:"Stratford",      state:"ON", country:"CAN", region:"CANON"},
-  {name:"Nat Swaan",       city:"North Battleford",state:"SK",country:"CAN", region:"CANPR"},
-  {name:"Nick Snoke",      city:"Grand Junction", state:"CO", country:"USA", region:"USC"},
-  {name:"PJ Mathew",       city:"Detroit",        state:"MI", country:"USA", region:"USE"},
-  {name:"Terry Zimmer",    city:"Hinton",         state:"AB", country:"CAN", region:"CANPR"},
-  {name:"Trevor Sundbo",   city:"Regina",         state:"SK", country:"CAN", region:"CANPR"},
-  {name:"Wayne Peters",    city:"Winkler",        state:"MB", country:"CAN", region:"CANPR"},
-  {name:"Calvin James",   city:"Georgetown",      state:"",   country:"GUY", region:"CARIB"},
-  {name:"Bernard James",  city:"St. George",      state:"",   country:"GRN", region:"CARIB"},
-  {name:"Cephas Forde",   city:"St. Vincent",     state:"",   country:"VCT", region:"CARIB"}
+  {name:"Andy Snoke",      city:"Grand Junction", state:"CO", country:"USA", region:"USC", email:"a.snoke@globalmissionsinc.org"},
+  {name:"Bill Chinnis",    city:"Charlotte",      state:"NC", country:"USA", region:"USE", email:"b.chinnis@globalmissionsinc.org"},
+  {name:"Brian Hannigan",  city:"North Battleford",state:"SK",country:"CAN", region:"CANPR", email:"b.hannigan@globalmissionsinc.org"},
+  {name:"Darrell Smith",   city:"Edmonton",       state:"AB", country:"CAN", region:"CANPR", email:"d.smith@globalmissionsinc.org"},
+  {name:"Darren Olson",    city:"North Battleford",state:"SK",country:"CAN", region:"CANPR", email:"d.olson@globalmissionsinc.org"},
+  {name:"David Luff",      city:"Kingsport",      state:"TN", country:"USA", region:"USE", email:"d.luff@globalmissionsinc.org"},
+  {name:"Dennis Aarrestad",city:"Park Valley",    state:"SK", country:"CAN", region:"CANPR", email:"den.aarrestad@globalmissionsinc.org"},
+  {name:"Jeff Olson",      city:"Grand Junction", state:"CO", country:"USA", region:"USC", email:"j.olson@globalmissionsinc.org"},
+  {name:"Kelvin Martin",   city:"Stratford",      state:"ON", country:"CAN", region:"CANON", email:"k.martin@globalmissionsinc.org"},
+  {name:"Nat Swaan",       city:"North Battleford",state:"SK",country:"CAN", region:"CANPR", email:"n.swaan@globalmissionsinc.org"},
+  {name:"Nick Snoke",      city:"Grand Junction", state:"CO", country:"USA", region:"USC", email:"n.snoke@globalmissionsinc.org"},
+  {name:"PJ Mathew",       city:"Detroit",        state:"MI", country:"USA", region:"USE", email:"pj.mathew@globalmissionsinc.org"},
+  {name:"Terry Zimmer",    city:"Hinton",         state:"AB", country:"CAN", region:"CANPR", email:"t.zimmer@globalmissionsinc.org"},
+  {name:"Trevor Sundbo",   city:"Regina",         state:"SK", country:"CAN", region:"CANPR", email:"tr.sundbo@globalmissionsinc.org"},
+  {name:"Wayne Peters",    city:"Winkler",        state:"MB", country:"CAN", region:"CANPR", email:"w.peters@globalmissionsinc.org"},
+  {name:"Calvin James",    city:"Georgetown",     state:"",   country:"GUY", region:"CARIB", email:"c.james@globalmissionsinc.org"},
+  {name:"Bernard James",   city:"St. George",     state:"",   country:"GRN", region:"CARIB", email:"bj.james@globalmissionsinc.org"},
+  {name:"Cephas Forde",    city:"St. Vincent",    state:"",   country:"VCT", region:"CARIB", email:"c.forde@globalmissionsinc.org"}
 ];
 
 var ASSEMBLIES = [
@@ -1750,7 +1899,7 @@ var ASSEMBLIES = [
 
 
 var SCHEDULE = [
-  {assembly:"Victoria BC",        fri:"2026-01-16",m1:"Terry Zimmer",   m2:"David Luff",    m3:"Nick Snoke",      note:"Brian/Jeff instead of David",visited:false},
+  {assembly:"Victoria BC",        fri:"2026-01-16",m1:"Terry Zimmer",   m2:"David Luff",    m3:"Nick Snoke",      note:"",visited:false},
   {assembly:"Charlotte NC",       fri:"2026-01-16",m1:"Bill Chinnis",   m2:"Terry Zimmer",    m3:"",      note:"Trevor instead of Nick",visited:false},
   {assembly:"Saskatoon SK",       fri:"2026-02-13",m1:"Trevor Sundbo",  m2:"Brian Hannigan",m3:"Darren Olson",    note:"",visited:false},
   {assembly:"Portland OR",        fri:"2026-02-13",m1:"PJ Mathew",      m2:"Trevor Sundbo",    m3:"",      note:"",visited:false},
@@ -2167,22 +2316,26 @@ var crExpandedAsm = null;
 
 // ── Weekends ──────────────────────────────────────────────
 function getWeekends(year) {
-  var out = []; var d = new Date(year, 0, 1);
-  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  while (d.getFullYear() === year) {
-    if (d.getDay() === 5) {
-      var fri = new Date(d);
-      var sat = new Date(d); sat.setDate(sat.getDate()+1);
-      var sun = new Date(d); sun.setDate(sun.getDate()+2);
-      // Label shows Sat–Sun only e.g. "Jan 3–4" or "Jan 31–Feb 1"
+  var out = []; var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  // Start from the Friday on or before Jan 1 so we catch weekends that begin in Dec
+  var d = new Date(year, 0, 1);
+  var dow = d.getDay(); // 0=Sun,1=Mon,...,5=Fri,6=Sat
+  if (dow === 6) d.setDate(d.getDate() - 1); // Sat Jan1 → back to Fri Dec31
+  else if (dow !== 5) { var diff = (5 - dow + 7) % 7; d.setDate(d.getDate() + diff); } // advance to first Fri
+  // Now walk every Friday; include if Sat or Sun falls in the target year
+  while (true) {
+    var sat = new Date(d); sat.setDate(sat.getDate()+1);
+    var sun = new Date(d); sun.setDate(sun.getDate()+2);
+    if (sat.getFullYear() > year && sun.getFullYear() > year) break;
+    if (sat.getFullYear() === year || sun.getFullYear() === year) {
       var label = months[sat.getMonth()]+' '+sat.getDate()+'\u2013';
       if (sun.getMonth() !== sat.getMonth()) label += months[sun.getMonth()]+' ';
       label += sun.getDate();
-      out.push({fri: fri.toISOString().split('T')[0], label: label, year: year,
+      out.push({fri: d.toISOString().split('T')[0], label: label, year: year,
                 satDay: months[sat.getMonth()]+' '+sat.getDate(),
                 sunDay: months[sun.getMonth()]+' '+sun.getDate()});
     }
-    d.setDate(d.getDate()+1);
+    d.setDate(d.getDate()+7);
   }
   return out;
 }
@@ -2285,9 +2438,7 @@ function initSelects() {
   var rptAuth = document.getElementById('rpt-author');
   addOpts(rptAuth, mnames, function(v){return v;}, function(v){return v;});
 
-  // Availability grids
-  buildAvailGrid('av-2026-grid', WK2026);
-  buildAvailGrid('av-2027-grid', WK2027);
+  // Availability grid — rendered dynamically via renderAvailYearGrid()
 
   // Church reports write-assembly dropdown
   var crWa = document.getElementById('cr-write-assembly');
@@ -2321,7 +2472,36 @@ function buildAvailGrid(containerId, weekends) {
   }
 }
 
-// ── Conflicts ─────────────────────────────────────────────
+// ── Availability form year switcher ───────────────────────
+var _avYearCache = {};
+function renderAvailYearGrid() {
+  var sel = document.getElementById('av-year-select');
+  var year = sel ? parseInt(sel.value) : 2026;
+  var container = document.getElementById('av-year-grid');
+  if (!container) return;
+  container.innerHTML = '';
+  var weekends = getWeekendsForYear(year);
+  // Restore any previously checked state for this year
+  var saved = _avYearCache[year] || [];
+  buildAvailGrid('av-year-grid', weekends);
+  // Re-check saved selections
+  var cbs = container.querySelectorAll('input[type=checkbox]');
+  cbs.forEach(function(cb) {
+    if (saved.indexOf(cb.value) >= 0) {
+      cb.checked = true;
+      cb.parentNode.classList.add('checked');
+    }
+    cb.addEventListener('change', function() { _saveAvailCache(year); });
+  });
+}
+
+function _saveAvailCache(year) {
+  var container = document.getElementById('av-year-grid');
+  if (!container) return;
+  _avYearCache[year] = Array.from(container.querySelectorAll('input:checked')).map(function(cb){ return cb.value; });
+}
+
+
 function _detectConflictsBase() {
   var byDate = {};
   for (var i=0;i<SCHEDULE.length;i++) {
@@ -2765,11 +2945,32 @@ function applyInlineConflictFix(conflictIdx, count) {
     changed=true;
   }
   if(!changed){showToast('No changes made');return;}
+  // Collect affected ministers for Quill notification
+  var affectedMins = [];
+  for (var b=0;b<count;b++) {
+    var sel2=document.getElementById('cf-sel-'+conflictIdx+'-'+b);
+    if(!sel2||!sel2.value) continue;
+    var parts2=sel2.value.split('|');
+    var schedIdx2=parseInt(parts2[1]);
+    if(!isNaN(schedIdx2)) {
+      var s2=SCHEDULE[schedIdx2];
+      var allWk2=WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+      var wk2=null; for(var w2=0;w2<allWk2.length;w2++){if(allWk2[w2].fri===s2.fri){wk2=allWk2[w2];break;}}
+      var dateLabel2=wk2?wk2.label:s2.fri;
+      [s2.m1,s2.m2,s2.m3,s2.m4].filter(Boolean).forEach(function(mn){
+        if(affectedMins.indexOf(mn)<0) affectedMins.push({name:mn,assembly:s2.assembly,date:dateLabel2});
+      });
+    }
+  }
   renderConflicts();
   renderSchedule(activeScheduleYear);
   renderDashboard();
   renderMinisters();renderAssemblies();
   showToast('Conflict resolved');
+  if(affectedMins.length) {
+    var a0=affectedMins[0];
+    setTimeout(function(){ openQuillModal(a0.name, a0.assembly, a0.date, a0.assembly, a0.date); },400);
+  }
 }
 
 // ── Camp conflict resolution handlers ────────────────────
@@ -2783,6 +2984,11 @@ function applyCampConflictReplaceMinister(btn) {
   if (!replSel) return;
   var replacement = replSel.value; // 'none' means remove
   if (isNaN(schedIdx) || !slot) { showToast('Could not find schedule entry'); return; }
+  var oldMinister = SCHEDULE[schedIdx][slot] || '';
+  var assembly = SCHEDULE[schedIdx].assembly || '';
+  var allWkQ = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var wkQ = null; for(var wq=0;wq<allWkQ.length;wq++){if(allWkQ[wq].fri===SCHEDULE[schedIdx].fri){wkQ=allWkQ[wq];break;}}
+  var dateQ = wkQ ? wkQ.label : SCHEDULE[schedIdx].fri;
   SCHEDULE[schedIdx][slot] = replacement === 'none' ? '' : replacement;
   renderConflicts();
   renderSchedule(activeScheduleYear);
@@ -2790,6 +2996,9 @@ function applyCampConflictReplaceMinister(btn) {
   renderMinisters(); renderAssemblies();
   if (typeof renderCamps === 'function') renderCamps();
   showToast(replacement === 'none' ? 'Minister removed from visit' : replacement + ' assigned to visit');
+  if (oldMinister && oldMinister !== replacement) {
+    setTimeout(function(){ openQuillModal(oldMinister, assembly, dateQ, replacement === 'none' ? '(Unassigned)' : replacement, dateQ); }, 400);
+  }
 }
 
 // Option B: remove the conflicting minister from the camp roster
@@ -3388,7 +3597,7 @@ function showNotificationPrompt(ministerName) {
     + '<div style="font-size:11px;color:var(--text-muted);background:var(--gray);border-radius:8px;padding:10px;margin-bottom:10px;white-space:pre-wrap;max-height:160px;overflow-y:auto;font-family:monospace">' + text + '</div>'
     + '<div style="display:flex;gap:8px">'
     + '<button class="btn btn-primary btn-sm" onclick="copyNotification()" style="flex:1">Copy to clipboard</button>'
-    + '<button class="btn btn-sm" onclick="document.getElementById(\'notif-prompt\').style.display=\'none\'" style="flex:1">Dismiss</button>'
+    + '<button class="btn btn-sm" onclick="document.getElementById(\'notif-prompt\').style.display=\'none\'" style="flex:1">Close</button>'
     + '</div>';
   panel._text = text;
   panel._ministerName = ministerName;
@@ -3514,9 +3723,16 @@ function applyMinisterCampReplaceVisit(btn) {
   if (!sel||isNaN(schedIdx)||!slot) { showToast('Could not apply fix'); return; }
   var mname = SCHEDULE[schedIdx][slot] || '';
   var assembly = SCHEDULE[schedIdx].assembly || '';
-  SCHEDULE[schedIdx][slot] = sel.value==='none' ? '' : sel.value;
+  var allWkR = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var wkR = null; for(var wr=0;wr<allWkR.length;wr++){if(allWkR[wr].fri===SCHEDULE[schedIdx].fri){wkR=allWkR[wr];break;}}
+  var dateR = wkR ? wkR.label : SCHEDULE[schedIdx].fri;
+  var newVal = sel.value === 'none' ? '' : sel.value;
+  SCHEDULE[schedIdx][slot] = newVal;
   renderMinisters(); renderConflicts(); renderSchedule(activeScheduleYear); renderDashboard(); renderAssemblies(); renderAvailGrid(); renderAvailGrid();
   if (typeof renderCamps==='function') renderCamps();
+  if (mname && mname !== newVal) {
+    setTimeout(function(){ openQuillModal(mname, assembly, dateR, newVal || '(Unassigned)', dateR); }, 400);
+  }
 }
 
 // Cancel visit from minister page (camp conflict)
@@ -3642,21 +3858,21 @@ function closeMinisterForm() {
 }
 
 function refreshMinisterDropdowns() {
-  // Rebuild all minister dropdowns throughout the app
   var mnames = MINISTERS.map(function(m){return m.name;});
+  var mnamesSorted = mnames.slice().sort(); // alphabetical by first name
   var dropdowns = [
-    {id:'f26-minister', addBlank:'All ministers'},
-    {id:'av-name', addBlank:'Select your name...'},
-    {id:'rpt-author', addBlank:'Select minister...'}
+    {id:'f26-minister', addBlank:'All ministers', names:mnamesSorted},
+    {id:'av-name', addBlank:'Select your name...', names:mnamesSorted},
+    {id:'rpt-author', addBlank:'Select minister...', names:mnamesSorted}
   ];
   for (var d=0;d<dropdowns.length;d++) {
     var sel = document.getElementById(dropdowns[d].id);
     if (!sel) continue;
     var val = sel.value;
     sel.innerHTML = '<option value="">'+dropdowns[d].addBlank+'</option>';
-    for (var i=0;i<mnames.length;i++) {
+    for (var i=0;i<dropdowns[d].names.length;i++) {
       var o = document.createElement('option');
-      o.value = mnames[i]; o.textContent = mnames[i];
+      o.value = dropdowns[d].names[i]; o.textContent = dropdowns[d].names[i];
       sel.appendChild(o);
     }
     sel.value = val;
@@ -4208,12 +4424,24 @@ function openSchedEdit(idx) {
 function saveSchedEdit() {
   var idx=parseInt(document.getElementById('sched-edit-idx').value);
   if(isNaN(idx)||idx<0)return;
+
+  var oldMins = [SCHEDULE[idx].m1, SCHEDULE[idx].m2, SCHEDULE[idx].m3, SCHEDULE[idx].m4].filter(Boolean);
+  var allWkSE = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var wkSE = null; for(var wse=0;wse<allWkSE.length;wse++){if(allWkSE[wse].fri===SCHEDULE[idx].fri){wkSE=allWkSE[wse];break;}}
+  var dateSE = wkSE ? wkSE.label : SCHEDULE[idx].fri;
+  var oldAsm = SCHEDULE[idx].assembly;
+
   SCHEDULE[idx].m1=document.getElementById('sched-edit-m1').value;
   SCHEDULE[idx].m2=document.getElementById('sched-edit-m2').value;
   SCHEDULE[idx].m3=document.getElementById('sched-edit-m3').value;
   if(document.getElementById('sched-edit-m4')) SCHEDULE[idx].m4=document.getElementById('sched-edit-m4').value;
   SCHEDULE[idx].note=document.getElementById('sched-edit-note').value;
+
+  var newMins = [SCHEDULE[idx].m1, SCHEDULE[idx].m2, SCHEDULE[idx].m3, SCHEDULE[idx].m4].filter(Boolean);
+  var removed = oldMins.filter(function(m){ return newMins.indexOf(m) < 0; });
+
   closeSchedEdit();renderAsmSched();renderSchedule(activeScheduleYear);renderDashboard();renderMinisters();renderAssemblies();
+  updateConflictBadge();
   showToast('Schedule updated');
 }
 
@@ -4554,12 +4782,33 @@ function renderHistory() {
 function submitAvailability() {
   var name=document.getElementById('av-name').value;
   if(!name){showToast('Please select your name');return;}
+  var sel=document.getElementById('av-year-select');
+  if(sel)_saveAvailCache(parseInt(sel.value));
   var unavail=[];
-  var cbs=document.querySelectorAll('#av-2026-grid input:checked,#av-2027-grid input:checked');
-  for(var i=0;i<cbs.length;i++)unavail.push(cbs[i].value);
+  Object.keys(_avYearCache).forEach(function(yr){
+    _avYearCache[yr].forEach(function(fri){if(unavail.indexOf(fri)<0)unavail.push(fri);});
+  });
   AVAILABILITY[name]=unavail;
   showToast('Availability submitted for '+name);
   renderMinisters();
+  // Show submitted banner
+  var banner=document.getElementById('av-submitted-banner');
+  var nameEl=document.getElementById('av-submitted-name');
+  if(banner){banner.style.display='flex';}
+  if(nameEl){nameEl.textContent='Submitted for '+name+' — '+unavail.length+' weekend'+(unavail.length!==1?'s':'')+' marked unavailable.';}
+}
+
+function clearAvailabilityForm() {
+  document.getElementById('av-name').value='';
+  document.getElementById('av-notes').value='';
+  document.querySelectorAll('input[name="travel"]').forEach(function(r){r.checked=false;});
+  _avYearCache={};
+  var sel=document.getElementById('av-year-select');
+  if(sel){sel.value='2026';}
+  renderAvailYearGrid();
+  var banner=document.getElementById('av-submitted-banner');
+  if(banner)banner.style.display='none';
+  showToast('Form cleared');
 }
 
 // ── Visit confirmation form ───────────────────────────────
@@ -4592,10 +4841,14 @@ function showPanel(id) {
   document.getElementById('panel-'+id).classList.add('active');
   var navMap={
     'dashboard':'Dashboard','schedule':'Schedule','avail-grid':'Availability Grid',
-    'conflicts':'Conflicts','ministers':'Ministers','assemblies':'Assemblies',
+    'conflicts':'Conflicts','ministers':'Ministries','assemblies':'Assemblies',
     'assembly-detail':'Assembly Detail','history':'Visit History',
     'church-reports':'Church Reports','proposals':'Travel Proposal','calendar':'Calendar','travel-request':'Travel Request',
-    'budget':'Travel Budget','form-availability':'Availability Form'
+    'budget':'Travel Budget','form-availability':'Availability Form',
+    'camps':'Camp Schedule','local-church-schedule':'Local Church Schedule',
+    'schedule-conflicts':'Schedule Conflicts',
+    'pending-requests':'Pending Requests',
+    'report-conflict':'Report a Conflict'
   };
   document.getElementById('page-title').textContent=navMap[id]||id;
   var navItems=document.querySelectorAll('.nav-item');
@@ -4613,6 +4866,12 @@ function showPanel(id) {
   if(id==='church-reports')renderChurchReports();
   if(id==='history')renderHistory();
   if(id==='calendar'){initCalendarSelects();renderCalendar();}
+  if(id==='local-church-schedule')renderLocalChurchSchedule();
+  if(id==='form-availability'){refreshMinisterDropdowns();renderAvailYearGrid();}
+  if(id==='schedule-conflicts')renderScheduleConflicts();
+  if(id==='pending-requests')renderPendingRequests();
+  if(id==='report-conflict')initConflictReportForm();
+  if(id==='schedule')refreshMinisterDropdowns();
   if(id==='travel-request')initTravelRequest();
 }
 
@@ -5006,15 +5265,27 @@ function openDashEdit(idx) {
 function saveDashEdit() {
   var idx=parseInt(document.getElementById('dash-edit-idx').value);
   if(isNaN(idx)||idx<0) return;
+
+  var oldMins = [SCHEDULE[idx].m1, SCHEDULE[idx].m2, SCHEDULE[idx].m3, SCHEDULE[idx].m4].filter(Boolean);
+  var allWkD = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var wkD = null; for(var wd=0;wd<allWkD.length;wd++){if(allWkD[wd].fri===SCHEDULE[idx].fri){wkD=allWkD[wd];break;}}
+  var dateD = wkD ? wkD.label : SCHEDULE[idx].fri;
+  var oldAsm = SCHEDULE[idx].assembly;
+
   SCHEDULE[idx].m1=document.getElementById('dash-m1').value;
   SCHEDULE[idx].m2=document.getElementById('dash-m2').value;
   SCHEDULE[idx].m3=document.getElementById('dash-m3').value;
   SCHEDULE[idx].m4=document.getElementById('dash-m4')?document.getElementById('dash-m4').value:'';
   SCHEDULE[idx].note=document.getElementById('dash-note').value;
+
+  var newMins = [SCHEDULE[idx].m1, SCHEDULE[idx].m2, SCHEDULE[idx].m3, SCHEDULE[idx].m4].filter(Boolean);
+  var removed = oldMins.filter(function(m){ return newMins.indexOf(m) < 0; });
+
   closeDashEdit();
   renderDashboard();
   renderSchedule(activeScheduleYear);
   renderMinisters(); renderAssemblies();
+  updateConflictBadge();
   showToast('Visit updated');
 }
 
@@ -5634,6 +5905,14 @@ function saveSchedRowEdit(idx) {
   if (!asmEl) return;
   var newAsm = asmEl ? asmEl.value.trim() : '';
   if (!newAsm) { showToast('Please select an assembly'); return; }
+
+  // Capture before state for Quill
+  var oldMins = [SCHEDULE[idx].m1, SCHEDULE[idx].m2, SCHEDULE[idx].m3, SCHEDULE[idx].m4].filter(Boolean);
+  var allWkQ2 = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var wkQ2 = null; for(var wq2=0;wq2<allWkQ2.length;wq2++){if(allWkQ2[wq2].fri===SCHEDULE[idx].fri){wkQ2=allWkQ2[wq2];break;}}
+  var dateQ2 = wkQ2 ? wkQ2.label : SCHEDULE[idx].fri;
+  var oldAsm = SCHEDULE[idx].assembly;
+
   SCHEDULE[idx].assembly = newAsm;
   SCHEDULE[idx].m1   = m1El ? m1El.value.trim() : '';
   SCHEDULE[idx].m2   = m2El ? m2El.value.trim() : '';
@@ -5641,10 +5920,15 @@ function saveSchedRowEdit(idx) {
   var m4El = document.getElementById('ve-m4-'+idx);
   SCHEDULE[idx].m4   = m4El ? m4El.value.trim() : '';
   SCHEDULE[idx].note = noteEl ? noteEl.value.trim() : '';
+
+  var newMins = [SCHEDULE[idx].m1, SCHEDULE[idx].m2, SCHEDULE[idx].m3, SCHEDULE[idx].m4].filter(Boolean);
+  var removed = oldMins.filter(function(m){ return newMins.indexOf(m) < 0; });
+
   closeSchedRowEdit(idx);
   renderSchedule(activeScheduleYear);
   renderDashboard();
   renderMinisters(); renderAssemblies();
+  updateConflictBadge();
   showToast('Visit updated');
 }
 
@@ -5733,8 +6017,13 @@ function tripCost(ministerName, assemblyName, s) {
   var total = totalLocal;
   if (tripCurrency==='CAD' && cfg.currency==='USD') total = totalLocal * cfg.fx;
   if (tripCurrency==='USD' && cfg.currency==='CAD') total = totalLocal / cfg.fx;
-  return {transport:transport, accommodation:accommodation, meals:mealsCost,
-          hospitality:cfg.hospitality, total:total, mode:mode,
+  var fxRate = (tripCurrency==='CAD' && cfg.currency==='USD') ? cfg.fx : (tripCurrency==='USD' && cfg.currency==='CAD') ? 1/cfg.fx : 1;
+  var transportDisp = transport * fxRate;
+  var accommodationDisp = accommodation * fxRate;
+  var mealsCostDisp = mealsCost * fxRate;
+  var hospitalityDisp = cfg.hospitality * fxRate;
+  return {transport:transportDisp, accommodation:accommodationDisp, meals:mealsCostDisp,
+          hospitality:hospitalityDisp, total:total, mode:mode,
           km:km, distDisplay:distDisplay, tripDist:tripDist,
           tripNights:tripNights, tripDays:tripDays,
           isLocal:isLocal, tripCurrency:tripCurrency, flightCost:override.flightCost||0};
@@ -5763,6 +6052,20 @@ function renderBudget() {
   // Get all scheduled visits for this year
   var visits = SCHEDULE.filter(function(s){ return s.fri.startsWith(yearStr) && !s.cancelled; });
 
+  // Also include approved travel requests for this year
+  var approvedRequests = PROPOSALS.filter(function(p){
+    return p.status === 'Approved' && p._source === 'minister-request' && p.propType === 'assembly' &&
+           p.weekend && p.weekend.startsWith(yearStr);
+  });
+
+  // Include camp assignments for this year
+  var campVisits = [];
+  CAMPS.filter(function(c){ return c.start && c.start.startsWith(yearStr); }).forEach(function(c){
+    (c.ministers||[]).forEach(function(mname){
+      campVisits.push({minister:mname, camp:c.name, start:c.start, end:c.end});
+    });
+  });
+
   var totalCost = 0;
   var driveCost = 0; var flyCost = 0;
   var canCost = 0; var usCost = 0;
@@ -5770,7 +6073,7 @@ function renderBudget() {
   var ministerData = {};
   var assemblyData = {};
 
-  // Process each visit slot (m1, m2, m3)
+  // Process each visit slot (m1, m2, m3, m4)
   for (var si=0;si<visits.length;si++) {
     var s = visits[si];
     var slots = [s.m1,s.m2,s.m3,s.m4].filter(Boolean);
@@ -5778,20 +6081,13 @@ function renderBudget() {
       var mname = slots[mi];
       var tc = tripCost(mname, s.assembly, s);
       totalCost += tc.total;
-
       if (tc.mode==='drive') driveCost+=tc.total; else flyCost+=tc.total;
-
-      // Country split
       var mCountry='CAN';
       for(var i=0;i<MINISTERS.length;i++){if(MINISTERS[i].name===mname){mCountry=MINISTERS[i].country;break;}}
       if(mCountry==='CAN') canCost+=tc.total; else usCost+=tc.total;
-
-      // Region
       var reg='';
       for(var i=0;i<ASSEMBLIES.length;i++){if(ASSEMBLIES[i].name===s.assembly){reg=ASSEMBLIES[i].region;break;}}
       if(reg) regionCosts[reg]=(regionCosts[reg]||0)+tc.total;
-
-      // Per minister
       if(!ministerData[mname]) ministerData[mname]={total:0,trips:[],drives:0,flies:0};
       ministerData[mname].total+=tc.total;
       if(tc.mode==='drive')ministerData[mname].drives++;else ministerData[mname].flies++;
@@ -5799,8 +6095,6 @@ function renderBudget() {
         dist:tc.distDisplay,transport:tc.transport,accommodation:tc.accommodation,
         meals:tc.meals,hospitality:tc.hospitality,total:tc.total,
         isLocal:tc.isLocal,tripCurrency:tc.tripCurrency,currency:cfg.currency});
-
-      // Per assembly
       if(!assemblyData[s.assembly]) assemblyData[s.assembly]={total:0,visits:0,ministers:[]};
       assemblyData[s.assembly].total+=tc.total;
       assemblyData[s.assembly].visits++;
@@ -5808,39 +6102,196 @@ function renderBudget() {
     }
   }
 
+  // Process approved travel requests (not already in SCHEDULE)
+  for (var ri=0;ri<approvedRequests.length;ri++) {
+    var p = approvedRequests[ri];
+    var alreadyInSchedule = false;
+    for(var si=0;si<visits.length;si++){
+      var slots2 = [visits[si].m1,visits[si].m2,visits[si].m3,visits[si].m4].filter(Boolean);
+      if(visits[si].assembly===p.assembly && visits[si].fri===p.weekend && slots2.indexOf(p.minister)>=0){ alreadyInSchedule=true; break; }
+    }
+    if(alreadyInSchedule) continue;
+    var fakeRow = {fri:p.weekend, assembly:p.assembly};
+    var tc = tripCost(p.minister, p.assembly, fakeRow);
+    totalCost += tc.total;
+    if(tc.mode==='drive') driveCost+=tc.total; else flyCost+=tc.total;
+    var mCountry='CAN';
+    for(var i=0;i<MINISTERS.length;i++){if(MINISTERS[i].name===p.minister){mCountry=MINISTERS[i].country;break;}}
+    if(mCountry==='CAN') canCost+=tc.total; else usCost+=tc.total;
+    if(!ministerData[p.minister]) ministerData[p.minister]={total:0,trips:[],drives:0,flies:0};
+    ministerData[p.minister].total+=tc.total;
+    if(tc.mode==='drive')ministerData[p.minister].drives++;else ministerData[p.minister].flies++;
+    ministerData[p.minister].trips.push({assembly:p.assembly,fri:p.weekend,mode:tc.mode,
+      dist:tc.distDisplay,transport:tc.transport,accommodation:tc.accommodation,
+      meals:tc.meals,hospitality:tc.hospitality,total:tc.total,
+      isLocal:tc.isLocal,tripCurrency:tc.tripCurrency,currency:cfg.currency,_approved:true});
+    if(!assemblyData[p.assembly]) assemblyData[p.assembly]={total:0,visits:0,ministers:[]};
+    assemblyData[p.assembly].total+=tc.total;
+    assemblyData[p.assembly].visits++;
+    if(assemblyData[p.assembly].ministers.indexOf(p.minister)<0) assemblyData[p.assembly].ministers.push(p.minister);
+  }
+
+  // Ensure ALL ministers appear in table even with 0 trips
+  MINISTERS.forEach(function(m){
+    if(!ministerData[m.name]) ministerData[m.name]={total:0,trips:[],drives:0,flies:0};
+  });
+
+  // Process camp assignments for this year
+  for(var ki=0;ki<campVisits.length;ki++){
+    var cv = campVisits[ki];
+    var mname = cv.minister;
+    // Find matching approved proposal for this minister+camp to get their budget estimate
+    var campProposal = null;
+    for(var pi=0;pi<PROPOSALS.length;pi++){
+      var pr = PROPOSALS[pi];
+      if(pr.status==='Approved' && pr.propType==='camp' && pr.minister===mname && pr.assembly===cv.camp){
+        campProposal = pr; break;
+      }
+    }
+    var campCost = 0;
+    var campMode = 'drive';
+    if(campProposal && campProposal.budget && campProposal.budget.total){
+      campCost = campProposal.budget.total;
+      campMode = campProposal.mode || 'drive';
+    } else {
+      // Default: use config nights/meals for a multi-day camp
+      var campNights = cfg.nights || 2;
+      var sd2 = cv.start ? new Date(cv.start+'T12:00:00') : null;
+      var ed2 = cv.end ? new Date(cv.end+'T12:00:00') : null;
+      if(sd2 && ed2) campNights = Math.max(1, Math.round((ed2-sd2)/(1000*60*60*24)));
+      campCost = (campNights * cfg.hotel) + ((campNights+1) * cfg.meals);
+    }
+    totalCost += campCost;
+    if(campMode==='drive') driveCost+=campCost; else flyCost+=campCost;
+    var mCountry='CAN';
+    for(var i=0;i<MINISTERS.length;i++){if(MINISTERS[i].name===mname){mCountry=MINISTERS[i].country;break;}}
+    if(mCountry==='CAN') canCost+=campCost; else usCost+=campCost;
+    if(!ministerData[mname]) ministerData[mname]={total:0,trips:[],drives:0,flies:0};
+    ministerData[mname].total+=campCost;
+    if(campMode==='drive')ministerData[mname].drives++;else ministerData[mname].flies++;
+    ministerData[mname].trips.push({assembly:cv.camp+' (Camp)',fri:cv.start,mode:campMode,
+      dist:'—',transport:0,accommodation:campCost,meals:0,hospitality:0,total:campCost,
+      isLocal:false,tripCurrency:mCountry==='CAN'?'CAD':'USD',currency:cfg.currency,_camp:true});
+  }
+
   // ── Summary metrics ───────────────────────────────────────
   var sym = cfg.currency;
+  var totalVisits = visits.length + approvedRequests.filter(function(p){
+    return !visits.some(function(s){ return s.assembly===p.assembly && s.fri===p.weekend && [s.m1,s.m2,s.m3,s.m4].indexOf(p.minister)>=0; });
+  }).length;
   document.getElementById('bgt-metrics').innerHTML =
     '<div class="metric-card"><div class="metric-label">Total estimated cost</div><div class="metric-value" style="font-size:22px">'+fmtCurrency(totalCost,sym)+'</div><div class="metric-sub">'+cfg.year+' program</div></div>'
     +'<div class="metric-card"><div class="metric-label">Driving cost</div><div class="metric-value" style="font-size:22px">'+fmtCurrency(driveCost,sym)+'</div><div class="metric-sub">'+Math.round(driveCost/Math.max(totalCost,1)*100)+'% of total</div></div>'
     +'<div class="metric-card"><div class="metric-label">Flying cost</div><div class="metric-value" style="font-size:22px">'+fmtCurrency(flyCost,sym)+'</div><div class="metric-sub">'+Math.round(flyCost/Math.max(totalCost,1)*100)+'% of total</div></div>'
     +'<div class="metric-card"><div class="metric-label">Canadian ministers</div><div class="metric-value" style="font-size:22px">'+fmtCurrency(canCost,sym)+'</div></div>'
     +'<div class="metric-card"><div class="metric-label">US ministers</div><div class="metric-value" style="font-size:22px">'+fmtCurrency(usCost,sym)+'</div></div>'
-    +'<div class="metric-card"><div class="metric-label">Cost per visit</div><div class="metric-value" style="font-size:22px">'+fmtCurrency(totalCost/Math.max(visits.length,1),sym)+'</div><div class="metric-sub">average</div></div>';
+    +'<div class="metric-card"><div class="metric-label">Cost per visit</div><div class="metric-value" style="font-size:22px">'+fmtCurrency(totalCost/Math.max(totalVisits,1),sym)+'</div><div class="metric-sub">average</div></div>';
 
-  // ── Minister table ────────────────────────────────────────
-  var mSorted = Object.keys(ministerData).sort(function(a,b){return ministerData[b].total-ministerData[a].total;});
+  // ── Minister table — sortable, all ministers, alpha default ──
+  if (!window._bgtSort) window._bgtSort = {col:'name', dir:'asc'};
+  var allMins = Object.keys(ministerData);
+  allMins.sort(function(a,b){
+    var col = window._bgtSort.col;
+    var dir = window._bgtSort.dir === 'asc' ? 1 : -1;
+    if(col==='name') return dir * a.localeCompare(b);
+    if(col==='trips') return dir * (ministerData[a].trips.length - ministerData[b].trips.length);
+    if(col==='drives') return dir * (ministerData[a].drives - ministerData[b].drives);
+    if(col==='flies') return dir * (ministerData[a].flies - ministerData[b].flies);
+    if(col==='total') return dir * (ministerData[a].total - ministerData[b].total);
+    return 0;
+  });
+
+  function sortArrow(col) {
+    if(window._bgtSort.col!==col) return '<span style="color:var(--border);margin-left:4px">⇅</span>';
+    return window._bgtSort.dir==='asc'?'<span style="margin-left:4px">↑</span>':'<span style="margin-left:4px">↓</span>';
+  }
+  function thClick(col){ return 'onclick="window._bgtSort={col:\''+col+'\',dir:(window._bgtSort&&window._bgtSort.col===\''+col+'\'&&window._bgtSort.dir===\'asc\')?\'desc\':\'asc\'};renderBudget()"'; }
+
+  var thStyle = 'padding:10px 12px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;white-space:nowrap';
   var th='<thead><tr>'
-    +'<th style="text-align:left;padding:10px 12px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)">Minister</th>'
-    +'<th style="text-align:center;padding:10px 8px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)">Trips</th>'
-    +'<th style="text-align:center;padding:10px 8px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)">Driving</th>'
-    +'<th style="text-align:center;padding:10px 8px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)">Flying</th>'
-    +'<th style="text-align:right;padding:10px 12px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)">Est. Total</th>'
+    +'<th style="text-align:left;'+thStyle+'" '+thClick('name')+'>Minister'+sortArrow('name')+'</th>'
+    +'<th style="text-align:center;'+thStyle+'" '+thClick('trips')+'>Trips'+sortArrow('trips')+'</th>'
+    +'<th style="text-align:center;'+thStyle+'" '+thClick('drives')+'>Driving'+sortArrow('drives')+'</th>'
+    +'<th style="text-align:center;'+thStyle+'" '+thClick('flies')+'>Flying'+sortArrow('flies')+'</th>'
+    +'<th style="text-align:right;'+thStyle+'" '+thClick('total')+'>Est. Total'+sortArrow('total')+'</th>'
     +'<th style="padding:10px 8px;background:var(--gray);border-bottom:1px solid var(--border)"></th>'
     +'</tr></thead>';
   var rows='';
-  for(var mi=0;mi<mSorted.length;mi++){
-    var mn=mSorted[mi]; var md=ministerData[mn];
-    rows+='<tr style="cursor:pointer" onclick="showMinisterBudgetDetail(\''+mn+'\')">'
-      +'<td style="padding:10px 12px;border-bottom:1px solid var(--border);font-weight:500">'+mn+'</td>'
+  for(var mi=0;mi<allMins.length;mi++){
+    var mn=allMins[mi]; var md=ministerData[mn];
+    var rowMuted = md.trips.length===0 ? 'opacity:.5' : '';
+    var uid = 'bgt-acc-'+mn.replace(/\s+/g,'_');
+    // Build trip detail HTML for accordion
+    var allWkB=WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+    var iStyle='width:70px;font-size:11px;padding:3px 5px;text-align:right;border:1px solid var(--border);border-radius:4px';
+    var tripRows=''; var grandTotal=0;
+    var trips=md.trips.slice().sort(function(a,b){return (a.fri||'').localeCompare(b.fri||'');});
+    for(var ti=0;ti<trips.length;ti++){
+      var t=trips[ti];
+      var wkB=null;for(var w=0;w<allWkB.length;w++){if(allWkB[w].fri===t.fri){wkB=allWkB[w];break;}}
+      var isFly=t.mode==='fly';
+      var key=getTripKey(mn,t.fri,t.assembly);
+      var override=TRIP_OVERRIDES[key]||{};
+      grandTotal+=t.total;
+      var localTag=t.isLocal?'<span style="font-size:10px;color:var(--green);margin-left:4px">(local)</span>':'';
+      var campTag=t._camp?'<span style="font-size:10px;background:#EEEDFE;color:#3C3489;padding:1px 5px;border-radius:3px;margin-left:4px">Camp</span>':'';
+      var drvBg=isFly?'#f0f0f0':'#1A5C24'; var drvCol=isFly?'#666':'#fff';
+      var flyBg=isFly?'#1A3A6B':'#f0f0f0'; var flyCol=isFly?'#fff':'#666';
+      tripRows+='<tr>'
+        +'<td style="padding:7px 12px 7px 32px;border-bottom:1px solid var(--border);font-size:12px;white-space:nowrap">'+(wkB?wkB.label:t.fri||'—')+'</td>'
+        +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:12px;font-weight:500">'+t.assembly+localTag+campTag+'</td>'
+        +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:center;white-space:nowrap">'
+        +'<div style="display:inline-flex;border:1px solid var(--border);border-radius:6px;overflow:hidden">'
+        +'<button data-mn="'+mn+'" data-fri="'+t.fri+'" data-asm="'+t.assembly+'" data-mode="drive" onclick="budgetModeBtn(this)" style="padding:2px 7px;font-size:11px;border:none;cursor:pointer;background:'+drvBg+';color:'+drvCol+'">Drive</button>'
+        +'<button data-mn="'+mn+'" data-fri="'+t.fri+'" data-asm="'+t.assembly+'" data-mode="fly" onclick="budgetModeBtn(this)" style="padding:2px 7px;font-size:11px;border:none;cursor:pointer;background:'+flyBg+';color:'+flyCol+'">Fly</button>'
+        +'</div></td>'
+        +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right">'
+        +(isFly
+          ?'<input type="number" value="'+(override.flightCost||'')+'" placeholder="Enter $" data-mn="'+mn+'" data-fri="'+t.fri+'" data-asm="'+t.assembly+'" data-field="flightCost" style="'+iStyle+'" oninput="budgetFieldChange(this)">'
+          :'<span style="font-size:12px;color:var(--text-muted)">'+Math.round(t.tripDist||0)+' '+cfg.unit+'</span>')
+        +'</td>'
+        +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right;font-size:12px">'+fmtCurrency(t.transport,sym)+'</td>'
+        +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right;font-size:12px">'+(t.isLocal?'&mdash;':fmtCurrency(t.accommodation,sym))+'</td>'
+        +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right;font-size:12px">'+(t.isLocal?'&mdash;':fmtCurrency((t.meals||0)+(t.hospitality||0),sym))+'</td>'
+        +'<td style="padding:7px 12px;border-bottom:1px solid var(--border);text-align:right;font-weight:600;color:var(--navy-dark)">'+fmtCurrency(t.total,sym)+'</td>'
+        +'</tr>';
+    }
+    // Summary row at bottom of accordion
+    if(trips.length){
+      tripRows+='<tr style="background:var(--blue-light)">'
+        +'<td colspan="7" style="padding:8px 8px 8px 32px;font-weight:600;color:var(--navy-dark);font-size:12px">Total for '+mn+'</td>'
+        +'<td style="padding:8px 12px;text-align:right;font-weight:700;color:var(--navy-dark)">'+fmtCurrency(grandTotal,sym)+'</td>'
+        +'</tr>';
+    }
+    rows+='<tr style="'+rowMuted+'" onclick="(function(el){var body=document.getElementById(\''+uid+'\');var arr=el.querySelector(\'.bgt-arrow\');if(body.style.display===\'none\'||!body.style.display){body.style.display=\'table-row-group\';if(arr)arr.style.transform=\'rotate(180deg)\'}else{body.style.display=\'none\';if(arr)arr.style.transform=\'\'}})(this)" style="cursor:pointer">'
+      +'<td style="padding:10px 12px;border-bottom:1px solid var(--border);font-weight:500;display:flex;align-items:center;gap:6px">'
+      +'<svg class="bgt-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0;transition:transform .2s;color:var(--text-muted)"><polyline points="6 9 12 15 18 9"/></svg>'
+      +mn+'</td>'
       +'<td style="padding:10px 8px;border-bottom:1px solid var(--border);text-align:center">'+md.trips.length+'</td>'
       +'<td style="padding:10px 8px;border-bottom:1px solid var(--border);text-align:center;font-size:12px;color:var(--green)">'+md.drives+'</td>'
       +'<td style="padding:10px 8px;border-bottom:1px solid var(--border);text-align:center;font-size:12px;color:var(--blue)">'+md.flies+'</td>'
       +'<td style="padding:10px 12px;border-bottom:1px solid var(--border);text-align:right;font-weight:600;color:var(--navy-dark)">'+fmtCurrency(md.total,sym)+'</td>'
-      +'<td style="padding:10px 8px;border-bottom:1px solid var(--border);text-align:right"><span style="font-size:11px;color:var(--blue)">Details \u2192</span></td>'
-      +'</tr>';
-  }
-  document.getElementById('bgt-minister-table').innerHTML=th+'<tbody>'+rows+'</tbody>';
+      +'<td style="padding:10px 8px;border-bottom:1px solid var(--border)"></td>'
+      +'</tr>'
+      +'<tbody id="'+uid+'" style="display:none">'
+      +'<tr><td colspan="6" style="padding:0;background:var(--gray)">'
+      +'<table style="width:100%;border-collapse:collapse">'
+      +'<thead><tr style="background:var(--gray)">'
+      +'<th style="padding:6px 12px 6px 32px;font-size:10px;font-weight:600;color:var(--text-muted);text-align:left;white-space:nowrap">Weekend</th>'
+      +'<th style="padding:6px 8px;font-size:10px;font-weight:600;color:var(--text-muted);text-align:left">Assembly / Camp</th>'
+      +'<th style="padding:6px 8px;font-size:10px;font-weight:600;color:var(--text-muted);text-align:center">Mode</th>'
+      +'<th style="padding:6px 8px;font-size:10px;font-weight:600;color:var(--text-muted);text-align:right">Distance</th>'
+      +'<th style="padding:6px 8px;font-size:10px;font-weight:600;color:var(--text-muted);text-align:right">Transport</th>'
+      +'<th style="padding:6px 8px;font-size:10px;font-weight:600;color:var(--text-muted);text-align:right">Hotel</th>'
+      +'<th style="padding:6px 8px;font-size:10px;font-weight:600;color:var(--text-muted);text-align:right">Food</th>'
+      +'<th style="padding:6px 12px;font-size:10px;font-weight:600;color:var(--text-muted);text-align:right">Total</th>'
+      +'</tr></thead>'
+      +'<tbody>'+tripRows+'</tbody>'
+      +'</table>'
+      +'</td></tr>'
+      +'</tbody>';
+  }  // end for allMins
+  document.getElementById('bgt-minister-table').innerHTML=th+rows;
   window._budgetMinisterData=ministerData;
   window._budgetCfg=cfg;
 
@@ -5971,8 +6422,12 @@ function budgetModeBtn(btn) {
   var key=getTripKey(btn.getAttribute('data-mn'),btn.getAttribute('data-fri'),btn.getAttribute('data-asm'));
   if(!TRIP_OVERRIDES[key]) TRIP_OVERRIDES[key]={};
   TRIP_OVERRIDES[key].mode=btn.getAttribute('data-mode');
+  var mn = btn.getAttribute('data-mn');
   renderBudget();
-  showMinisterBudgetDetail(btn.getAttribute('data-mn'));
+  // Re-open the accordion for this minister
+  var uid = 'bgt-acc-'+mn.replace(/\s+/g,'_');
+  var body = document.getElementById(uid);
+  if(body){ body.style.display='table-row-group'; }
 }
 
 function budgetFlightCost(input) {
@@ -6075,24 +6530,43 @@ function initTravelRequest() {
     aSel.innerHTML += '<option value="'+a.name+'">'+a.name+'</option>';
   });
 
-  // Weekend dropdown
-  var wSel = document.getElementById('tr-weekend');
-  wSel.innerHTML = '<option value="">Select weekend...</option>';
-  WK2026.concat(WK2027).concat(WK2028).forEach(function(w){
-    wSel.innerHTML += '<option value="'+w.fri+'">'+w.label+' ('+w.year+')</option>';
-  });
+  // Weekend dropdown — filter by selected year
+  trFilterWeekendsByYear();
 
-  // Camp dropdown
-  var cSel = document.getElementById('tr-camp');
-  cSel.innerHTML = '<option value="">Select camp...</option>';
-  CAMPS.filter(function(c){return c.start;}).slice().sort(function(a,b){return a.start.localeCompare(b.start);}).forEach(function(c){
-    var sd = new Date(c.start+'T12:00:00');
-    var mns = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    cSel.innerHTML += '<option value="'+c.name+'">'+c.name+' ('+mns[sd.getMonth()]+' '+sd.getDate()+')</option>';
-  });
+  // Camp dropdown — filter by selected year
+  trFilterCampsByYear();
 
   trUpdateBudget();
   if (cur) trMinisterChange();
+}
+
+function trFilterWeekendsByYear() {
+  var yearSel = document.getElementById('tr-assembly-year');
+  var year = parseInt(yearSel ? yearSel.value : '2026');
+  var wSel = document.getElementById('tr-weekend');
+  if (!wSel) return;
+  var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var filtered = allWk.filter(function(w){ return w.year === year; });
+  wSel.innerHTML = '<option value="">Select weekend...</option>';
+  filtered.forEach(function(w){
+    wSel.innerHTML += '<option value="'+w.fri+'">'+w.label+'</option>';
+  });
+}
+
+function trFilterCampsByYear() {
+  var yearSel = document.getElementById('tr-camp-year');
+  var year = yearSel ? yearSel.value : '2026';
+  var cSel = document.getElementById('tr-camp');
+  if (!cSel) return;
+  cSel.innerHTML = '<option value="">Select camp...</option>';
+  CAMPS.filter(function(c){ return c.start && c.start.startsWith(year); })
+    .slice().sort(function(a,b){ return a.start.localeCompare(b.start); })
+    .forEach(function(c){
+      var sd = new Date(c.start+'T12:00:00');
+      var mns = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var campYr = c.start ? c.start.substring(0,4) : '';
+      cSel.innerHTML += '<option value="'+c.name+'">'+c.name+(campYr?' '+campYr:'')+' ('+mns[sd.getMonth()]+' '+sd.getDate()+')</option>';
+    });
 }
 
 function trTypeChange() {
@@ -6105,6 +6579,7 @@ function trTypeChange() {
   visitLabel.style.background = type === 'assembly' ? 'var(--blue-light)' : 'var(--white)';
   campLabel.style.borderColor = type === 'camp' ? 'var(--navy)' : 'var(--border)';
   campLabel.style.background = type === 'camp' ? 'var(--blue-light)' : 'var(--white)';
+  if (type === 'camp') trFilterCampsByYear();
 }
 
 function trModeChange() {
@@ -6204,7 +6679,13 @@ function submitTravelRequest() {
   } else {
     destination = document.getElementById('tr-camp').value;
     if (!destination) { showToast('Please select a camp'); return; }
-    var camp = null; for (var i=0;i<CAMPS.length;i++){if(CAMPS[i].name===destination){camp=CAMPS[i];break;}}
+    var campYearSel = document.getElementById('tr-camp-year');
+    var campYearVal = campYearSel ? campYearSel.value : '2026';
+    var camp = null;
+    // Match by name AND selected year
+    for (var i=0;i<CAMPS.length;i++){if(CAMPS[i].name===destination && CAMPS[i].start && CAMPS[i].start.startsWith(campYearVal)){camp=CAMPS[i];break;}}
+    // Fallback to any match
+    if (!camp) { for (var i=0;i<CAMPS.length;i++){if(CAMPS[i].name===destination){camp=CAMPS[i];break;}} }
     if (camp && camp.start) {
       var sd=new Date(camp.start+'T12:00:00'); var ed=new Date(camp.end+'T12:00:00');
       var mns=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -6265,6 +6746,7 @@ function submitTravelRequest() {
     _source: 'minister-request'
   };
   PROPOSALS.unshift(proposal);
+  updateRequestsBadge();
 
   document.getElementById('tr-text-output').value = text;
   window._trLastText = text;
@@ -6291,8 +6773,8 @@ function clearTravelRequest() {
   });
   document.getElementById('tr-distance').value = '';
   document.getElementById('tr-flight').value = '';
-  document.getElementById('tr-nights').value = '2';
-  document.getElementById('tr-days').value = '3';
+  document.getElementById('tr-nights').value = '0';
+  document.getElementById('tr-days').value = '0';
   document.getElementById('tr-notes').value = '';
   document.getElementById('tr-result').style.display = 'none';
   document.getElementById('tr-overseers-box').style.display = 'none';
@@ -6332,9 +6814,101 @@ function renderCalendar() {
 
   if (view === 'bulletin') {
     body.innerHTML = renderBulletinView(year, yearStr, ministerF);
+  } else if (view === 'assembly') {
+    body.innerHTML = renderAssemblyVisitView(year, yearStr, ministerF);
+  } else if (view === 'camps') {
+    body.innerHTML = renderCampsCalView(year, yearStr, ministerF);
   } else {
     body.innerHTML = renderItineraryView(year, yearStr, ministerF);
   }
+}
+
+function renderAssemblyVisitView(year, yearStr, ministerF) {
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+
+  // Build conflict map: fri -> ministers who appear more than once
+  var byFri = {};
+  SCHEDULE.forEach(function(s) {
+    if (!byFri[s.fri]) byFri[s.fri] = [];
+    [s.m1,s.m2,s.m3,s.m4].filter(Boolean).forEach(function(m){ byFri[s.fri].push(m); });
+  });
+  var conflictMap = {};
+  Object.keys(byFri).forEach(function(fri) {
+    var seen = {}, dups = {};
+    byFri[fri].forEach(function(m){ if(seen[m]) dups[m]=true; else seen[m]=true; });
+    conflictMap[fri] = dups;
+  });
+
+  var html = '';
+  for (var mo = 0; mo < 12; mo++) {
+    var moStr = String(mo + 1).padStart(2, '0');
+    var moKey = yearStr + '-' + moStr;
+    var entries = SCHEDULE.filter(function(s){
+      return s.fri.startsWith(moKey) && !s.cancelled;
+    }).map(function(s) {
+      var mins = [s.m1,s.m2,s.m3,s.m4].filter(Boolean);
+      if (ministerF && mins.indexOf(ministerF) < 0) return null;
+      var wk = null; for (var w=0;w<allWk.length;w++){if(allWk[w].fri===s.fri){wk=allWk[w];break;}}
+      var conflicts = mins.filter(function(m){ return conflictMap[s.fri] && conflictMap[s.fri][m]; });
+      return { date:s.fri, dateLabel: wk ? wk.label : s.fri, assembly:s.assembly, ministers:mins, visited:s.visited, conflicts:conflicts };
+    }).filter(Boolean);
+    if (!entries.length) continue;
+    entries.sort(function(a,b){return a.assembly.localeCompare(b.assembly);});
+    html += '<div>'
+      + '<div style="background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 1.25rem;letter-spacing:.03em">'+months[mo]+' '+year+'</div>'
+      + '<table style="width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed">'
+      + '<colgroup><col style="width:180px"><col style="width:130px"><col style="width:auto"></colgroup>';
+    entries.forEach(function(e) {
+      var rowBg = e.conflicts.length ? 'background:var(--red-light)' : e.visited ? 'background:var(--green-light)' : '';
+      html += '<tr style="border-bottom:1px solid var(--border);'+rowBg+';vertical-align:top">'
+        + '<td style="padding:8px 1.25rem;font-weight:600">'+e.assembly+'</td>'
+        + '<td style="padding:8px 4px;color:var(--text-muted);font-size:12px">'+e.dateLabel+'</td>'
+        + '<td style="padding:8px 1.25rem">'
+        + e.ministers.map(function(m){
+            var isConflict = e.conflicts.indexOf(m) >= 0;
+            return '<div style="font-size:12px;'+(isConflict?'color:var(--red);font-weight:600':'color:var(--text-muted)')+'">'+m+(isConflict?' ⚠':'')+'</div>';
+          }).join('')
+        + '</td></tr>';
+    });
+    html += '</table></div>';
+  }
+  return html || '<div style="padding:1.25rem;color:var(--text-muted)">No assembly visits scheduled.</div>';
+}
+
+function renderCampsCalView(year, yearStr, ministerF) {
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var html = '';
+  for (var mo = 0; mo < 12; mo++) {
+    var moStr = String(mo + 1).padStart(2, '0');
+    var moKey = yearStr + '-' + moStr;
+    var entries = CAMPS.filter(function(c){
+      return c.start && (c.start.startsWith(moKey) || (c.start <= moKey+'-31' && c.end >= moKey+'-01'));
+    }).map(function(c) {
+      var campMins = (c.ministers||[]).filter(Boolean);
+      if (ministerF && campMins.indexOf(ministerF) < 0) return null;
+      var sd = new Date(c.start+'T12:00:00'); var ed = new Date(c.end+'T12:00:00');
+      var mns = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var label = mns[sd.getMonth()]+' '+sd.getDate()+'\u2013'+mns[ed.getMonth()]+' '+ed.getDate();
+      return { date:c.start, dateLabel:label, name:c.name, location:c.location||'', ministers:campMins };
+    }).filter(Boolean);
+    if (!entries.length) continue;
+    entries.sort(function(a,b){return a.date.localeCompare(b.date);});
+    html += '<div>'
+      + '<div style="background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 1.25rem;letter-spacing:.03em">'+months[mo]+' '+year+'</div>'
+      + '<table style="width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed">'
+      + '<colgroup><col style="width:180px"><col style="width:130px"><col style="width:auto"><col style="width:auto"></colgroup>';
+    entries.forEach(function(e) {
+      html += '<tr style="border-bottom:1px solid var(--border);background:#EEEDFE;vertical-align:top">'
+        + '<td style="padding:8px 1.25rem;font-weight:600">'+e.name+(e.date?' '+e.date.substring(0,4):'')+'</td>'
+        + '<td style="padding:8px 4px;color:var(--text-muted);font-size:12px">'+e.dateLabel+'</td>'
+        + '<td style="padding:8px 4px;color:var(--text-muted);font-size:12px">'+e.location+'</td>'
+        + '<td style="padding:8px 1.25rem">'+e.ministers.map(function(m){return '<div style="font-size:12px;color:var(--text-muted)">'+m+'</div>';}).join('')+'</td>'
+        + '</tr>';
+    });
+    html += '</table></div>';
+  }
+  return html || '<div style="padding:1.25rem;color:var(--text-muted)">No camps scheduled.</div>';
 }
 
 function renderBulletinView(year, yearStr, ministerF) {
@@ -6406,6 +6980,19 @@ function renderItineraryView(year, yearStr, ministerF) {
   var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
   var colors = ['#1A3A6B','#1A5C24','#7B0000','#7B4D00','#2E5EA3','#0F4D2E','#5B1A8B','#A32D2D','#854F0B','#185FA5','#0F6E56','#3C3489','#712B13','#27500A','#633806','#023E7A','#3B6D11','#993556'];
 
+  // Build conflict map
+  var byFri = {};
+  SCHEDULE.forEach(function(s) {
+    if (!byFri[s.fri]) byFri[s.fri] = [];
+    [s.m1,s.m2,s.m3,s.m4].filter(Boolean).forEach(function(m){ byFri[s.fri].push(m); });
+  });
+  var conflictMap = {};
+  Object.keys(byFri).forEach(function(fri) {
+    var seen = {}, dups = {};
+    byFri[fri].forEach(function(m){ if(seen[m]) dups[m]=true; else seen[m]=true; });
+    conflictMap[fri] = dups;
+  });
+
   var ministers = MINISTERS.filter(function(m){
     return !ministerF || m.name === ministerF;
   }).slice().sort(function(a,b){return a.name.localeCompare(b.name);});
@@ -6415,17 +7002,17 @@ function renderItineraryView(year, yearStr, ministerF) {
   ministers.forEach(function(m, mi) {
     var color = colors[MINISTERS.indexOf(m) % colors.length];
     var initials = m.name.split(' ').map(function(w){return w[0];}).join('');
+    var uid = 'itin-' + m.name.replace(/\s+/g,'_');
 
-    // Get all visits this year
     var entries = [];
     SCHEDULE.filter(function(s){
       return s.fri.startsWith(yearStr) && !s.cancelled &&
              [s.m1,s.m2,s.m3,s.m4].indexOf(m.name) >= 0;
     }).forEach(function(s) {
       var wk = null; for (var w=0;w<allWk.length;w++){if(allWk[w].fri===s.fri){wk=allWk[w];break;}}
-      var mns = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       var d = new Date(s.fri+'T12:00:00');
-      entries.push({ type:'visit', date:s.fri, monthIdx:d.getMonth(), dateLabel: wk ? wk.label : s.fri, assembly:s.assembly });
+      var hasConflict = conflictMap[s.fri] && conflictMap[s.fri][m.name];
+      entries.push({ type:'visit', date:s.fri, monthIdx:d.getMonth(), dateLabel: wk ? wk.label : s.fri, assembly:s.assembly, conflict:hasConflict });
     });
 
     CAMPS.filter(function(c){
@@ -6434,7 +7021,7 @@ function renderItineraryView(year, yearStr, ministerF) {
       var sd = new Date(c.start+'T12:00:00'); var ed = new Date(c.end+'T12:00:00');
       var mns2 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       var label = mns2[sd.getMonth()]+' '+sd.getDate()+'–'+mns2[ed.getMonth()]+' '+ed.getDate();
-      entries.push({ type:'camp', date:c.start, monthIdx:sd.getMonth(), dateLabel:label, assembly:c.name, location:c.location });
+      entries.push({ type:'camp', date:c.start, monthIdx:sd.getMonth(), dateLabel:label, assembly:c.name, location:c.location, conflict:false });
     });
 
     if (!entries.length) return;
@@ -6442,53 +7029,112 @@ function renderItineraryView(year, yearStr, ministerF) {
 
     var tripCount = entries.filter(function(e){return e.type==='visit';}).length;
     var campCount = entries.filter(function(e){return e.type==='camp';}).length;
+    var conflictCount = entries.filter(function(e){return e.conflict;}).length;
 
-    html += '<div style="border-bottom:1px solid var(--border)">'
-      // Minister header
-      + '<div style="display:flex;align-items:center;gap:12px;padding:12px 1.25rem;background:var(--gray);border-bottom:1px solid var(--border)">'
-      +   '<div style="width:36px;height:36px;border-radius:50%;background:'+color+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">'+initials+'</div>'
-      +   '<div>'
-      +     '<div style="font-size:14px;font-weight:600;color:var(--navy-dark)">'+m.name+'</div>'
-      +     '<div style="font-size:11px;color:var(--text-muted)">'+m.city+(m.state?', '+m.state:'')+(m.country?' · '+m.country:'')+'</div>'
-      +   '</div>'
-      +   '<div style="margin-left:auto;display:flex;gap:8px">'
-      +     '<span style="background:var(--blue-light);color:var(--navy);font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500">'+tripCount+' visit'+(tripCount!==1?'s':'')+'</span>'
-      +     (campCount ? '<span style="background:#EEEDFE;color:#3C3489;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500">'+campCount+' camp'+(campCount!==1?'s':'')+'</span>' : '')
-      +   '</div>'
-      + '</div>';
-
-    // Group by month
+    // Build entries HTML
+    var entriesHtml = '';
     var lastMonth = -1;
     entries.forEach(function(e) {
       var isCamp = e.type === 'camp';
       if (e.monthIdx !== lastMonth) {
-        if (lastMonth >= 0) html += '</div>';
-        html += '<div style="font-size:10px;font-weight:600;color:var(--text-muted);padding:6px 1.25rem 2px;letter-spacing:.05em;text-transform:uppercase;background:var(--gray);border-top:1px solid var(--border)">'+months[e.monthIdx]+'</div>';
-        html += '<div>';
+        if (lastMonth >= 0) entriesHtml += '</div>';
+        entriesHtml += '<div style="font-size:10px;font-weight:600;color:var(--text-muted);padding:6px 1.25rem 2px;letter-spacing:.05em;text-transform:uppercase;background:var(--gray);border-top:1px solid var(--border)">'+months[e.monthIdx]+'</div><div>';
         lastMonth = e.monthIdx;
       }
-      html += '<div style="display:grid;grid-template-columns:110px 120px 1fr;align-items:center;padding:8px 1.25rem;border-bottom:1px solid var(--border);'+(isCamp?'background:#EEEDFE':'')+'">'
+      var rowBg = e.conflict ? 'background:var(--red-light)' : isCamp ? 'background:#EEEDFE' : '';
+      entriesHtml += '<div style="display:grid;grid-template-columns:110px 120px 1fr;align-items:center;padding:8px 1.25rem;border-bottom:1px solid var(--border);'+rowBg+'">'
         + '<div style="font-size:11px;color:var(--text-muted);white-space:nowrap">'+e.dateLabel+'</div>'
         + '<div>'+(isCamp
             ? '<span style="font-size:10px;background:#EEEDFE;color:#3C3489;border:1px solid #AFA9EC;padding:2px 7px;border-radius:3px;font-weight:700">Camp</span>'
             : '<span style="font-size:10px;background:var(--blue-light);color:var(--navy);border:1px solid #85B7EB;padding:2px 7px;border-radius:3px;font-weight:700">Assembly Visit</span>')
         + '</div>'
         + '<div>'
-        +   '<div style="font-size:13px;font-weight:500;color:var(--navy-dark)">'+e.assembly+'</div>'
+        +   '<div style="font-size:13px;font-weight:500;color:'+(e.conflict?'var(--red)':'var(--navy-dark)')+'">'+e.assembly+(e.conflict?' ⚠ Double-booked':'')+'</div>'
         +   (e.location ? '<div style="font-size:11px;color:var(--text-muted)">'+e.location+'</div>' : '')
         + '</div>'
         + '</div>';
     });
-    if (lastMonth >= 0) html += '</div>';
-    html += '</div>';
+    if (lastMonth >= 0) entriesHtml += '</div>';
+
+    html += '<div style="border-bottom:2px solid var(--border)">'
+      + '<div onclick="(function(el){var body=document.getElementById(\''+uid+'\');var arr=el.querySelector(\'.itin-arrow\');if(body.style.display===\'none\'){body.style.display=\'\';arr.style.transform=\'rotate(180deg)\'}else{body.style.display=\'none\';arr.style.transform=\'\'}})(this)" style="display:flex;align-items:center;gap:12px;padding:12px 1.25rem;background:var(--gray);border-bottom:1px solid var(--border);cursor:pointer;user-select:none">'
+      +   '<div style="width:36px;height:36px;border-radius:50%;background:'+color+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">'+initials+'</div>'
+      +   '<div>'
+      +     '<div style="font-size:14px;font-weight:600;color:var(--navy-dark)">'+m.name+'</div>'
+      +     '<div style="font-size:11px;color:var(--text-muted)">'+m.city+(m.state?', '+m.state:'')+(m.country?' · '+m.country:'')+'</div>'
+      +   '</div>'
+      +   '<div style="margin-left:auto;display:flex;gap:8px;align-items:center">'
+      +     '<span style="background:var(--blue-light);color:var(--navy);font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500">'+tripCount+' visit'+(tripCount!==1?'s':'')+'</span>'
+      +     (campCount ? '<span style="background:#EEEDFE;color:#3C3489;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500">'+campCount+' camp'+(campCount!==1?'s':'')+'</span>' : '')
+      +     (conflictCount ? '<span style="background:var(--red-light);color:var(--red);font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600">⚠ '+conflictCount+' conflict'+(conflictCount!==1?'s':'')+'</span>' : '')
+      +     '<svg class="itin-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;transition:transform .2s;color:var(--text-muted)"><polyline points="6 9 12 15 18 9"/></svg>'
+      +   '</div>'
+      + '</div>'
+      + '<div id="'+uid+'" style="display:none">'+entriesHtml+'</div>'
+      + '</div>';
   });
 
   if (!html) return '<div style="padding:1.5rem;color:var(--text-muted);font-size:13px">No schedule data for '+year+'.</div>';
+  if (ministerF) {
+    setTimeout(function(){
+      var uid = 'itin-' + ministerF.replace(/\s+/g,'_');
+      var body = document.getElementById(uid);
+      if (body && body.style.display === 'none') {
+        body.style.display = '';
+        var trigger = body.previousElementSibling;
+        if (trigger) {
+          var arrow = trigger.querySelector('.itin-arrow');
+          if (arrow) arrow.style.transform = 'rotate(180deg)';
+        }
+      }
+    }, 50);
+  }
   return html;
 }
 
 // ── Travel Proposals ──────────────────────────────────────
-var PROPOSALS = [];
+var PROPOSALS = [
+  {
+    id: 1001, submitted: '2026-05-28', propType: 'assembly',
+    minister: 'Andy Snoke', assembly: 'Rosetown SK', weekend: '2026-07-24',
+    weekendLabel: 'Jul 25–26 2026', purpose: 'Regular visit',
+    spouse: false, mode: 'drive', budget: {total:420, sym:'CA$', currency:'CAD'},
+    notes: 'Happy to go, just need confirmation on timing.',
+    status: 'Pending', _source: 'minister-request'
+  },
+  {
+    id: 1002, submitted: '2026-05-30', propType: 'camp',
+    minister: 'David Luff', assembly: 'North Battleford Summer Camp', weekend: '2026-07-05',
+    weekendLabel: 'Jul 5–12 2026', purpose: 'Camp attendance',
+    spouse: true, mode: 'fly', budget: {total:1840, sym:'US$', currency:'USD'},
+    notes: 'Would like to bring my wife if possible.',
+    status: 'Pending', _source: 'minister-request'
+  },
+  {
+    id: 1003, submitted: '2026-06-01',
+    minister: 'Terry Zimmer', assembly: 'Rosetown SK', weekend: '2026-07-24',
+    weekendLabel: 'Jul 25–26 2026', assembly: 'Rosetown SK',
+    type: 'double-booked', typeLabel: 'Double-booked',
+    notes: 'I am already scheduled for Regina that same weekend. Please advise.',
+    status: 'Pending', _source: 'conflict-report'
+  },
+  {
+    id: 1004, submitted: '2026-05-20', propType: 'assembly',
+    minister: 'Wayne Peters', assembly: 'Winkler MB', weekend: '2026-06-05',
+    weekendLabel: 'Jun 6–7 2026', purpose: 'Regular visit',
+    spouse: false, mode: 'drive', budget: {total:180, sym:'CA$', currency:'CAD'},
+    notes: '',
+    status: 'Approved', _source: 'minister-request'
+  },
+  {
+    id: 1005, submitted: '2026-05-22',
+    minister: 'Brian Hannigan', assembly: 'Regina SK', weekend: '2026-07-24',
+    weekendLabel: 'Jul 25–26 2026',
+    type: 'double-booked', typeLabel: 'Double-booked',
+    notes: 'Both Regina and Rosetown are on my schedule for the same weekend.',
+    status: 'Closed', _source: 'conflict-report'
+  }
+];
 
 function initProposalForm() {
   var mSel=document.getElementById('prop-minister');
@@ -7093,7 +7739,7 @@ function renderCamps() {
       + '</div>'
       + '<div style="flex:1;min-width:0">'
       + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">'
-      + '<span style="font-size:14px;font-weight:600;color:var(--navy-dark)">'+camp.name+'</span>'
+      + '<span style="font-size:14px;font-weight:600;color:var(--navy-dark)">'+camp.name+(camp.start?' '+camp.start.substring(0,4):'')+'</span>'
       + (camp._year && !hasDates ? '<span style="font-size:11px;background:var(--amber-light);color:var(--amber);padding:2px 8px;border-radius:10px;font-weight:500">'+camp._year+'</span>' : '')
       + statusBadge
       + (campConflictsForThisCamp.length ? '<span class="badge badge-conflict">'+campConflictsForThisCamp.length+' conflict'+(campConflictsForThisCamp.length!==1?'s':'')+'</span>' : '')
@@ -7187,8 +7833,19 @@ function seedFutureCamps() {
   }
   futureYears.forEach(function(yr) {
     baseCamps.forEach(function(c) {
+      if (!c.start) return;
+      var startDate = new Date(c.start + 'T12:00:00');
+      var endDate = new Date(c.end + 'T12:00:00');
+      var diffDays = Math.round((endDate - startDate) / 86400000);
+      var newStart = new Date(startDate);
+      newStart.setFullYear(parseInt(yr));
+      var newEnd = new Date(newStart);
+      newEnd.setDate(newEnd.getDate() + diffDays);
+      function pad(n){ return String(n).padStart(2,'0'); }
+      var newStartStr = yr+'-'+pad(newStart.getMonth()+1)+'-'+pad(newStart.getDate());
+      var newEndStr = yr+'-'+pad(newEnd.getMonth()+1)+'-'+pad(newEnd.getDate());
       CAMPS.push({
-        name: c.name, start: '', end: '', _year: yr, _seed: true,
+        name: c.name, start: newStartStr, end: newEndStr, _year: yr, _seed: true,
         location: c.location || '', ministers: [],
         airport: c.airport || '', contact: '', notes: '', done: false
       });
@@ -7286,18 +7943,692 @@ var _origShowPanel = showPanel;
 showPanel = function(id) {
   _origShowPanel(id);
   if (id === 'camps') {
-    document.getElementById('page-title').textContent = 'Camps';
+    document.getElementById('page-title').textContent = 'Camp Schedule';
     renderCamps();
   }
 };
 
-// ── Boot ──────────────────────────────────────────────────
-initSelects();
-seedFutureCamps();
-renderDashboard();
+// ── Local Church Visitation Schedule ─────────────────────
+var lcsYear = 2026;
+
+function switchLCSYear(year) {
+  lcsYear = year;
+  [2026,2027,2028,2029,2030].forEach(function(y) {
+    var btn = document.getElementById('lcs-yr-btn-'+y);
+    if (!btn) return;
+    btn.style.background = y === year ? 'var(--navy)' : 'var(--white)';
+    btn.style.color = y === year ? '#fff' : 'var(--text-muted)';
+    btn.style.fontWeight = y === year ? '600' : '500';
+  });
+  var title = document.getElementById('lcs-year-title');
+  if (title) title.textContent = 'Local Church Visitation Schedule ' + year;
+  renderLocalChurchSchedule();
+}
+
+function renderLocalChurchSchedule() {
+  var el = document.getElementById('lcs-current');
+  if (!el) return;
+
+  // Populate minister filter if empty
+  var mSel = document.getElementById('lcs-minister');
+  if (mSel && mSel.options.length <= 1) {
+    MINISTERS.forEach(function(m) {
+      var opt = document.createElement('option');
+      opt.value = m.name; opt.textContent = m.name;
+      mSel.appendChild(opt);
+    });
+  }
+
+  var regionF = (document.getElementById('lcs-region') || {}).value || '';
+  var ministerF = (document.getElementById('lcs-minister') || {}).value || '';
+  var statusF = (document.getElementById('lcs-status') || {}).value || '';
+
+  var weekends = getWeekendsForYear(lcsYear);
+  var html = '';
+  var conflicts = [];
+
+  for (var wi = 0; wi < weekends.length; wi++) {
+    var wk = weekends[wi];
+    var visits = [];
+    for (var si = 0; si < SCHEDULE.length; si++) {
+      var s = SCHEDULE[si];
+      if (s.fri !== wk.fri) continue;
+      if (regionF) {
+        var a = null;
+        for (var ai = 0; ai < ASSEMBLIES.length; ai++) { if (ASSEMBLIES[ai].name === s.assembly) { a = ASSEMBLIES[ai]; break; } }
+        if (!a || a.region !== regionF) continue;
+      }
+      if (ministerF && [s.m1, s.m2, s.m3, s.m4].indexOf(ministerF) < 0) continue;
+      if (statusF === 'visited' && !s.visited) continue;
+      if (statusF === 'cancelled' && !s.cancelled) continue;
+      if (statusF === 'upcoming' && (s.visited || s.cancelled)) continue;
+      visits.push({ s: s, idx: si });
+    }
+    if ((regionF || ministerF || statusF) && !visits.length) continue;
+
+    // Detect conflicts: same minister on same weekend
+    var ministerCounts = {};
+    visits.forEach(function(v) {
+      [v.s.m1, v.s.m2, v.s.m3, v.s.m4].filter(Boolean).forEach(function(m) {
+        ministerCounts[m] = (ministerCounts[m] || 0) + 1;
+      });
+    });
+    var conflictMins = Object.keys(ministerCounts).filter(function(m) { return ministerCounts[m] > 1; });
+    if (conflictMins.length) {
+      conflicts.push({ fri: wk.label, ministers: conflictMins });
+    }
+
+    var visitsHtml = '';
+    if (visits.length) {
+      visits.forEach(function(v) {
+        var s = v.s;
+        var asm = null;
+        for (var ai = 0; ai < ASSEMBLIES.length; ai++) { if (ASSEMBLIES[ai].name === s.assembly) { asm = ASSEMBLIES[ai]; break; } }
+        var hasConflict = conflictMins.some(function(m) { return [s.m1,s.m2,s.m3,s.m4].indexOf(m) >= 0; });
+        var rowStyle = s.visited ? 'background:var(--green-light)' : s.cancelled ? 'opacity:0.5' : hasConflict ? 'background:var(--red-light);border-left:3px solid var(--red)' : '';
+        visitsHtml += '<div class="visit-row" style="' + rowStyle + '">'
+          + (asm ? regionBadgeShort(asm.region || '') : '<span style="min-width:56px;display:inline-block;font-size:10px;color:var(--text-muted);padding:2px 6px;border:1px solid var(--border);border-radius:10px;text-align:center">?</span>')
+          + '<span class="visit-assembly">' + s.assembly + '</span>'
+          + '<span class="visit-ministers">' + [s.m1, s.m2, s.m3, s.m4].filter(Boolean).join(' · ') + '</span>'
+          + (s.note ? '<span class="visit-note">' + s.note + '</span>' : '')
+          + (s.cancelled ? '<span class="badge badge-cancelled">Cancelled</span>' : '')
+          + (hasConflict ? '<span class="badge" style="background:var(--red-light);color:var(--red);margin-left:auto">&#9888; Conflict</span>' : '')
+          + (s.visited ? '<span class="badge badge-visited" style="margin-left:auto">✓ Visited</span>' : '')
+          + '</div>';
+      });
+    } else {
+      visitsHtml = '<div class="empty-weekend">No visits scheduled</div>';
+    }
+
+    html += '<div class="weekend-row">'
+      + '<div class="weekend-date"><div class="fri">' + wk.label + '</div><div class="sat-sun">' + lcsYear + '</div></div>'
+      + '<div class="weekend-visits">' + visitsHtml + '</div></div>';
+  }
+
+  el.innerHTML = html || '<div style="padding:1.25rem;color:var(--text-muted)">No visits scheduled for this year yet.</div>';
+
+  // Conflict banner
+  var banner = document.getElementById('lcs-conflict-banner');
+  var conflictList = document.getElementById('lcs-conflict-list');
+  if (banner && conflictList) {
+    if (conflicts.length) {
+      banner.style.display = 'block';
+      conflictList.innerHTML = conflicts.map(function(c) {
+        return '• ' + c.fri + ': ' + c.ministers.join(', ') + ' double-booked';
+      }).join('<br>');
+    } else {
+      banner.style.display = 'none';
+    }
+  }
+}
+
+// ── Quill — GMI Travel Desk Notifications ─────────────────
+var _quillMailto = '';
+
+function getMinisterEmail(name) {
+  var prof = MINISTER_PROFILES[name] || {};
+  if (prof.email) return prof.email;
+  var m = MINISTERS.find(function(x){ return x.name === name; });
+  return m && m.email ? m.email : '';
+}
+
+function openQuillModal(ministerName, oldAssembly, oldDate, newAssembly, newDate) {
+  var email = getMinisterEmail(ministerName);
+  var subject = 'GMI Schedule Change — ' + ministerName;
+  var firstName = ministerName.split(' ')[0];
+
+  var isRemoved = !newAssembly || newAssembly === '(Unassigned)';
+  var body = 'Dear ' + firstName + ',\n\n';
+
+  if (isRemoved) {
+    body += 'We are writing to let you know that your assignment to ' + oldAssembly + ' on the weekend of ' + oldDate + ' has been removed due to a scheduling conflict.\n\n'
+      + 'You were found to be double-booked that weekend. This assignment has been cleared from your schedule. Please disregard any previous travel arrangements for that visit.\n\n'
+      + 'Your overseer will be in touch if a replacement assignment is needed. If you have any questions, please contact your overseer.\n\n';
+  } else {
+    body += 'We are writing to inform you of a change to your travel schedule.\n\n'
+      + 'PREVIOUS ASSIGNMENT\n'
+      + '  Assembly:  ' + oldAssembly + '\n'
+      + '  Weekend:   ' + oldDate + '\n\n'
+      + 'UPDATED ASSIGNMENT\n'
+      + '  Assembly:  ' + newAssembly + '\n'
+      + '  Weekend:   ' + newDate + '\n\n'
+      + 'Please review this change and update your plans accordingly. If you have any questions or concerns, please contact your overseer.\n\n';
+  }
+
+  body += 'GMI Travel Desk\n'
+    + 'Global Missions Inc.';
+
+  document.getElementById('quill-to-display').textContent = ministerName + (email ? ' <' + email + '>' : ' (no email on file)');
+  document.getElementById('quill-subject-display').textContent = subject;
+  document.getElementById('quill-body-preview').textContent = body;
+  document.getElementById('quill-edit-body').value = body;
+
+  _quillMailto = 'mailto:' + encodeURIComponent(email)
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body=' + encodeURIComponent(body);
+
+  var modal = document.getElementById('quill-modal');
+  modal.style.display = 'flex';
+}
+
+function closeQuillModal() {
+  document.getElementById('quill-modal').style.display = 'none';
+}
+
+function sendQuillEmail() {
+  var editedBody = document.getElementById('quill-edit-body').value;
+  var toDisplay = document.getElementById('quill-to-display').textContent;
+  var email = toDisplay.match(/<([^>]+)>/);
+  var emailAddr = email ? email[1] : '';
+  var subject = document.getElementById('quill-subject-display').textContent;
+  var mailto = 'mailto:' + encodeURIComponent(emailAddr)
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body=' + encodeURIComponent(editedBody);
+  window.location.href = mailto;
+  closeQuillModal();
+}
+
+
+// ── Pending Travel Requests ───────────────────────────────
+function updateRequestsBadge() {
+  var badge = document.getElementById('nav-requests-badge');
+  if (!badge) return;
+  var pending = PROPOSALS.filter(function(p){ return p.status === 'Pending' && (p._source === 'minister-request' || p._source === 'conflict-report'); });
+  if (pending.length) { badge.textContent = pending.length; badge.style.display = 'inline'; }
+  else { badge.style.display = 'none'; }
+}
+
+function renderPendingRequests() {
+  updateRequestsBadge();
+  var body = document.getElementById('ptr-body');
+  var resolved = document.getElementById('ptr-resolved');
+  if (!body) return;
+
+  var pending = PROPOSALS.filter(function(p){ return p.status === 'Pending' && (p._source === 'minister-request' || p._source === 'conflict-report'); });
+  var done = PROPOSALS.filter(function(p){ return p.status !== 'Pending' && (p._source === 'minister-request' || p._source === 'conflict-report'); });
+  var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var mnames = MINISTERS.map(function(m){return m.name;}).sort();
+
+  if (!pending.length) {
+    body.innerHTML = '<div style="padding:1.5rem 1.25rem;text-align:center;color:var(--text-muted);font-size:13px">No pending requests.</div>';
+  } else {
+    var html = '';
+    pending.forEach(function(p, pi) {
+      var pidx = PROPOSALS.indexOf(p);
+      var isConflictReport = p._source === 'conflict-report';
+
+      if (isConflictReport) {
+        // Conflict report card
+        html += '<div style="border-bottom:1px solid var(--border);padding:1.25rem;display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap">'
+          + '<div style="flex:1;min-width:220px">'
+          + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">'
+          + '<span style="background:var(--red-light);color:var(--red);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">&#9888; Conflict Report</span>'
+          + '<span style="font-weight:600;color:var(--navy-dark);font-size:14px">' + p.minister + '</span>'
+          + '</div>'
+          + '<div style="font-size:13px;color:var(--navy-dark);font-weight:500;margin-bottom:2px">' + (p.assembly||'Assembly not specified') + '</div>'
+          + '<div style="font-size:12px;color:var(--text-muted);margin-bottom:2px">' + p.weekendLabel + ' &nbsp;·&nbsp; ' + (p.typeLabel||p.type) + '</div>'
+          + '<div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">Submitted: ' + p.submitted + '</div>'
+          + (p.notes ? '<div style="font-size:12px;color:var(--text-muted);font-style:italic">"' + p.notes + '"</div>' : '')
+          + '</div>'
+          + '<div style="display:flex;flex-direction:column;gap:8px;min-width:180px">'
+          + '<button onclick="showPanel(\'schedule-conflicts\')" class="btn btn-primary btn-sm" style="width:100%">&#8594; Resolve in Schedule Conflicts</button>'
+          + '<button onclick="dismissConflictReport('+pidx+')" class="btn btn-sm" style="width:100%">Close</button>'
+          + '</div>'
+          + '</div>';
+      } else {
+      var asm = null; for(var ai=0;ai<ASSEMBLIES.length;ai++){if(ASSEMBLIES[ai].name===p.assembly){asm=ASSEMBLIES[ai];break;}}
+      var b = p.budget || {};
+      var sym = (b.sym||'$');
+
+      // Find first empty slot in the schedule for this weekend/assembly
+      var schedMatch = -1;
+      for(var si=0;si<SCHEDULE.length;si++){
+        if(SCHEDULE[si].assembly===p.assembly && SCHEDULE[si].fri===p.weekend){ schedMatch=si; break; }
+      }
+      var emptySlot = '';
+      if(schedMatch>=0){
+        var s=SCHEDULE[schedMatch];
+        if(!s.m1) emptySlot='m1'; else if(!s.m2) emptySlot='m2'; else if(!s.m3) emptySlot='m3'; else if(!s.m4) emptySlot='m4';
+      }
+
+      html += '<div style="border-bottom:1px solid var(--border);padding:1.25rem">'
+        + '<div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">'
+        + '<div style="flex:1;min-width:220px">'
+        + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">'
+        + '<span style="background:#FFF3CD;color:#856404;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">&#9203; Pending</span>'
+        + '<span style="font-weight:600;color:var(--navy-dark);font-size:14px">' + p.minister + '</span>'
+        + '</div>'
+        + '<div style="font-size:13px;color:var(--navy-dark);font-weight:500;margin-bottom:2px">' + p.assembly + (asm?' &mdash; '+regionBadge(asm.region):'') + '</div>'
+        + '<div style="font-size:12px;color:var(--text-muted);margin-bottom:2px">' + (p.weekendLabel||p.weekend) + ' &nbsp;·&nbsp; ' + (p.mode==='fly'?'Flying':'Driving') + (p.spouse?' &nbsp;·&nbsp; With spouse':'') + '</div>'
+        + '<div style="font-size:12px;color:var(--text-muted);margin-bottom:2px">Estimated: ' + sym + Math.round(b.total||0).toLocaleString() + '</div>'
+        + '<div style="font-size:11px;color:var(--text-muted)">Submitted: ' + p.submitted + '</div>'
+        + (p.notes ? '<div style="font-size:12px;color:var(--text-muted);margin-top:6px;font-style:italic">"' + p.notes + '"</div>' : '')
+        + '</div>'
+        + '<div style="display:flex;flex-direction:column;gap:8px;min-width:200px">'
+        // Slot selector for approve
+        + '<div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Add to schedule slot</div>'
+        + '<select id="ptr-slot-'+pidx+'" style="font-size:12px;padding:5px 8px;border:1px solid var(--border);border-radius:6px">'
+        + (schedMatch>=0
+            ? '<option value="m1"'+(emptySlot==='m1'?' selected':'')+'>Minister 1'+(SCHEDULE[schedMatch].m1?' ('+SCHEDULE[schedMatch].m1+')':' (empty)')+'</option>'
+            + '<option value="m2"'+(emptySlot==='m2'?' selected':'')+'>Minister 2'+(SCHEDULE[schedMatch].m2?' ('+SCHEDULE[schedMatch].m2+')':' (empty)')+'</option>'
+            + '<option value="m3"'+(emptySlot==='m3'?' selected':'')+'>Minister 3'+(SCHEDULE[schedMatch].m3?' ('+SCHEDULE[schedMatch].m3+')':' (empty)')+'</option>'
+            + '<option value="m4"'+(emptySlot==='m4'?' selected':'')+'>Minister 4'+(SCHEDULE[schedMatch].m4?' ('+SCHEDULE[schedMatch].m4+')':' (empty)')+'</option>'
+            : '<option value="">No matching schedule row found</option>')
+        + '</select>'
+        + '<button onclick="approveTravelRequest('+pidx+')" class="btn btn-primary btn-sm" style="width:100%">&#10003; Approve &amp; Add to Schedule</button>'
+        + '<button onclick="rejectTravelRequest('+pidx+')" class="btn btn-sm" style="width:100%;background:var(--red);color:#fff;border:none">&#10005; Reject</button>'
+        + '</div>'
+        + '</div></div>';
+      } // end else travel request
+    });
+    body.innerHTML = html;
+  }
+
+  // Resolved
+  if (resolved) {
+    if (!done.length) {
+      resolved.innerHTML = '<div style="padding:1rem 1.25rem;font-size:12px;color:var(--text-muted)">No resolved requests yet.</div>';
+    } else {
+      var rhtml = '<table style="width:100%;border-collapse:collapse;font-size:13px">'
+        + '<thead><tr style="background:var(--gray);border-bottom:1px solid var(--border)">'
+        + '<th style="padding:8px 1.25rem;text-align:left;font-size:11px;color:var(--text-muted)">Minister</th>'
+        + '<th style="padding:8px;text-align:left;font-size:11px;color:var(--text-muted)">Assembly</th>'
+        + '<th style="padding:8px;text-align:left;font-size:11px;color:var(--text-muted)">Weekend</th>'
+        + '<th style="padding:8px;text-align:left;font-size:11px;color:var(--text-muted)">Status</th>'
+        + '<th style="padding:8px 1.25rem;text-align:left;font-size:11px;color:var(--text-muted)"></th>'
+        + '</tr></thead><tbody>';
+      done.forEach(function(p, di) {
+        var pidx = PROPOSALS.indexOf(p);
+        var statusColor = p.status === 'Approved' ? 'var(--green)' : p.status === 'Resolved' ? 'var(--green)' : 'var(--red)';
+        rhtml += '<tr style="border-bottom:1px solid var(--border)">'
+          + '<td style="padding:8px 1.25rem;font-weight:500">' + p.minister + '</td>'
+          + '<td style="padding:8px;color:var(--text-muted)">' + (p.assembly||'—') + '</td>'
+          + '<td style="padding:8px;color:var(--text-muted)">' + (p.weekendLabel||p.weekend||'—') + '</td>'
+          + '<td style="padding:8px"><span style="font-size:11px;font-weight:700;color:'+statusColor+'">' + p.status + '</span></td>'
+          + '<td style="padding:8px 1.25rem;display:flex;gap:6px;align-items:center">'
+          + (p.status !== 'Resolved' ? '<button onclick="markResolved('+pidx+')" class="btn btn-sm" style="background:#1A5C24;color:#fff;border:none;font-size:11px">&#10003; Resolved</button>' : '<span style="font-size:11px;font-weight:700;color:var(--green)">&#10003; Resolved</span>')
+          + '<button onclick="deleteRequest('+pidx+')" class="btn btn-sm" style="background:none;border:none;color:var(--text-muted);font-size:16px;padding:0 4px;cursor:pointer" title="Delete">&times;</button>'
+          + '</td>'
+          + '</tr>';
+      });
+      rhtml += '</tbody></table>';
+      resolved.innerHTML = rhtml;
+    }
+  }
+}
+
+function approveTravelRequest(pidx) {
+  var p = PROPOSALS[pidx];
+  if (!p) return;
+
+  if (p.propType === 'camp') {
+    // Match camp by name AND year from the request weekend
+    var campYear = p.weekend ? p.weekend.substring(0,4) : '2026';
+    var campMatch = -1;
+    for(var ci=0;ci<CAMPS.length;ci++){
+      var c = CAMPS[ci];
+      if(c.name===p.assembly && c.start && c.start.startsWith(campYear)){ campMatch=ci; break; }
+    }
+    // Fallback: match by name only
+    if(campMatch<0){
+      for(var ci=0;ci<CAMPS.length;ci++){
+        if(CAMPS[ci].name===p.assembly){ campMatch=ci; break; }
+      }
+    }
+    if (campMatch >= 0) {
+      if (!CAMPS[campMatch].ministers) CAMPS[campMatch].ministers = [];
+      if (CAMPS[campMatch].ministers.indexOf(p.minister) < 0) {
+        CAMPS[campMatch].ministers.push(p.minister);
+      }
+    } else {
+      showToast('Could not find matching camp: ' + p.assembly);
+      return;
+    }
+    p.status = 'Approved';
+    if (typeof renderCamps === 'function') renderCamps();
+    if (typeof renderCalendar === 'function') renderCalendar();
+    if (typeof renderBudget === 'function') renderBudget();
+    renderDashboard();
+    renderPendingRequests();
+    showToast(p.minister + ' added to ' + p.assembly);
+    return;
+  }
+
+  // Assembly visit
+  var slotSel = document.getElementById('ptr-slot-'+pidx);
+  var slot = slotSel ? slotSel.value : '';
+
+  var schedMatch = -1;
+  for(var si=0;si<SCHEDULE.length;si++){
+    if(SCHEDULE[si].assembly===p.assembly && SCHEDULE[si].fri===p.weekend){ schedMatch=si; break; }
+  }
+
+  // Auto-pick first empty slot if none selected
+  if (!slot) {
+    if (schedMatch >= 0) {
+      var s = SCHEDULE[schedMatch];
+      if (!s.m1) slot = 'm1';
+      else if (!s.m2) slot = 'm2';
+      else if (!s.m3) slot = 'm3';
+      else slot = 'm4';
+    } else {
+      slot = 'm1';
+    }
+  }
+
+  if (schedMatch >= 0) {
+    SCHEDULE[schedMatch][slot] = p.minister;
+  } else {
+    var newRow = {assembly:p.assembly, fri:p.weekend, m1:'', m2:'', m3:'', m4:'', note:'', visited:false};
+    newRow[slot] = p.minister;
+    SCHEDULE.push(newRow);
+  }
+  p.status = 'Approved';
+  renderSchedule(activeScheduleYear);
+  renderDashboard();
+  renderMinisters();
+  renderAssemblies();
+  if (typeof renderCalendar === 'function') renderCalendar();
+  if (typeof renderBudget === 'function') renderBudget();
+  if (typeof renderLocalChurchSchedule === 'function') renderLocalChurchSchedule();
+  updateConflictBadge();
+  renderPendingRequests();
+  showToast(p.minister + ' approved and added to schedule');
+}
+
+function rejectTravelRequest(pidx) {
+  var p = PROPOSALS[pidx];
+  if (!p) return;
+  if (!confirm('Reject this travel request from ' + p.minister + '?')) return;
+  p.status = 'Rejected';
+  renderPendingRequests();
+  showToast('Request rejected');
+  // Fire Quill to notify minister
+  setTimeout(function(){
+    openQuillModal(p.minister, p.assembly, p.weekendLabel||p.weekend, '', '');
+  }, 300);
+}
+
+
+function detectAllConflicts() {
+  var byFri = {};
+  for (var i=0;i<SCHEDULE.length;i++) {
+    var s = SCHEDULE[i];
+    if (s.cancelled) continue;
+    if (!byFri[s.fri]) byFri[s.fri] = [];
+    byFri[s.fri].push({idx:i, assembly:s.assembly, ministers:[s.m1,s.m2,s.m3,s.m4].filter(Boolean)});
+  }
+  var conflicts = [];
+  Object.keys(byFri).sort().forEach(function(fri) {
+    var rows = byFri[fri];
+    var seen = {}, dups = {};
+    rows.forEach(function(r){ r.ministers.forEach(function(m){ if(seen[m]) dups[m]=true; else seen[m]=true; }); });
+    Object.keys(dups).forEach(function(minister) {
+      var involved = rows.filter(function(r){ return r.ministers.indexOf(minister) >= 0; });
+      conflicts.push({ fri:fri, minister:minister, rows:involved });
+    });
+  });
+  return conflicts;
+}
+
+function updateConflictBadge() {
+  var conflicts = detectAllConflicts();
+  var singles = SCHEDULE.filter(function(s, idx){
+    if (s.cancelled) return false;
+    if (DISMISSED_SOLOS.indexOf(idx) >= 0) return false;
+    return [s.m1,s.m2,s.m3,s.m4].filter(Boolean).length === 1;
+  });
+  var total = conflicts.length + singles.length;
+  var badge = document.getElementById('nav-conflict-badge');
+  if (!badge) return;
+  if (total) {
+    badge.textContent = total;
+    badge.style.display = 'inline';
+    badge.style.background = conflicts.length ? 'var(--red)' : '#856404';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function renderScheduleConflicts() {
+  updateConflictBadge();
+  var body = document.getElementById('sc-body');
+  if (!body) return;
+  var conflicts = detectAllConflicts();
+  var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var mnames = MINISTERS.map(function(m){return m.name;}).sort();
+
+  // Detect single-minister visits
+  var singles = SCHEDULE.filter(function(s, idx){
+    if (s.cancelled) return false;
+    if (DISMISSED_SOLOS.indexOf(idx) >= 0) return false;
+    var mins = [s.m1,s.m2,s.m3,s.m4].filter(Boolean);
+    return mins.length === 1;
+  });
+
+  if (!conflicts.length && !singles.length) {
+    body.innerHTML = '<div style="padding:2rem 1.25rem;text-align:center;color:var(--text-muted)">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:40px;height:40px;margin-bottom:12px;opacity:.3;display:block;margin-left:auto;margin-right:auto"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+      + '<div style="font-weight:600;margin-bottom:4px">No conflicts</div>'
+      + '<div style="font-size:13px">All visits are fully staffed with no double-bookings.</div></div>';
+    return;
+  }
+
+  var html = '';
+
+  // ── Double-bookings ──
+  if (conflicts.length) {
+    html += '<div style="background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 1.25rem;letter-spacing:.03em">Double-bookings &mdash; ' + conflicts.length + ' conflict' + (conflicts.length!==1?'s':'') + '</div>';
+    conflicts.forEach(function(c, ci) {
+      var wk = null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===c.fri){wk=allWk[w];break;}}
+      var dateLabel = wk ? wk.label + ' ' + c.fri.substring(0,4) : c.fri;
+      html += '<div style="border-bottom:1px solid var(--border);padding:1.25rem">'
+        + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap">'
+        + '<span style="background:var(--red-light);color:var(--red);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">&#9888; Double-booked</span>'
+        + '<span style="font-weight:600;color:var(--navy-dark);font-size:14px">' + c.minister + '</span>'
+        + '<span style="font-size:12px;color:var(--text-muted)">weekend of ' + dateLabel + '</span>'
+        + '</div>'
+        + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">';
+      c.rows.forEach(function(row, ri) {
+        var asm = null; for(var ai=0;ai<ASSEMBLIES.length;ai++){if(ASSEMBLIES[ai].name===row.assembly){asm=ASSEMBLIES[ai];break;}}
+        var otherMins = row.ministers.filter(function(m){return m!==c.minister;});
+        html += '<div style="background:var(--red-light);border:1px solid #F09595;border-radius:10px;padding:14px">'
+          + '<div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Assignment ' + (ri+1) + '</div>'
+          + '<div style="font-size:14px;font-weight:600;color:var(--navy-dark);margin-bottom:4px">' + row.assembly + '</div>'
+          + (asm ? '<div style="margin-bottom:8px">' + regionBadge(asm.region) + '</div>' : '')
+          + (otherMins.length ? '<div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Also assigned: ' + otherMins.join(', ') + '</div>' : '<div style="margin-bottom:10px"></div>')
+          + '<button onclick="resolveConflict('+ci+','+ri+','+row.idx+')" class="btn btn-sm" style="background:var(--red);color:#fff;border:none">Remove ' + c.minister + ' from this visit</button>'
+          + '</div>';
+      });
+      html += '</div></div>';
+    });
+  }
+
+  // ── Single minister visits ──
+  if (singles.length) {
+    html += '<div style="background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 1.25rem;letter-spacing:.03em;margin-top:' + (conflicts.length?'0':'0') + '">Single Minister Visits &mdash; ' + singles.length + ' visit' + (singles.length!==1?'s':'') + '</div>';
+    singles.forEach(function(s, si) {
+      var idx = SCHEDULE.indexOf(s);
+      var wk = null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===s.fri){wk=allWk[w];break;}}
+      var dateLabel = wk ? wk.label + ' ' + s.fri.substring(0,4) : s.fri;
+      var asm = null; for(var ai=0;ai<ASSEMBLIES.length;ai++){if(ASSEMBLIES[ai].name===s.assembly){asm=ASSEMBLIES[ai];break;}}
+      var assignedMin = [s.m1,s.m2,s.m3,s.m4].filter(Boolean)[0];
+      // Find empty slot
+      var emptySlot = 'm2';
+      if (!s.m1) emptySlot='m1'; else if (!s.m2) emptySlot='m2'; else if (!s.m3) emptySlot='m3'; else emptySlot='m4';
+
+      html += '<div style="border-bottom:1px solid var(--border);padding:1.25rem;display:flex;align-items:center;gap:16px;flex-wrap:wrap">'
+        + '<div style="flex:1;min-width:200px">'
+        + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">'
+        + '<span style="background:#FFF3CD;color:#856404;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">&#9432; Solo</span>'
+        + '<span style="font-weight:600;color:var(--navy-dark);font-size:14px">' + s.assembly + '</span>'
+        + '</div>'
+        + '<div style="font-size:12px;color:var(--text-muted)">' + dateLabel + ' &mdash; ' + assignedMin
+        + (asm ? ' &mdash; ' + (asm.region||'') : '') + '</div>'
+        + '</div>'
+        + '<div style="display:flex;align-items:center;gap:8px">'
+        + '<select id="sc-add-'+si+'" style="font-size:12px;padding:5px 8px;border:1px solid var(--border);border-radius:6px">'
+        + '<option value="">Add a minister...</option>'
+        + mnames.filter(function(m){return m!==assignedMin;}).map(function(m){return '<option value="'+m+'">'+m+'</option>';}).join('')
+        + '</select>'
+        + '<button onclick="addMinisterToVisit('+idx+',\''+emptySlot+'\',\'sc-add-'+si+'\')" class="btn btn-primary btn-sm">Add</button>'
+        + '<button onclick="dismissSoloVisit('+idx+')" class="btn btn-sm">Close</button>'
+        + '</div>'
+        + '</div>';
+    });
+  }
+
+  body.innerHTML = html;
+}
+
+function resolveConflict(ci, ri, schedIdx) {
+  var conflicts = detectAllConflicts();
+  var c = conflicts[ci];
+  if (!c) { showToast('Conflict no longer exists'); renderScheduleConflicts(); return; }
+  var s = SCHEDULE[schedIdx];
+  if (!s) return;
+  var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var wk = null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===s.fri){wk=allWk[w];break;}}
+  var dateLabel = wk ? wk.label + ' ' + s.fri.substring(0,4) : s.fri;
+  var conflictMinister = c.minister;
+  var slots = ['m1','m2','m3','m4'];
+  var slot = null;
+  for(var si=0;si<slots.length;si++){if(s[slots[si]]===conflictMinister){slot=slots[si];break;}}
+  if (!slot) { showToast('Could not find minister in schedule row'); return; }
+  var oldAssembly = s.assembly;
+  s[slot] = '';
+  renderSchedule(activeScheduleYear);
+  renderDashboard();
+  renderMinisters();
+  renderAssemblies();
+  if (typeof renderCamps === 'function') renderCamps();
+  renderScheduleConflicts();
+  showToast(conflictMinister + ' removed from ' + oldAssembly);
+  setTimeout(function(){
+    openQuillModal(conflictMinister, oldAssembly, dateLabel, '', dateLabel);
+  }, 400);
+}
+
+var DISMISSED_SOLOS = [];
+
+function dismissSoloVisit(schedIdx) {
+  if (DISMISSED_SOLOS.indexOf(schedIdx) < 0) DISMISSED_SOLOS.push(schedIdx);
+  updateConflictBadge();
+  renderScheduleConflicts();
+  showToast('Solo visit dismissed');
+}
+
+function addMinisterToVisit(schedIdx, slot, selId) {
+  var sel = document.getElementById(selId);
+  if (!sel || !sel.value) { showToast('Please select a minister to add'); return; }
+  var minister = sel.value;
+  var s = SCHEDULE[schedIdx];
+  if (!s) return;
+  s[slot] = minister;
+  renderSchedule(activeScheduleYear);
+  renderDashboard();
+  renderMinisters();
+  renderAssemblies();
+  renderScheduleConflicts();
+  showToast(minister + ' added to ' + s.assembly);
+}
+
+
+// ── Report a Conflict ────────────────────────────────────
+var CONFLICT_REPORTS = [];
+
+function initConflictReportForm() {
+  var mSel = document.getElementById('rc-minister');
+  if (mSel && mSel.options.length <= 1) {
+    MINISTERS.slice().sort(function(a,b){return a.name.localeCompare(b.name);}).forEach(function(m){
+      var o = document.createElement('option');
+      o.value = m.name; o.textContent = m.name;
+      mSel.appendChild(o);
+    });
+  }
+  var wkSel = document.getElementById('rc-weekend');
+  if (wkSel && wkSel.options.length <= 1) {
+    var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+    allWk.forEach(function(wk){
+      var o = document.createElement('option');
+      o.value = wk.fri; o.textContent = wk.label + ' ' + wk.year;
+      wkSel.appendChild(o);
+    });
+  }
+}
+
+function submitConflictReport() {
+  var minister = document.getElementById('rc-minister').value;
+  var weekend = document.getElementById('rc-weekend').value;
+  var assembly = document.getElementById('rc-assembly').value.trim();
+  var type = document.getElementById('rc-type').value;
+  var notes = document.getElementById('rc-notes').value.trim();
+  if (!minister) { showToast('Please select your name'); return; }
+  if (!weekend) { showToast('Please select a weekend'); return; }
+  var allWk = WK2026.concat(WK2027).concat(WK2028);
+  var wk = null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===weekend){wk=allWk[w];break;}}
+  var typeLabels = {'double-booked':'Double-booked','unavailable':'Unavailable','other':'Other'};
+  var report = {
+    id: Date.now(),
+    submitted: new Date().toISOString().split('T')[0],
+    minister: minister,
+    weekend: weekend,
+    weekendLabel: wk ? wk.label + ' ' + wk.year : weekend,
+    assembly: assembly,
+    type: type,
+    typeLabel: typeLabels[type] || type,
+    notes: notes,
+    status: 'Pending',
+    _source: 'conflict-report'
+  };
+  PROPOSALS.unshift(report);
+  updateRequestsBadge();
+  var banner = document.getElementById('rc-submitted-banner');
+  if (banner) banner.style.display = 'flex';
+  showToast('Conflict report submitted');
+}
+
+function clearConflictReport() {
+  document.getElementById('rc-minister').value = '';
+  document.getElementById('rc-weekend').value = '';
+  document.getElementById('rc-assembly').value = '';
+  document.getElementById('rc-notes').value = '';
+  document.getElementById('rc-type').value = 'double-booked';
+  var banner = document.getElementById('rc-submitted-banner');
+  if (banner) banner.style.display = 'none';
+}
+
+function dismissConflictReport(pidx) {
+  var p = PROPOSALS[pidx];
+  if (!p) return;
+  p.status = 'Closed';
+  updateRequestsBadge();
+  renderPendingRequests();
+  showToast('Report dismissed');
+}
+
+function markResolved(pidx) {
+  var p = PROPOSALS[pidx];
+  if (!p) return;
+  p.status = 'Resolved';
+  renderPendingRequests();
+  showToast('Marked as resolved');
+}
+
+function deleteRequest(pidx) {
+  PROPOSALS.splice(pidx, 1);
+  updateRequestsBadge();
+  renderPendingRequests();
+  showToast('Request deleted');
+}
+
 renderSchedule(2026);
+seedFutureCamps();
 initHashRouting();
 updateSchedLock();
+updateConflictBadge();
+updateRequestsBadge();
+showPanel('calendar');
 
 // ══════════════════════════════════════════════════════════
 // DASHBOARD ENHANCEMENTS
@@ -7945,5 +9276,65 @@ renderActivityFeed();
     <div id="gs-results"><div id="gs-empty"></div></div>
   </div>
 </div>
-</body>
+<!-- QUILL EMAIL NOTIFICATION MODAL -->
+<div id="quill-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;display:none;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto">
+  <div style="background:#fff;border-radius:16px;max-width:580px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;margin:auto">
+    <!-- Header -->
+    <div style="background:var(--navy);padding:14px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:1">
+      <div><svg width="32" height="32" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle"><ellipse cx="38" cy="54" rx="22" ry="17" fill="#FFCF00"/><ellipse cx="38" cy="36" rx="9" ry="11" fill="#FFCF00"/><ellipse cx="44" cy="24" rx="13" ry="12" fill="#FFCF00"/><ellipse cx="26" cy="56" rx="13" ry="7" fill="#F0BC00" transform="rotate(-15 26 56)"/><ellipse cx="57" cy="48" rx="7" ry="4" fill="#F0BC00" transform="rotate(30 57 48)"/><ellipse cx="57" cy="26" rx="7" ry="3.5" fill="#FF8C00"/><line x1="50" y1="26" x2="64" y2="26" stroke="#E07800" stroke-width="0.8"/><circle cx="49" cy="20" r="2.5" fill="#1A1A1A"/><circle cx="50" cy="19" r="0.8" fill="#fff"/><rect x="40" y="16" width="9" height="6" rx="3" fill="#1A1A1A"/><rect x="41" y="17" width="7" height="4" rx="2" fill="#2255AA" opacity="0.85"/><rect x="50" y="16" width="9" height="6" rx="3" fill="#1A1A1A"/><rect x="51" y="17" width="7" height="4" rx="2" fill="#2255AA" opacity="0.85"/><line x1="49" y1="19" x2="50" y2="19" stroke="#1A1A1A" stroke-width="1.2"/><ellipse cx="38" cy="69" rx="26" ry="4" fill="#AAD4F5" opacity="0.45"/></svg></div>
+      <div>
+        <div style="color:#fff;font-size:14px;font-weight:700">Quill — GMI Travel Desk</div>
+        <div style="color:rgba(255,255,255,.6);font-size:11px">Schedule change notification</div>
+      </div>
+      <button onclick="closeQuillModal()" style="margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:18px;line-height:1;font-weight:300">&times;</button>
+    </div>
+    <!-- To / Subject -->
+    <div style="padding:14px 18px;border-bottom:1px solid var(--border);background:var(--gray)">
+      <div style="font-size:13px;margin-bottom:4px"><strong>To:</strong> <span id="quill-to-display" style="color:var(--navy)"></span></div>
+      <div style="font-size:13px"><strong>Subject:</strong> <span id="quill-subject-display"></span></div>
+    </div>
+    <!-- Edit area -->
+    <div style="padding:16px 18px;border-bottom:1px solid var(--border)">
+      <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Message — edit before sending</div>
+      <textarea id="quill-edit-body" oninput="document.getElementById('quill-body-preview').textContent=this.value" style="width:100%;height:200px;font-size:13px;font-family:Georgia,serif;border:1px solid var(--border);border-radius:8px;padding:10px;resize:vertical;box-sizing:border-box;line-height:1.7"></textarea>
+    </div>
+    <!-- Preview -->
+    <div style="padding:14px 18px;border-bottom:1px solid var(--border)">
+      <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Preview</div>
+      <div style="background:var(--gray);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:13px;line-height:1.7">
+        <div id="quill-body-preview" style="white-space:pre-wrap;font-family:Georgia,serif;font-size:13px"></div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:10px 0">
+        <div style="display:flex;align-items:center;gap:10px">
+          <svg width="28" height="28" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="38" cy="54" rx="22" ry="17" fill="#FFCF00"/>
+            <ellipse cx="38" cy="36" rx="9" ry="11" fill="#FFCF00"/>
+            <ellipse cx="44" cy="24" rx="13" ry="12" fill="#FFCF00"/>
+            <ellipse cx="26" cy="56" rx="13" ry="7" fill="#F0BC00" transform="rotate(-15 26 56)"/>
+            <ellipse cx="57" cy="48" rx="7" ry="4" fill="#F0BC00" transform="rotate(30 57 48)"/>
+            <ellipse cx="57" cy="26" rx="7" ry="3.5" fill="#FF8C00"/>
+            <line x1="50" y1="26" x2="64" y2="26" stroke="#E07800" stroke-width="0.8"/>
+            <circle cx="49" cy="20" r="2.5" fill="#1A1A1A"/>
+            <circle cx="50" cy="19" r="0.8" fill="#fff"/>
+            <rect x="40" y="16" width="9" height="6" rx="3" fill="#1A1A1A"/>
+            <rect x="41" y="17" width="7" height="4" rx="2" fill="#2255AA" opacity="0.85"/>
+            <rect x="50" y="16" width="9" height="6" rx="3" fill="#1A1A1A"/>
+            <rect x="51" y="17" width="7" height="4" rx="2" fill="#2255AA" opacity="0.85"/>
+            <line x1="49" y1="19" x2="50" y2="19" stroke="#1A1A1A" stroke-width="1.2"/>
+            <ellipse cx="38" cy="69" rx="26" ry="4" fill="#AAD4F5" opacity="0.45"/>
+          </svg>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--navy)">Quill</div>
+            <div style="font-size:11px;color:var(--text-muted)">GMI Travel Desk · Global Missions Inc.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Buttons -->
+    <div style="padding:14px 18px;display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="closeQuillModal()" class="btn">Cancel</button>
+      <button onclick="sendQuillEmail()" class="btn btn-primary" style="display:flex;align-items:center;gap:6px"><svg width="22" height="22" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle"><ellipse cx="38" cy="54" rx="22" ry="17" fill="#FFCF00"/><ellipse cx="38" cy="36" rx="9" ry="11" fill="#FFCF00"/><ellipse cx="44" cy="24" rx="13" ry="12" fill="#FFCF00"/><ellipse cx="26" cy="56" rx="13" ry="7" fill="#F0BC00" transform="rotate(-15 26 56)"/><ellipse cx="57" cy="48" rx="7" ry="4" fill="#F0BC00" transform="rotate(30 57 48)"/><ellipse cx="57" cy="26" rx="7" ry="3.5" fill="#FF8C00"/><line x1="50" y1="26" x2="64" y2="26" stroke="#E07800" stroke-width="0.8"/><circle cx="49" cy="20" r="2.5" fill="#1A1A1A"/><circle cx="50" cy="19" r="0.8" fill="#fff"/><rect x="40" y="16" width="9" height="6" rx="3" fill="#1A1A1A"/><rect x="41" y="17" width="7" height="4" rx="2" fill="#2255AA" opacity="0.85"/><rect x="50" y="16" width="9" height="6" rx="3" fill="#1A1A1A"/><rect x="51" y="17" width="7" height="4" rx="2" fill="#2255AA" opacity="0.85"/><line x1="49" y1="19" x2="50" y2="19" stroke="#1A1A1A" stroke-width="1.2"/><ellipse cx="38" cy="69" rx="26" ry="4" fill="#AAD4F5" opacity="0.45"/></svg> Open in Mail</button>
+    </div>
+  </div>
+</div>
+
 </html>
