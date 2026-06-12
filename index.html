@@ -275,7 +275,7 @@ textarea{min-height:80px;resize:vertical}
   .asm-detail-grid{grid-template-columns:1fr}
   /* step cards on travel request */
   #panel-travel-request .card{margin-bottom:.75rem}
-  /* availability grid — full width scroll */
+  /* scheduling grid — full width scroll */
   #ag-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
   /* proposals table */
   #proposals-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -384,7 +384,7 @@ textarea{min-height:80px;resize:vertical}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard
     </div>
     <div class="nav-item" onclick="showPanel('avail-grid')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Availability Grid
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Scheduling Grid
     </div>
     <div class="nav-item" onclick="showPanel('ministers')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Ministries
@@ -932,7 +932,7 @@ textarea{min-height:80px;resize:vertical}
     <div class="panel" id="panel-avail-grid">
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Availability Grid</span>
+          <span class="card-title">Scheduling Grid</span>
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
             <select id="ag-year" onchange="renderAvailGrid()"><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select>
             <select id="ag-region" onchange="renderAvailGrid()"><option value="">All regions</option><option value="CANPR">Canada Prairies</option><option value="CANPC">Canada Pacific</option><option value="CANON">Canada Ontario</option><option value="USE">US East</option><option value="USC">US Central</option><option value="USPC">US Pacific</option><option value="CARIB">Caribbean (CAR)</option></select>
@@ -4822,7 +4822,7 @@ function showPanel(id) {
   document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
   document.getElementById('panel-'+id).classList.add('active');
   var navMap={
-    'dashboard':'Dashboard','schedule':'Schedule','avail-grid':'Availability Grid',
+    'dashboard':'Dashboard','schedule':'Schedule','avail-grid':'Scheduling Grid',
     'conflicts':'Conflicts','ministers':'Ministries','assemblies':'Assemblies',
     'assembly-detail':'Assembly Detail','history':'Visit History',
     'church-reports':'Church Reports','proposals':'Travel Proposal','calendar':'Calendar','travel-request':'Travel Request',
@@ -5367,6 +5367,22 @@ function renderAvailLegend() {
   }
 }
 
+var NEW_ASSIGNMENTS = {}; // key: mname+'|'+fri+'|'+assembly → true
+
+function markNewAssignment(mname, fri, assembly) {
+  var key = mname+'|'+fri+'|'+assembly;
+  if (!NEW_ASSIGNMENTS[mname]) NEW_ASSIGNMENTS[mname] = {};
+  NEW_ASSIGNMENTS[mname][key] = true;
+}
+
+function isNewAssignment(mname, fri, assembly) {
+  return !!(NEW_ASSIGNMENTS[mname] && NEW_ASSIGNMENTS[mname][mname+'|'+fri+'|'+assembly]);
+}
+
+function acknowledgeAssignments(mname) {
+  delete NEW_ASSIGNMENTS[mname];
+}
+
 function renderAvailGrid() {
   var regionF = document.getElementById('ag-region').value;
   var monthF  = document.getElementById('ag-month').value;
@@ -5437,6 +5453,7 @@ function renderAvailGrid() {
         bg='var(--blue-light)';border='1px solid #85B7EB';textColor='var(--blue)';
         fullName=assigned[0].assembly;
         label=getCode(fullName);
+        if(isNewAssignment(mn.name, fri, fullName)) border='2px solid var(--navy)';
         trips++;
       } else if(unavail){
         bg='var(--red-light)';border='1px solid #F09595';textColor='var(--red)';
@@ -5465,13 +5482,15 @@ function renderAvailGrid() {
       var fontSize = isFullYear ? '10px' : '10px';
       var tooltip = mn.name+' \u2014 '+weekends[w].label+(fullName?' : '+fullName:'');
 
+      var isNew = isNewAssignment(mn.name, fri, fullName);
       html+='<td style="padding:0;text-align:center;border-bottom:1px solid var(--border);width:'+cellW+'px;min-width:'+cellW+'px;max-width:'+cellW+'px;box-sizing:border-box" title="'+tooltip+'">'
         +'<div data-mname="'+mn.name+'" data-fri="'+fri+'" data-label="'+weekends[w].label+'" onclick="agCellClick(this)" '
         +'style="width:'+cellW+'px;height:20px;border-radius:3px;background:'+bg+';border:'+border+';color:'+textColor+';'
-        +'display:flex;align-items:center;justify-content:center;font-size:'+fontSize+';font-weight:900;letter-spacing:-.3px;'
+        +'display:flex;align-items:center;justify-content:center;font-size:'+fontSize+';font-weight:'+(isNew?'900':'900')+';letter-spacing:-.3px;'
+        +(isNew?'box-shadow:inset 0 0 0 1px var(--navy);':'')
         +'cursor:pointer;transition:opacity .1s;overflow:hidden" '
         +'onmouseover="this.style.opacity=0.7" onmouseout="this.style.opacity=1">'
-        +label+'</div></td>';
+        +(isNew?'<strong>'+label+'</strong>':label)+'</div></td>';
     }
     html+='<td style="text-align:center;font-size:12px;font-weight:600;color:var(--navy-dark);padding:5px 8px;border-bottom:1px solid var(--border)">'+trips+'</td>';
     html+='</tr>';
@@ -5558,9 +5577,10 @@ function openMinisterSchedulePanel(mname) {
       var ministers = [v.sc.m1,v.sc.m2,v.sc.m3,v.sc.m4].filter(Boolean).map(function(m){
         return m===mname ? '<strong style="color:var(--navy-dark)">'+m+'</strong>' : m;
       }).join(', ');
-      body += '<tr style="'+(v.sc.cancelled?'opacity:0.5':v.sc.visited?'background:var(--green-light)':'')+'">'
-        +'<td style="padding:9px 16px;border-bottom:1px solid var(--border);font-size:12px;white-space:nowrap">'+(v.wk?v.wk.label:v.sc.fri)+'</td>'
-        +'<td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500">'+v.sc.assembly+'</td>'
+      var isNew = isNewAssignment(mname, v.sc.fri, v.sc.assembly);
+      body += '<tr style="'+(v.sc.cancelled?'opacity:0.5':v.sc.visited?'background:var(--green-light)':isNew?'background:#FFF9E6;border-left:3px solid var(--navy)':'')+'">'
+        +'<td style="padding:9px 16px;border-bottom:1px solid var(--border);font-size:12px;white-space:nowrap;'+(isNew?'font-weight:700':'')+'"">'+(v.wk?v.wk.label:v.sc.fri)+(isNew?' <span style="font-size:10px;background:var(--navy);color:#fff;padding:1px 5px;border-radius:3px;margin-left:4px">NEW</span>':'')+'</td>'
+        +'<td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:'+(isNew?'700':'500')+'">'+v.sc.assembly+'</td>'
         +'<td style="padding:9px 12px;border-bottom:1px solid var(--border)">'+(asm?regionBadge(asm.region):'')+'</td>'
         +'<td style="padding:9px 12px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text-muted)">'+ministers+'</td>'
         +'<td style="padding:9px 12px;border-bottom:1px solid var(--border)">'+statusBadge+'</td>'
@@ -5585,6 +5605,25 @@ function openMinisterSchedulePanel(mname) {
 
   document.getElementById('ag-mp-body').innerHTML = body;
   var panel = document.getElementById('ag-minister-panel');
+
+  // Update header to include Notify button
+  var newCount = NEW_ASSIGNMENTS[mname] ? Object.keys(NEW_ASSIGNMENTS[mname]).length : 0;
+  document.getElementById('ag-mp-title').textContent = mname + ' \u2014 ' + year + ' Schedule';
+
+  // Add Notify button to header
+  var headerDiv = panel.querySelector('.card-header');
+  var existingNotify = headerDiv.querySelector('.ag-notify-btn');
+  if (existingNotify) existingNotify.remove();
+  var notifyBtn = document.createElement('button');
+  notifyBtn.className = 'btn btn-primary btn-sm ag-notify-btn';
+  notifyBtn.style.cssText = 'display:flex;align-items:center;gap:6px;';
+  notifyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><ellipse cx="38" cy="54" rx="22" ry="17" fill="#FFCF00"/><ellipse cx="38" cy="36" rx="9" ry="11" fill="#FFCF00"/><ellipse cx="44" cy="24" rx="13" ry="12" fill="#FFCF00"/><ellipse cx="57" cy="26" rx="7" ry="3.5" fill="#FF8C00"/><circle cx="49" cy="20" r="2.5" fill="#1A1A1A"/></svg> Notify'
+    + (newCount ? ' <span style="background:var(--red);color:#fff;font-size:10px;padding:1px 5px;border-radius:10px;">'+newCount+' new</span>' : '');
+  notifyBtn.onclick = function() { openQuillScheduleNotify(mname, year); };
+  // Insert before the close button
+  var closeBtn = headerDiv.querySelector('button:last-child');
+  headerDiv.insertBefore(notifyBtn, closeBtn);
+
   panel.style.display = 'block';
   panel.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
@@ -5649,26 +5688,46 @@ function openAgCell(mname, fri, label) {
 
   } else {
     body+='<div style="font-size:13px;color:var(--text-muted);margin-bottom:12px">'+mname+' is available this weekend.</div>';
-    if(weekVisits.length>0){
-      body+='<label style="display:block;font-size:11px;font-weight:500;margin-bottom:4px">Assign to a visit:</label>'
-        +'<div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">'
-        +'<select id="ag-addasm" style="font-size:12px;padding:5px 8px;flex:1">'
-        +'<option value="">\u2014 Select assembly \u2014</option>';
-      for(var vi=0;vi<weekVisits.length;vi++) body+='<option value="'+weekVisits[vi].idx+'">'+weekVisits[vi].assembly+'</option>';
-      body+='</select>'
-        +'<select id="ag-addslot" style="font-size:12px;padding:5px 8px">'
-        +'<option value="m1">Slot 1</option><option value="m2">Slot 2</option><option value="m3">Slot 3</option><option value="m4">Slot 4</option>'
-        +'</select>'
-        +'<button class="btn btn-sm btn-primary" data-mname="'+mname+'" onclick="applyAgAssignBtn(this)">Assign</button>'
-        +'</div>';
-    }
-    body+='<label style="display:block;font-size:11px;font-weight:500;margin-bottom:4px">Create a new visit:</label>'
+
+    // Single unified dropdown: existing visits + all assemblies + camps overlapping this weekend
+    body+='<label style="display:block;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Assign to</label>'
       +'<div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">'
-      +'<select id="ag-newasm" style="font-size:12px;padding:5px 8px;flex:1">'
-      +'<option value="">\u2014 Select assembly \u2014</option>';
-    for(var ai=0;ai<ASSEMBLIES.length;ai++) body+='<option value="'+ASSEMBLIES[ai].name+'">'+ASSEMBLIES[ai].name+'</option>';
+      +'<select id="ag-assign-target" style="font-size:12px;padding:5px 8px;flex:1">'
+      +'<option value="">\u2014 Select\u2026 \u2014</option>';
+
+    // Existing schedule rows this weekend
+    if(weekVisits.length>0){
+      body+='<optgroup label="Existing visits this weekend">';
+      for(var vi=0;vi<weekVisits.length;vi++){
+        body+='<option value="sched:'+weekVisits[vi].idx+':m1">'+weekVisits[vi].assembly+'</option>';
+      }
+      body+='</optgroup>';
+    }
+
+    // All assemblies (new visit)
+    body+='<optgroup label="All assemblies (new visit)">';
+    var sortedAsm = ASSEMBLIES.slice().sort(function(a,b){return a.name.localeCompare(b.name);});
+    for(var ai=0;ai<sortedAsm.length;ai++){
+      body+='<option value="newasm:'+sortedAsm[ai].name+'">'+sortedAsm[ai].name+'</option>';
+    }
+    body+='</optgroup>';
+
+    // Camps overlapping this weekend
+    var overlappingCamps = CAMPS.filter(function(c){
+      return c.start && c.end && c.start <= fri && c.end >= fri;
+    });
+    if(overlappingCamps.length>0){
+      body+='<optgroup label="Camps this weekend">';
+      for(var ci=0;ci<overlappingCamps.length;ci++){
+        var c = overlappingCamps[ci];
+        var yr = c.start ? c.start.substring(0,4) : '';
+        body+='<option value="camp:'+ci_real(c)+'">'+c.name+' '+yr+'</option>';
+      }
+      body+='</optgroup>';
+    }
+
     body+='</select>'
-      +'<button class="btn btn-sm btn-primary" data-mname="'+mname+'" data-fri="'+fri+'" onclick="applyAgNewVisit(this)">Create</button>'
+      +'<button class="btn btn-sm btn-primary" data-mname="'+mname+'" data-fri="'+fri+'" onclick="applyAgUnifiedAssign(this)">Assign</button>'
       +'</div>'
       +'<div style="border-top:1px solid var(--border);padding-top:10px">'
       +'<button class="btn btn-sm" data-mname="'+mname+'" data-fri="'+fri+'" onclick="addUnavailBtn(this)" style="color:var(--red);border-color:var(--red-light)">\u2715 Mark unavailable</button>'
@@ -5696,12 +5755,61 @@ function applyAgReplacements(count) {
   else showToast('No changes made');
 }
 
+function ci_real(camp) {
+  // Return real index of camp in CAMPS array
+  for(var i=0;i<CAMPS.length;i++){if(CAMPS[i]===camp)return i;}
+  return -1;
+}
+
+function applyAgUnifiedAssign(btn) {
+  var mname = btn.getAttribute('data-mname');
+  var fri = btn.getAttribute('data-fri');
+  var sel = document.getElementById('ag-assign-target');
+  if(!sel||!sel.value){showToast('Please select an assembly or camp');return;}
+  var val = sel.value;
+
+  if(val.startsWith('sched:')) {
+    // Assign to existing schedule row — find first empty slot
+    var parts = val.split(':');
+    var schedIdx = parseInt(parts[1]);
+    var s = SCHEDULE[schedIdx];
+    var slot = !s.m1?'m1':!s.m2?'m2':!s.m3?'m3':'m4';
+    s[slot] = mname;
+    markNewAssignment(mname, fri, s.assembly);
+  } else if(val.startsWith('newasm:')) {
+    // Create new schedule row
+    var asmName = val.substring(7);
+    SCHEDULE.push({assembly:asmName,fri:fri,m1:mname,m2:'',m3:'',m4:'',note:'',visited:false,cancelled:false,suggested:false});
+    markNewAssignment(mname, fri, asmName);
+  } else if(val.startsWith('camp:')) {
+    // Add to camp roster
+    var campIdx = parseInt(val.substring(5));
+    if(campIdx>=0 && CAMPS[campIdx]) {
+      if(!CAMPS[campIdx].ministers) CAMPS[campIdx].ministers=[];
+      if(CAMPS[campIdx].ministers.indexOf(mname)<0) CAMPS[campIdx].ministers.push(mname);
+      markNewAssignment(mname, fri, CAMPS[campIdx].name);
+      if(typeof renderCamps==='function') renderCamps();
+    }
+  }
+
+  updateConflictBadge();
+  closeAgPopover();
+  renderAvailGrid();
+  renderSchedule(activeScheduleYear);
+  renderDashboard();
+  renderMinisters();
+  renderAssemblies();
+  showToast(mname+' assigned');
+}
+
 function applyAgAssignBtn(btn) {
   var mname=btn.getAttribute('data-mname');
   var asmIdx=parseInt(document.getElementById('ag-addasm').value);
   var slot=document.getElementById('ag-addslot').value;
   if(isNaN(asmIdx)||!document.getElementById('ag-addasm').value){showToast('Please select an assembly');return;}
   SCHEDULE[asmIdx][slot]=mname;
+  markNewAssignment(mname, SCHEDULE[asmIdx].fri, SCHEDULE[asmIdx].assembly);
+  updateConflictBadge();
   closeAgPopover();renderAvailGrid();renderSchedule(activeScheduleYear);renderDashboard();renderMinisters();renderAssemblies();showToast(mname+' assigned');
 }
 
@@ -5711,6 +5819,8 @@ function applyAgNewVisit(btn) {
   var asmName=document.getElementById('ag-newasm').value;
   if(!asmName){showToast('Please select an assembly');return;}
   SCHEDULE.push({assembly:asmName,fri:fri,m1:mname,m2:'',m3:'',note:'',visited:false,cancelled:false,suggested:false});
+  markNewAssignment(mname, fri, asmName);
+  updateConflictBadge();
   closeAgPopover();renderAvailGrid();renderSchedule(activeScheduleYear);renderDashboard();renderMinisters();renderAssemblies();showToast('Visit created');
 }
 
@@ -7462,7 +7572,7 @@ function updateProposalStatus(id, status) {
         }
         renderSchedule(activeScheduleYear);
         renderDashboard();
-        // Switch availability grid to the year of the approved trip so the checkmark is visible
+        // Switch scheduling grid to the year of the approved trip so the checkmark is visible
         var tripYear=parseInt(p.weekend.substring(0,4))||2026;
         var agYearSel=document.getElementById('ag-year');
         if(agYearSel) agYearSel.value=String(tripYear);
@@ -8274,6 +8384,78 @@ function rejectTravelRequest(pidx) {
 }
 
 
+function openQuillScheduleNotify(mname, year) {
+  var yearStr = String(year);
+  var allWk = getWeekendsForYear(year);
+  var firstName = mname.split(' ')[0];
+
+  // Assembly visits
+  var visits = [];
+  for(var s=0;s<SCHEDULE.length;s++){
+    var sc = SCHEDULE[s];
+    if(!sc.fri.startsWith(yearStr)) continue;
+    if([sc.m1,sc.m2,sc.m3,sc.m4].indexOf(mname)<0) continue;
+    if(sc.cancelled) continue;
+    var wk = null;
+    for(var w=0;w<allWk.length;w++){if(allWk[w].fri===sc.fri){wk=allWk[w];break;}}
+    var isNew = isNewAssignment(mname, sc.fri, sc.assembly);
+    visits.push({fri:sc.fri, label:wk?wk.label:sc.fri, name:sc.assembly, isNew:isNew, type:'visit'});
+  }
+
+  // Camp assignments
+  CAMPS.filter(function(c){
+    return c.start && c.start.startsWith(yearStr) && (c.ministers||[]).indexOf(mname)>=0;
+  }).forEach(function(c){
+    var sd = new Date(c.start+'T12:00:00'); var ed = new Date(c.end+'T12:00:00');
+    var mns = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var label = mns[sd.getMonth()]+' '+sd.getDate()+'\u2013'+mns[ed.getMonth()]+' '+ed.getDate();
+    var isNew = isNewAssignment(mname, c.start, c.name);
+    visits.push({fri:c.start, label:label, name:c.name+' '+c.start.substring(0,4), isNew:isNew, type:'camp'});
+  });
+
+  visits.sort(function(a,b){return a.fri.localeCompare(b.fri);});
+
+  var hasNew = visits.some(function(v){return v.isNew;});
+  var subject = hasNew
+    ? 'GMI Schedule Update \u2014 New Assignments for ' + mname + ' (' + year + ')'
+    : 'GMI Schedule \u2014 ' + mname + ' ' + year;
+
+  var body = 'Dear ' + firstName + ',\n\n';
+  if(hasNew){
+    body += 'Your ' + year + ' schedule has been updated. New assignments are marked with ** below.\n\n';
+  } else {
+    body += 'Here is your current ' + year + ' travel schedule.\n\n';
+  }
+  body += 'YOUR ' + year + ' SCHEDULE\n';
+  body += '----------------------------------------\n';
+  if(!visits.length){
+    body += '  No visits scheduled yet.\n';
+  } else {
+    for(var vi=0;vi<visits.length;vi++){
+      var v = visits[vi];
+      var tag = v.type==='camp' ? ' [Camp]' : '';
+      body += (v.isNew ? '  ** ' : '     ') + v.label + '   ' + v.name + tag + (v.isNew ? '  \u2190 NEW' : '') + '\n';
+    }
+  }
+  body += '\n';
+  if(hasNew){
+    body += 'Please review the new assignments marked with **. If you have any questions or concerns, please contact your overseer.\n\n';
+  }
+  body += 'GMI Travel Desk\nGlobal Missions Inc.';
+
+  acknowledgeAssignments(mname);
+  renderAvailGrid();
+  openQuillModal(mname, '', '', '', '');
+
+  setTimeout(function(){
+    document.getElementById('quill-subject-display').textContent = subject;
+    document.getElementById('quill-body-preview').textContent = body;
+    document.getElementById('quill-edit-body').value = body;
+    var email = getMinisterEmail(mname);
+    document.getElementById('quill-to-display').textContent = mname + (email?' <'+email+'>':'');
+  }, 50);
+}
+
 function detectAllConflicts() {
   var byFri = {};
   for (var i=0;i<SCHEDULE.length;i++) {
@@ -8516,9 +8698,11 @@ function rcDetectConflicts() {
     var wk = null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===c.fri){wk=allWk[w];break;}}
     var label = wk ? wk.label + ' ' + c.fri.substring(0,4) : c.fri;
     var asmText = c.assemblies.join(' &amp; ');
-    return '<button onclick="rcPrefill(\''+c.fri+'\',\''+c.assemblies[0]+'\')" style="text-align:left;background:var(--red-light);border:1px solid #F09595;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13px;width:100%">'
+    var asmJoined = c.assemblies.join(' & ');
+    return '<button onclick="rcPrefill(\''+c.fri+'\',\''+asmJoined.replace(/'/g,"\\'")+'\')" style="text-align:left;background:var(--red-light);border:1px solid #F09595;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13px;width:100%">'
       + '<div style="font-weight:600;color:var(--red);margin-bottom:2px">&#9888; ' + label + '</div>'
       + '<div style="font-size:12px;color:var(--navy-dark)">Double-booked: ' + asmText + '</div>'
+      + '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">Tap to pre-fill the form below &#8595;</div>'
       + '</button>';
   }).join('');
 }
@@ -8527,13 +8711,21 @@ function rcPrefill(fri, assembly) {
   var wkSel = document.getElementById('rc-weekend');
   var asmEl = document.getElementById('rc-assembly');
   var typeEl = document.getElementById('rc-type');
+  var notesEl = document.getElementById('rc-notes');
+  var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var wk = null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===fri){wk=allWk[w];break;}}
+  var dateLabel = wk ? wk.label + ' ' + fri.substring(0,4) : fri;
   if (wkSel) wkSel.value = fri;
   if (asmEl) asmEl.value = assembly;
   if (typeEl) typeEl.value = 'double-booked';
-  // Scroll to form
-  var form = document.getElementById('rc-assembly');
-  if (form) form.scrollIntoView({behavior:'smooth', block:'center'});
-  form.focus();
+  if (notesEl && !notesEl.value) {
+    notesEl.value = 'I am scheduled for both ' + assembly + ' on the weekend of ' + dateLabel + '. Please advise which assignment to keep.';
+  }
+  // Highlight the form fields briefly
+  if (asmEl) { asmEl.style.borderColor = 'var(--red)'; setTimeout(function(){ asmEl.style.borderColor = ''; }, 2000); }
+  if (wkSel) { wkSel.style.borderColor = 'var(--red)'; setTimeout(function(){ wkSel.style.borderColor = ''; }, 2000); }
+  var notesSection = document.getElementById('rc-notes');
+  if (notesSection) notesSection.scrollIntoView({behavior:'smooth', block:'center'});
 }
 
 function submitConflictReport() {
