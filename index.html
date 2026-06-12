@@ -624,21 +624,6 @@ textarea{min-height:80px;resize:vertical}
     <!-- SETTINGS -->
 
 
-    <!-- CONFLICTS -->
-    <div class="panel" id="panel-conflicts">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Double-bookings</span>
-          <span style="font-size:11px;color:var(--text-muted)">Click any conflict to fix it</span>
-        </div>
-        <div class="card-body" id="conflicts-body"></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">Substitution notes</span></div>
-        <div style="padding:0"><table><thead><tr><th>Assembly</th><th>Weekend</th><th>Ministers assigned</th><th>Note</th></tr></thead><tbody id="subs-tbody"></tbody></table></div>
-      </div>
-    </div>
-
     <!-- SCHEDULE CONFLICTS -->
     <div class="panel" id="panel-schedule-conflicts">
       <div class="card">
@@ -1162,13 +1147,6 @@ textarea{min-height:80px;resize:vertical}
           <div class="card-header"><span class="card-title">Cost by Minister</span><span style="font-size:11px;color:var(--text-muted)">Click a row to see trip breakdown</span></div>
           <div style="overflow-x:auto"><table id="bgt-minister-table" style="width:100%;border-collapse:collapse;font-size:13px"></table></div>
         </div>
-        <div id="bgt-minister-detail" class="card" style="display:none;border-color:var(--blue)">
-          <div class="card-header" style="background:var(--blue-light)">
-            <span class="card-title" id="bgt-minister-detail-title" style="color:var(--navy-dark)">Trip breakdown</span>
-            <button class="btn btn-sm" onclick="document.getElementById('bgt-minister-detail').style.display='none'">&#10005;</button>
-          </div>
-          <div style="overflow-x:auto"><table id="bgt-trip-table" style="width:100%;border-collapse:collapse;font-size:13px"></table></div>
-        </div>
       </div>
 
       <!-- Assembly view -->
@@ -1595,9 +1573,7 @@ textarea{min-height:80px;resize:vertical}
               <div style="font-size:11px;font-weight:600;color:var(--navy);margin-bottom:4px">This request will be sent to your overseers:</div>
               <div id="tr-overseers-list" style="font-size:13px;color:var(--navy-dark)"></div>
             </div>
-            <div id="tr-no-overseers-box" style="display:none;background:var(--amber-light);border:1px solid #EF9F27;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:#633806">
-              &#9888; No overseers found in your profile. Please contact your administrator to have overseers added before submitting.
-            </div>
+            <div id="tr-no-overseers-box" style="display:none"></div>
 
             <div style="background:#FFF3CD;border:1px solid #EF9F27;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#633806;font-weight:500">
               &#9888; By submitting this request you confirm you will not proceed with any travel arrangements until written approval has been received from your overseers.
@@ -1703,7 +1679,14 @@ textarea{min-height:80px;resize:vertical}
           <div style="padding:1.25rem">
             <div class="form-group" style="margin-bottom:1rem">
               <label class="form-label">Your name</label>
-              <select id="rc-minister"><option value="">Select your name...</option></select>
+              <select id="rc-minister" onchange="rcDetectConflicts()"><option value="">Select your name...</option></select>
+            </div>
+            <!-- Detected conflicts quick-select -->
+            <div id="rc-detected" style="display:none;margin-bottom:1rem">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">&#9888; Conflicts found on your schedule — tap to pre-fill</div>
+              <div id="rc-detected-list" style="display:flex;flex-direction:column;gap:6px"></div>
+              <div style="border-top:1px solid var(--border);margin:14px 0"></div>
+              <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Or fill in manually below</div>
             </div>
             <div class="form-group" style="margin-bottom:1rem">
               <label class="form-label">Weekend</label>
@@ -1820,7 +1803,6 @@ textarea{min-height:80px;resize:vertical}
               <option value="upcoming">Upcoming</option>
               <option value="done">Completed</option>
             </select>
-            <button class="btn btn-primary btn-sm" onclick="openCampForm(-1)">+ Add camp</button>
           </div>
         </div>
         <div id="camps-list" style="padding:0"></div>
@@ -1844,7 +1826,7 @@ var MINISTERS = [
   {name:"Darren Olson",    city:"North Battleford",state:"SK",country:"CAN", region:"CANPR", email:"d.olson@globalmissionsinc.org"},
   {name:"David Luff",      city:"Kingsport",      state:"TN", country:"USA", region:"USE", email:"d.luff@globalmissionsinc.org"},
   {name:"Dennis Aarrestad",city:"Park Valley",    state:"SK", country:"CAN", region:"CANPR", email:"den.aarrestad@globalmissionsinc.org"},
-  {name:"Jeff Olson",      city:"Grand Junction", state:"CO", country:"USA", region:"USC", email:"j.olson@globalmissionsinc.org"},
+  {name:"Jeff Olson",        city:"Grand Junction", state:"CO", country:"USA", region:"USC", email:"j.olson@globalmissionsinc.org"},
   {name:"Kelvin Martin",   city:"Stratford",      state:"ON", country:"CAN", region:"CANON", email:"k.martin@globalmissionsinc.org"},
   {name:"Nat Swaan",       city:"North Battleford",state:"SK",country:"CAN", region:"CANPR", email:"n.swaan@globalmissionsinc.org"},
   {name:"Nick Snoke",      city:"Grand Junction", state:"CO", country:"USA", region:"USC", email:"n.snoke@globalmissionsinc.org"},
@@ -3085,7 +3067,7 @@ MINISTER_PROFILES["Dennis Aarrestad"] = {role:"Helper",           spouse:"Cynthi
   if(!MINISTER_PROFILES["Bernard James"]) MINISTER_PROFILES["Bernard James"]={};
   if(!MINISTER_PROFILES["Bernard James"]["role"]) MINISTER_PROFILES["Bernard James"]["role"]="Traveling Deacon";
   if(!MINISTER_PROFILES["Bernard James"]["phone"]) MINISTER_PROFILES["Bernard James"]["phone"]="473-403-8110";
-  if(!MINISTER_PROFILES["Bernard James"]["email"]) MINISTER_PROFILES["Bernard James"]["email"]="bjames@globalmissionsinc.org";
+  if(!MINISTER_PROFILES["Bernard James"]["email"]) MINISTER_PROFILES["Bernard James"]["email"]="bj.james@globalmissionsinc.org";
   if(!MINISTER_PROFILES["Bernard James"]["spouse"]) MINISTER_PROFILES["Bernard James"]["spouse"]="Roslyn";
   if(!MINISTER_PROFILES["Bernard James"]["city"]) MINISTER_PROFILES["Bernard James"]["city"]="St. Davids";
   if(!MINISTER_PROFILES["Bernard James"]["country"]) MINISTER_PROFILES["Bernard James"]["country"]="Caribbean";
@@ -4884,14 +4866,17 @@ var MINISTER_COORDS = {
   'Darren Olson':     [52.7863,-108.2970],
   'David Luff':       [36.5484,-82.5618],
   'Dennis Aarrestad': [52.0000,-105.5000],
-  'Jeff Olson':       [39.0639,-108.5506],
+  'Jeff Olson':         [39.0639,-108.5506],
   'Kelvin Martin':    [43.3616,-80.9860],
   'Nat Swaan':        [52.7863,-108.2970],
   'Nick Snoke':       [39.0639,-108.5506],
   'PJ Mathew':        [42.3314,-83.0458],
   'Terry Zimmer':     [53.4073,-117.5893],
   'Trevor Sundbo':    [50.4501,-104.6178],
-  'Wayne Peters':     [49.1800,-97.9400]
+  'Wayne Peters':     [49.1800,-97.9400],
+  'Calvin James':     [6.8013,-58.1551],   // Georgetown, Guyana
+  'Bernard James':    [12.0561,-61.7488],  // St. George, Grenada
+  'Cephas Forde':     [13.1939,-61.2247]   // Kingstown, St. Vincent
 };
 
 var ASSEMBLY_COORDS = {
@@ -4931,7 +4916,12 @@ var ASSEMBLY_COORDS = {
   'Minneapolis MN':      [44.9778,-93.265],
   'Minden NE':           [40.4994,-98.9514],
   'Payette ID':          [44.0749,-116.9329],
-  'Portland OR':         [45.5051,-122.675]
+  'Portland OR':         [45.5051,-122.675],
+  'Georgetown GUY':      [6.8013,-58.1551],
+  'St. George GRN':      [12.0561,-61.7488],
+  'Kingstown VCT':       [13.1939,-61.2247],
+  'Bridgetown BRB':      [13.0969,-59.6145],
+  'Port of Spain TTO':   [10.6549,-61.5019]
 };
 
 // Ministers from same home city — avoid grouping together
@@ -5842,11 +5832,11 @@ function generateScheduleForYear() {
     }
     if (btn) { btn.textContent='Regenerate'; btn.disabled=false; }
     showToast(activeScheduleYear+' schedule generated');
+    updateConflictBadge();
+    if (typeof renderBudget === 'function') renderBudget();
   },100);
 }
 
-// Keep backward compat
-function generateSchedule2027() { activeScheduleYear=2027; generateScheduleForYear(); }
 
 // ── URL hash — shareable availability link ────────────────
 function initHashRouting() {
@@ -6065,6 +6055,21 @@ function renderBudget() {
       campVisits.push({minister:mname, camp:c.name, start:c.start, end:c.end});
     });
   });
+
+  // Empty state — prompt to generate
+  if (!visits.length && !approvedRequests.length && !campVisits.length) {
+    var emptyHtml = '<div style="padding:2rem 1.25rem;text-align:center;color:var(--text-muted)">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:40px;height:40px;margin-bottom:12px;opacity:.3;display:block;margin-left:auto;margin-right:auto"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'
+      + '<div style="font-weight:600;margin-bottom:6px">No schedule data for '+cfg.year+'</div>'
+      + '<div style="font-size:13px;margin-bottom:1rem">Generate the '+cfg.year+' schedule first, or approve travel requests for this year.</div>'
+      + '<button class="btn btn-primary" onclick="showPanel(\'schedule\');switchScheduleYear('+cfg.year+')">Go to Admin \u2192 Schedule</button>'
+      + '</div>';
+    document.getElementById('bgt-metrics').innerHTML = '';
+    document.getElementById('bgt-minister-table').innerHTML = emptyHtml;
+    var asmTable = document.getElementById('bgt-assembly-table');
+    if (asmTable) asmTable.innerHTML = '';
+    return;
+  }
 
   var totalCost = 0;
   var driveCost = 0; var flyCost = 0;
@@ -6341,81 +6346,6 @@ function renderBudget() {
 
   // Don't hide the detail panel if it's already open
   switchBudgetTab(budgetTab);
-}
-
-function showMinisterBudgetDetail(mname) {
-  var md = (window._budgetMinisterData||{})[mname];
-  var cfg = window._budgetCfg || getBudgetSettings();
-  if (!md) return;
-  document.getElementById('bgt-minister-detail-title').textContent=mname+' \u2014 Trip Breakdown';
-  var sym=cfg.currency; var unit=cfg.unit;
-  var allWk=WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
-  var iStyle='width:70px;font-size:11px;padding:3px 5px;text-align:right;border:1px solid var(--border);border-radius:4px';
-  var iFlyStyle='width:80px;font-size:11px;padding:3px 5px;text-align:right;border:1px solid var(--blue);border-radius:4px;background:var(--blue-light)';
-  var th='<thead><tr>'
-    +'<th style="text-align:left;padding:9px 12px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)">Weekend</th>'
-    +'<th style="text-align:left;padding:9px 8px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)">Assembly</th>'
-    +'<th style="text-align:center;padding:9px 8px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)">Mode</th>'
-    +'<th style="text-align:right;padding:9px 8px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)">Dist / Flight $</th>'
-    +'<th style="text-align:right;padding:9px 8px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)">Hotel nights</th>'
-    +'<th style="text-align:right;padding:9px 8px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)">Meal days</th>'
-    +'<th style="text-align:right;padding:9px 8px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)">Transport</th>'
-    +'<th style="text-align:right;padding:9px 8px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)">Hotel</th>'
-    +'<th style="text-align:right;padding:9px 8px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)">Food</th>'
-    +'<th style="text-align:right;padding:9px 12px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--gray);border-bottom:1px solid var(--border)">Total</th>'
-    +'</tr></thead>';
-  var trips=md.trips.slice().sort(function(a,b){return a.fri.localeCompare(b.fri);});
-  var rows=''; var grandTotal=0;
-  for(var ti=0;ti<trips.length;ti++){
-    var t=trips[ti];
-    var wk=null;for(var w=0;w<allWk.length;w++){if(allWk[w].fri===t.fri){wk=allWk[w];break;}}
-    var key=getTripKey(mname,t.fri,t.assembly);
-    var override=TRIP_OVERRIDES[key]||{};
-    var isFly=t.mode==='fly';
-    grandTotal+=t.total;
-    var localTag=t.isLocal?'<span style="font-size:10px;color:var(--green);margin-left:4px">(local)</span>':'';
-    var drvBg=isFly?'#f0f0f0':'#1A5C24'; var drvCol=isFly?'#666':'#fff';
-    var flyBg=isFly?'#1A3A6B':'#f0f0f0'; var flyCol=isFly?'#fff':'#666';
-    rows+='<tr>'
-      +'<td style="padding:7px 12px;border-bottom:1px solid var(--border);font-size:12px;white-space:nowrap">'+(wk?wk.label:t.fri)+'</td>'
-      +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:12px;font-weight:500">'+t.assembly+localTag+'</td>'
-      // Mode toggle
-      +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:center;white-space:nowrap">'
-      +'<div style="display:inline-flex;border:1px solid var(--border);border-radius:6px;overflow:hidden">'
-      +'<button data-mn="'+mname+'" data-fri="'+t.fri+'" data-asm="'+t.assembly+'" data-mode="drive" onclick="budgetModeBtn(this)" style="padding:2px 7px;font-size:11px;border:none;cursor:pointer;background:'+drvBg+';color:'+drvCol+'">Drive</button>'
-      +'<button data-mn="'+mname+'" data-fri="'+t.fri+'" data-asm="'+t.assembly+'" data-mode="fly" onclick="budgetModeBtn(this)" style="padding:2px 7px;font-size:11px;border:none;cursor:pointer;background:'+flyBg+';color:'+flyCol+'">Fly</button>'
-      +'</div></td>'
-      // Dist column - driving distance OR flight cost depending on mode
-      +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right">'
-      +(isFly
-        ?'<input type="number" value="'+(override.flightCost||'')+'" placeholder="Enter $" data-mn="'+mname+'" data-fri="'+t.fri+'" data-asm="'+t.assembly+'" data-field="flightCost" style="'+iFlyStyle+'" oninput="budgetFieldChange(this)">'
-        :'<input type="number" value="'+Math.round(t.tripDist)+'" data-mn="'+mname+'" data-fri="'+t.fri+'" data-asm="'+t.assembly+'" data-field="distance" style="'+iStyle+'" oninput="budgetFieldChange(this)">')
-      +'</td>'
-      // Editable hotel nights
-      +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right">'
-      +(t.isLocal?'<span style="color:var(--text-muted);font-size:12px;padding-right:8px">0</span>'
-        :'<input type="number" value="'+t.tripNights+'" min="0" data-mn="'+mname+'" data-fri="'+t.fri+'" data-asm="'+t.assembly+'" data-field="nights" style="'+iStyle+'" oninput="budgetFieldChange(this)">')
-      +'</td>'
-      // Editable meal days
-      +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right">'
-      +(t.isLocal?'<span style="color:var(--text-muted);font-size:12px;padding-right:8px">0</span>'
-        :'<input type="number" value="'+t.tripDays+'" min="0" data-mn="'+mname+'" data-fri="'+t.fri+'" data-asm="'+t.assembly+'" data-field="days" style="'+iStyle+'" oninput="budgetFieldChange(this)">')
-      +'</td>'
-      +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right;font-size:12px">'+fmtCurrency(t.transport,t.tripCurrency)+'</td>'
-      +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right;font-size:12px">'+(t.isLocal?'&mdash;':fmtCurrency(t.accommodation,t.tripCurrency))+'</td>'
-      +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right;font-size:12px">'+(t.isLocal?'&mdash;':fmtCurrency(t.meals+(t.hospitality||0),t.tripCurrency))+'</td>'
-      +'<td style="padding:7px 12px;border-bottom:1px solid var(--border);text-align:right;font-weight:600;color:var(--navy-dark)">'+fmtCurrency(t.total,sym)+'</td>'
-      +'</tr>';
-  }
-  rows+='<tr style="background:var(--blue-light)">'
-    +'<td colspan="9" style="padding:10px 12px;font-weight:600;color:var(--navy-dark)">Total estimated cost</td>'
-    +'<td style="padding:10px 12px;text-align:right;font-weight:700;font-size:15px;color:var(--navy-dark)">'+fmtCurrency(grandTotal,sym)+'</td>'
-    +'</tr>';
-  document.getElementById('bgt-trip-table').innerHTML=th+'<tbody>'+rows+'</tbody>';
-  window._currentBudgetMinister=mname;
-  var det=document.getElementById('bgt-minister-detail');
-  det.style.display='block';
-  det.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 function budgetModeBtn(btn) {
@@ -7357,8 +7287,6 @@ function submitProposal() {
   if(notes)text+='\nNOTES\n-----\n'+notes+'\n';
   if(overseerLines.length){
     text+='\nSEND TO\n-------\n'+overseerLines.join('\n')+'\n';
-  } else {
-    text+='\nNOTE: No overseers found for this minister. Please add overseers to their profile before sending.\n';
   }
   text+='\nSubmitted: '+new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
   var proposal={
@@ -7596,7 +7524,7 @@ var CAMPS = [
   {name:"Pinelow Summer Camp", start:"2026-08-02", end:"2026-08-08", location:"Loon Lake, WA", ministers:["Andy Snoke","Nick Snoke","Jeff Olson","Nat Swaan","Dennis Aarrestad","Terry Zimmer"], airport:"Spokane International (GEG) ~1 hr", contact:"", notes:"Pinelow Park and Conference Center, 3806 N Deer Lake Rd", done:false},
   {name:"Caribbean Camp – St Vincent", start:"2026-08-02", end:"2026-08-07", location:"St Vincent", ministers:["Darren Olson","Darrell Smith"], airport:"Argyle International Airport (SVD)", contact:"bjames@globalmissionsinc.org", notes:"Beachcombers Hotel. Meeting start Sunday Aug 2, end Fri evening Aug 7. Arrive Aug 1, depart Aug 8.", done:false},
   {name:"Guyana Region 4 – Georgetown Camp", start:"2026-08-21", end:"2026-08-23", location:"Georgetown, Guyana", ministers:["Trevor Sundbo"], airport:"", contact:"", notes:"", done:false},
-  {name:"Caribbean & South America Orientation", start:"2026-08-25", end:"2026-08-28", location:"Ideal, Guyana", ministers:["Trevor Sundbo"], airport:"", contact:"", notes:"In person and online. In-person: Calvin James, Bernard James, Trevor Sundbo. Online presenters (not blocked): David Luff, Darren Olson, Jeff Olson, Wayne Peters, Kelvin Martin.", done:false},
+  {name:"Caribbean & South America Orientation", start:"2026-08-25", end:"2026-08-28", location:"Ideal, Guyana", ministers:["Trevor Sundbo","Calvin James","Bernard James"], airport:"", contact:"", notes:"In person and online. In-person: Calvin James, Bernard James, Trevor Sundbo. Online presenters (not blocked): David Luff, Darren Olson, Jeff Olson, Wayne Peters, Kelvin Martin.", done:false},
   {name:"Park Valley Young People's", start:"2026-09-04", end:"2026-09-07", location:"Park Valley, SK", ministers:["Terry Zimmer","Dennis Aarrestad","Nat Swaan"], airport:"", contact:"cyndena@hotmail.com", notes:"", done:false},
   {name:"Hidden Acres Camp", start:"2026-09-04", end:"2026-09-07", location:"New Hamburg, ON", ministers:["Kelvin Martin","PJ Mathew","Trevor Sundbo","Brian Hannigan"], airport:"", contact:"kMartin@globalmissionsinc.org", notes:"Hidden Acres Mennonite Camp, 1921 37 Line, New Hamburg, ON N3A 4B5", done:false},
   {name:"Manitoba Fall Camp", start:"2026-09-18", end:"2026-09-20", location:"Ninette, MB", ministers:["Kelvin Martin","Trevor Sundbo","Wayne Peters","Brian Hannigan"], airport:"", contact:"", notes:"Manhattan Beach Retreat Centre, Pelican Lake", done:false},
@@ -7748,10 +7676,6 @@ function renderCamps() {
       + (ministerBadges ? '<div style="margin-bottom:6px">'+ministerBadges+'</div>' : '<div style="font-size:12px;color:var(--text-muted);font-style:italic;margin-bottom:6px">No ministers assigned</div>')
       + (camp.notes ? '<div style="font-size:11px;color:var(--text-muted);font-style:italic;margin-bottom:4px">'+camp.notes+'</div>' : '')
       + (camp.contact ? '<div style="font-size:11px;color:var(--blue)">📧 '+camp.contact+'</div>' : '')
-      + '</div>'
-      + '<div style="display:flex;gap:6px;flex-shrink:0">'
-      + '<button class="btn btn-sm" onclick="openCampForm('+realIdx+')">Edit</button>'
-      + '<button class="btn btn-sm" style="color:var(--red);border-color:var(--red-light)" onclick="deleteCamp('+realIdx+')">✕</button>'
       + '</div>'
       + '</div></div>';
   }
@@ -8555,6 +8479,61 @@ function initConflictReportForm() {
       wkSel.appendChild(o);
     });
   }
+}
+
+function rcDetectConflicts() {
+  var minister = document.getElementById('rc-minister').value;
+  var detectedEl = document.getElementById('rc-detected');
+  var listEl = document.getElementById('rc-detected-list');
+  if (!minister || !detectedEl || !listEl) return;
+
+  // Find weekends where this minister appears more than once in SCHEDULE
+  var byFri = {};
+  SCHEDULE.forEach(function(s) {
+    if (s.cancelled) return;
+    var mins = [s.m1,s.m2,s.m3,s.m4].filter(Boolean);
+    if (mins.indexOf(minister) < 0) return;
+    if (!byFri[s.fri]) byFri[s.fri] = [];
+    byFri[s.fri].push(s.assembly);
+  });
+
+  var conflicts = [];
+  Object.keys(byFri).sort().forEach(function(fri) {
+    if (byFri[fri].length > 1) {
+      conflicts.push({ fri: fri, assemblies: byFri[fri] });
+    }
+  });
+
+  var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+
+  if (!conflicts.length) {
+    detectedEl.style.display = 'none';
+    return;
+  }
+
+  detectedEl.style.display = 'block';
+  listEl.innerHTML = conflicts.map(function(c) {
+    var wk = null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===c.fri){wk=allWk[w];break;}}
+    var label = wk ? wk.label + ' ' + c.fri.substring(0,4) : c.fri;
+    var asmText = c.assemblies.join(' &amp; ');
+    return '<button onclick="rcPrefill(\''+c.fri+'\',\''+c.assemblies[0]+'\')" style="text-align:left;background:var(--red-light);border:1px solid #F09595;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13px;width:100%">'
+      + '<div style="font-weight:600;color:var(--red);margin-bottom:2px">&#9888; ' + label + '</div>'
+      + '<div style="font-size:12px;color:var(--navy-dark)">Double-booked: ' + asmText + '</div>'
+      + '</button>';
+  }).join('');
+}
+
+function rcPrefill(fri, assembly) {
+  var wkSel = document.getElementById('rc-weekend');
+  var asmEl = document.getElementById('rc-assembly');
+  var typeEl = document.getElementById('rc-type');
+  if (wkSel) wkSel.value = fri;
+  if (asmEl) asmEl.value = assembly;
+  if (typeEl) typeEl.value = 'double-booked';
+  // Scroll to form
+  var form = document.getElementById('rc-assembly');
+  if (form) form.scrollIntoView({behavior:'smooth', block:'center'});
+  form.focus();
 }
 
 function submitConflictReport() {
