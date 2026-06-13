@@ -6,6 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>GMI Travel — Scheduling System</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -36,7 +38,8 @@ h1,h2,h3{font-family:var(--font)}
 .sidebar{width:220px;min-width:220px;background:linear-gradient(160deg,#0A1B38 0%,#1A3A6B 100%);flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:100}
 .main{flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0;width:0;overflow-x:hidden}
 .topbar{background:var(--white);border-bottom:1px solid rgba(0,0,0,.06);box-shadow:0 1px 4px rgba(0,0,0,.06);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;min-width:0}
-.content{padding:2rem;flex:1;min-width:0}
+.content{padding:2rem;flex:1;min-width:0;overflow-y:auto;height:calc(100vh - 60px)}
+#panel-report-conflict.active{position:fixed;top:60px;left:220px;right:0;bottom:0;overflow-y:auto;background:var(--gray);z-index:10;padding:2rem}
 
 /* Sidebar */
 .sidebar-logo{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,.08)}
@@ -303,12 +306,13 @@ textarea{min-height:80px;resize:vertical}
 
 /* Minister avatar */
 .minister-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:16px;font-weight:600;color:#fff;background:var(--navy);margin-bottom:10px;flex-shrink:0}
+.no-top-pad { padding-top: 0 !important; }
 </style>
 </head>
 <body>
 <div class="app">
 <aside class="sidebar">
-  <div class="sidebar-logo" style="padding:12px 16px 8px;cursor:pointer" onclick="showPanel('dashboard')" title="Go to dashboard">
+  <div class="sidebar-logo" style="padding:12px 16px 8px;cursor:pointer" onclick="showPanel('calendar')" title="Go to Calendar">
     <svg width="100%" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
       <g id="duck-group" style="cursor:pointer">
       <!-- Duck body -->
@@ -357,24 +361,19 @@ textarea{min-height:80px;resize:vertical}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>My Availability
     </div>
     <div class="nav-item" onclick="showPanel('report-conflict')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Report a Conflict
+      <span style="font-size:15px;line-height:1;width:18px;text-align:center;flex-shrink:0">⚠</span>Report a Conflict
     </div>
-    <div class="nav-section">Schedule</div>
     <div class="nav-item active" onclick="showPanel('calendar')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendar
-    </div>
-    <div class="nav-item" onclick="showPanel('camps')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l4-8 4 4 4-6 4 10"/><path d="M3 20h18"/></svg>Camp Schedule
-    </div>
-    <div class="nav-item" onclick="showPanel('local-church-schedule')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Local Church Schedule
     </div>
     <div class="nav-item" onclick="showPanel('travel-request')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>Travel Request
     </div>
-    <div class="nav-section">Records</div>
-    <div class="nav-item" onclick="showPanel('assemblies')">
+    <div class="nav-item" onclick="showPanel('assemblies-ro')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Assemblies
+    </div>
+    <div class="nav-item" onclick="showPanel('map')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>Map
     </div>
     <div class="nav-item" onclick="showPanel('church-reports')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Church Reports
@@ -384,7 +383,13 @@ textarea{min-height:80px;resize:vertical}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard
     </div>
     <div class="nav-item" onclick="showPanel('avail-grid')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Scheduling Grid
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Grid
+    </div>
+    <div class="nav-item" onclick="showPanel('assemblies')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Assemblies
+    </div>
+    <div class="nav-item" onclick="showPanel('camps')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l4-8 4 4 4-6 4 10"/><path d="M3 20h18"/></svg>Camp Schedule
     </div>
     <div class="nav-item" onclick="showPanel('ministers')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Ministries
@@ -396,7 +401,7 @@ textarea{min-height:80px;resize:vertical}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Schedule Conflicts <span id="nav-conflict-badge" style="display:none;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px"></span>
     </div>
     <div class="nav-item" onclick="showPanel('pending-requests')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Pending Requests <span id="nav-requests-badge" style="display:none;background:var(--amber);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px"></span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Pending Requests <span id="nav-requests-badge" style="display:none;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px"></span>
     </div>
     <div class="nav-item" onclick="showPanel('budget')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Travel Budget
@@ -425,163 +430,97 @@ textarea{min-height:80px;resize:vertical}
     <!-- DASHBOARD -->
     <div class="panel active" id="panel-dashboard">
 
-      <!-- Unassigned visits banner -->
-      <div id="dash-unassigned-banner" class="unassigned-banner" style="display:none"></div>
+      <!-- GMI header -->
+      <div style="margin-bottom:1.5rem">
+        <div style="font-size:22px;font-weight:700;color:var(--navy-dark);margin-bottom:4px">Good morning, Admin</div>
+        <div style="font-size:13px;color:var(--text-muted)" id="dash-date-line"></div>
+      </div>
 
-      <!-- STAT ROW: 4 tight stat pills -->
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.25rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;align-items:start">
 
-        <div class="dash-stat" onclick="showPanel('ministers')" style="cursor:pointer">
-          <div class="dash-stat-icon" style="background:#EAF3DE;color:#1A5C24">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-          </div>
-          <div>
-            <div class="dash-stat-value"><span id="m-ministers">—</span></div>
-            <div class="dash-stat-label">Ministers</div>
-          </div>
-        </div>
-
-        <div class="dash-stat" onclick="showPanel('assemblies')" style="cursor:pointer">
-          <div class="dash-stat-icon" style="background:#E6F1FB;color:#185FA5">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          </div>
-          <div>
-            <div class="dash-stat-value"><span id="m-assemblies">—</span></div>
-            <div class="dash-stat-label">Assemblies</div>
-          </div>
-        </div>
-
-        <div class="dash-stat" onclick="donutNav('upcoming')" style="cursor:pointer">
-          <div class="dash-stat-icon" style="background:#E6F1FB;color:#185FA5">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
-          </div>
-          <div>
-            <div class="dash-stat-value" id="dash-stat-upcoming">—</div>
-            <div class="dash-stat-label">Visits left 2026</div>
-          </div>
-        </div>
-
-        <div class="dash-stat" id="m-conflicts-card" onclick="showPanel('conflicts')" style="cursor:pointer">
-          <div class="dash-stat-icon" id="dash-conflict-icon" style="background:#FDDEDE;color:#7B0000">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          </div>
-          <div>
-            <div class="dash-stat-value" id="m-conflicts" style="color:var(--red)">—</div>
-            <div class="dash-stat-label">Conflicts</div>
-          </div>
-        </div>
-
-      </div><!-- end stat row -->
-
-      <!-- MAIN GRID: 3 columns -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 280px;gap:1.25rem;align-items:start">
-
-        <!-- COL 1: Upcoming visits table -->
-        <div style="grid-column:span 2">
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">Upcoming visits — next 8 weekends</span>
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                <select id="dash-region-filter" style="font-size:12px;padding:4px 8px;width:auto" onchange="filterUpcomingByRegion()">
-                  <option value="">All regions</option>
-                  <option value="CANPR">Canada Prairies</option>
-                  <option value="CANPC">Canada Pacific</option>
-                  <option value="CANON">Canada Ontario</option>
-                  <option value="USE">US East</option>
-                  <option value="USC">US Central</option>
-                  <option value="USPC">US Pacific</option>
-                  <option value="CARIB">Caribbean (CAR)</option>
-                </select>
-                <span style="font-size:11px;color:var(--text-muted)">Click row to edit</span>
-              </div>
-            </div>
-            <div style="padding:0"><table><thead><tr><th>Weekend</th><th>Assembly</th><th>Region</th><th>Ministers</th><th>Status</th><th></th></tr></thead><tbody id="upcoming-tbody"></tbody></table></div>
-          </div>
-
-          <!-- Inline edit -->
-          <div id="dash-edit-card" class="card" style="display:none;border-color:var(--blue)">
-            <div class="card-header" style="background:var(--blue-light)">
-              <span class="card-title" id="dash-edit-title" style="color:var(--navy-dark)">Edit visit</span>
-              <button class="btn btn-sm" onclick="closeDashEdit()">&#10005;</button>
-            </div>
-            <div class="card-body">
-              <input type="hidden" id="dash-edit-idx">
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px">
-                <div><label class="form-label">Minister 1</label><select id="dash-m1"><option value="">— none —</option></select></div>
-                <div><label class="form-label">Minister 2</label><select id="dash-m2"><option value="">— none —</option></select></div>
-                <div><label class="form-label">Minister 3</label><select id="dash-m3"><option value="">— none —</option></select></div>
-                <div><label class="form-label">Minister 4 <span style="font-size:11px;color:var(--text-muted)">(optional)</span></label><select id="dash-m4"><option value="">— none —</option></select></div>
-              </div>
-              <div class="form-group"><label class="form-label">Note</label><input type="text" id="dash-note" placeholder="e.g. substitution reason, travel change..."></div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button class="btn btn-primary" onclick="saveDashEdit()">Save changes</button>
-                <button class="btn" id="dash-cancel-btn" onclick="toggleCancelVisit()">&#10007; Cancel this visit</button>
-                <button class="btn" onclick="closeDashEdit()">Close</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Conflicts (inline, under table) -->
-          <div class="card" id="dash-conflicts-card">
-            <div class="card-header"><span class="card-title">Schedule conflicts</span></div>
-            <div class="card-body" id="dashboard-conflicts"></div>
-          </div>
-        </div>
-
-        <!-- COL 3: sidebar widgets stacked -->
+        <!-- LEFT COLUMN -->
         <div style="display:flex;flex-direction:column;gap:1.25rem">
 
-          <!-- 2026 progress donut -->
-          <div class="card">
-            <div class="card-header"><span class="card-title">2026 schedule progress</span></div>
-            <div class="card-body" style="padding:1rem 1.25rem">
-              <div id="dash-donut-wrap" class="dash-donut-wrap">
-                <div style="font-size:12px;color:var(--text-muted)">Loading...</div>
-              </div>
+          <!-- Conflicts -->
+          <div class="card" id="dash-conflicts-card">
+            <div class="card-header" style="background:var(--blue-light)">
+              <span class="card-title" style="color:var(--navy-dark)">&#9888; Schedule Conflicts</span>
+              <button class="btn btn-sm btn-primary" onclick="showPanel('schedule-conflicts')" style="font-size:11px">Resolve &#8594;</button>
             </div>
+            <div id="dashboard-conflicts" style="padding:0"></div>
           </div>
 
-          <!-- Minister workload -->
-          <div class="card">
-            <div class="card-header"><span class="card-title">Minister workload 2026</span></div>
-            <div class="card-body" id="dash-workload-body" style="padding:1rem 1.25rem">
-              <div style="font-size:12px;color:var(--text-muted)">Loading...</div>
+          <!-- Pending requests -->
+          <div class="card" id="dash-pending-card">
+            <div class="card-header" style="background:var(--green-light)">
+              <span class="card-title" style="color:var(--navy-dark)">&#9203; Pending Requests</span>
+              <button class="btn btn-sm" onclick="showPanel('pending-requests')" style="background:var(--green);color:#fff;border:none;font-size:11px">Review &#8594;</button>
             </div>
+            <div id="dash-pending-body" style="padding:0"></div>
           </div>
 
-          <!-- Region coverage -->
-          <div class="card">
-            <div class="card-header"><span class="card-title">Region coverage 2026</span></div>
-            <div class="card-body" style="padding:.75rem 1.25rem">
-              <div id="dash-region-legend" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;font-size:11px;color:var(--text-muted)"></div>
-              <div id="dash-region-body"><div style="font-size:12px;color:var(--text-muted)">Loading...</div></div>
+          <!-- Unassigned visits -->
+          <div class="card" id="dash-unassigned-card">
+            <div class="card-header" style="background:#EDE9FE">
+              <span class="card-title" style="color:#5B1A8B">&#128197; Unassigned Visits</span>
+              <button class="btn btn-sm" onclick="showPanel('avail-grid')" style="background:#5B1A8B;color:#fff;border:none;font-size:11px">Open Grid &#8594;</button>
             </div>
+            <div id="dash-unassigned-body" style="padding:0"></div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div style="display:flex;flex-direction:column;gap:1.25rem">
+
+          <!-- Stats (hidden - kept for JS compatibility) -->
+          <div style="display:none">
+            <div id="m-ministers"></div>
+            <div id="m-assemblies"></div>
+            <div id="dash-stat-upcoming"></div>
+            <div id="m-conflicts"></div>
           </div>
 
           <!-- Upcoming camps -->
           <div class="card">
             <div class="card-header">
-              <span class="card-title">Upcoming camps</span>
-              <button class="btn btn-sm" onclick="showPanel('camps')" style="font-size:11px">View all →</button>
+              <span class="card-title">Upcoming Camps</span>
+              <button class="btn btn-sm" onclick="showPanel('camps')" style="font-size:11px">View all &#8594;</button>
             </div>
-            <div class="card-body" id="dash-camps-body" style="padding:.75rem 1.25rem">
-              <div style="font-size:12px;color:var(--text-muted)">Loading...</div>
-            </div>
+            <div class="card-body" id="dash-camps-body" style="padding:.75rem 1.25rem"></div>
           </div>
 
-          <!-- Activity feed -->
+          <!-- Recent activity -->
           <div class="card" style="cursor:pointer" onclick="openActivityModal()">
             <div class="card-header">
-              <span class="card-title">Recent activity</span>
-              <span style="font-size:11px;color:var(--blue)">View all →</span>
+              <span class="card-title">Recent Activity</span>
+              <span style="font-size:11px;color:var(--blue)">View all &#8594;</span>
             </div>
             <div class="card-body" style="padding:.75rem 1.25rem">
               <div id="dash-activity-metric"></div>
             </div>
           </div>
 
-        </div><!-- end sidebar widgets -->
-      </div><!-- end main grid -->
+        </div>
+      </div>
+
+      <!-- Hidden elements kept for compatibility -->
+      <div id="dash-unassigned-banner" style="display:none"></div>
+      <div id="dash-donut-wrap" style="display:none"></div>
+      <div id="dash-workload-body" style="display:none"></div>
+      <div id="dash-region-body" style="display:none"></div>
+      <div id="dash-region-legend" style="display:none"></div>
+      <div id="m-conflicts-card" style="display:none"></div>
+      <div id="dash-conflict-icon" style="display:none"></div>
+      <div id="upcoming-tbody" style="display:none"></div>
+      <select id="dash-region-filter" style="display:none"></select>
+      <div id="dash-edit-card" style="display:none">
+        <input type="hidden" id="dash-edit-idx">
+        <select id="dash-m1"></select><select id="dash-m2"></select>
+        <select id="dash-m3"></select><select id="dash-m4"></select>
+        <input type="text" id="dash-note">
+      </div>
+
     </div>
 
     <!-- SCHEDULE (multi-year) -->
@@ -719,7 +658,7 @@ textarea{min-height:80px;resize:vertical}
       <div class="filter-bar">
         <select id="f-asm-region" onchange="renderAssemblies()"><option value="">All regions</option><option value="CANPR">Canada Prairies</option><option value="CANPC">Canada Pacific</option><option value="CANON">Canada Ontario</option><option value="USE">US East</option><option value="USC">US Central</option><option value="USPC">US Pacific</option><option value="CARIB">Caribbean (CAR)</option></select>
         <select id="f-asm-country" onchange="renderAssemblies()"><option value="">All countries</option><option value="CAN">CAN</option><option value="USA">USA</option><option value="ATG">Antigua</option><option value="BRB">Barbados</option><option value="DMA">Dominica</option><option value="GRN">Grenada</option><option value="GUY">Guyana</option><option value="TTO">Trinidad</option><option value="VCT">St. Vincent</option></select>
-        <button class="btn btn-primary btn-sm" onclick="openAddAssembly()" style="margin-left:auto">+ Add assembly</button>
+        <button class="btn btn-primary btn-sm admin-only" onclick="openAddAssembly()" style="margin-left:auto">+ Add assembly</button>
       </div>
 
       <!-- Add assembly form -->
@@ -815,7 +754,7 @@ textarea{min-height:80px;resize:vertical}
         <button class="btn btn-sm" onclick="showPanel('assemblies')">&#8592; Back to Assemblies</button>
         <span id="asm-detail-badge"></span>
         <div style="margin-left:auto;display:flex;gap:8px">
-          <button class="btn btn-sm btn-primary" onclick="openEditAssembly()">Edit</button>
+          <button class="btn btn-sm btn-primary admin-only" onclick="openEditAssembly()">Edit</button>
           <button class="btn btn-sm" onclick="exportAssemblyProfile()" style="color:var(--navy);border-color:var(--blue-light)">Export profile</button>
           <button class="btn btn-sm" id="asm-archive-btn" onclick="toggleArchiveAssembly()" style="color:var(--amber);border-color:var(--amber-light)">Archive</button>
         </div>
@@ -831,7 +770,7 @@ textarea{min-height:80px;resize:vertical}
         <div>
           <!-- Address -->
           <div class="card">
-            <div class="card-header"><span class="card-title">Church Address</span><button class="btn btn-sm btn-primary" id="asm-addr-btn" onclick="toggleAddressEdit()">Edit</button></div>
+            <div class="card-header"><span class="card-title">Church Address</span><button class="btn btn-sm btn-primary admin-only" id="asm-addr-btn" onclick="toggleAddressEdit()">Edit</button></div>
             <div id="asm-addr-view" class="card-body"><div id="asm-addr-display" style="font-size:13px;color:var(--text-muted)">No address saved yet. Click Edit to add.</div></div>
             <div id="asm-addr-form" class="card-body" style="display:none">
               <div class="form-group"><label class="form-label">Building / Venue name</label><input type="text" id="addr-building" placeholder="e.g. Rosedale Community Hall"></div>
@@ -850,7 +789,7 @@ textarea{min-height:80px;resize:vertical}
           </div>
           <!-- Contacts -->
           <div class="card">
-            <div class="card-header"><span class="card-title">Contacts</span><button class="btn btn-sm btn-primary" onclick="openAddContact()">+ Add</button></div>
+            <div class="card-header"><span class="card-title">Contacts</span><button class="btn btn-sm btn-primary admin-only" onclick="openAddContact()">+ Add</button></div>
             <div id="asm-contacts-list" style="padding:.75rem 1.25rem;min-height:48px"></div>
           </div>
           <!-- Add/edit contact form -->
@@ -928,6 +867,107 @@ textarea{min-height:80px;resize:vertical}
       </div>
     </div>
 
+    <!-- MAP -->
+    <div class="panel" id="panel-map">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap">
+        <div style="display:flex;gap:0;background:var(--white);border:1px solid var(--border);border-radius:8px;overflow:hidden" id="map-filter-tabs">
+          <button onclick="setMapFilter('all')" id="map-tab-all" style="padding:6px 14px;font-size:12px;font-weight:600;border:none;background:var(--navy);color:#fff;cursor:pointer">All</button>
+          <button onclick="setMapFilter('assemblies')" id="map-tab-assemblies" style="padding:6px 14px;font-size:12px;font-weight:500;border:none;background:var(--white);color:var(--text-muted);cursor:pointer">Assemblies</button>
+          <button onclick="setMapFilter('camps')" id="map-tab-camps" style="padding:6px 14px;font-size:12px;font-weight:500;border:none;background:var(--white);color:var(--text-muted);cursor:pointer">Camps</button>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:12px">
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#2E5EA3;margin-right:4px"></span>Assembly</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#5B1A8B;margin-right:4px"></span>Camp</span>
+        </div>
+      </div>
+      <div id="gmi-map" style="height:calc(100vh - 200px);min-height:500px;border-radius:12px;border:1px solid var(--border);"></div>
+    </div>
+
+    <!-- ASSEMBLIES READ-ONLY -->
+    <div class="panel" id="panel-assemblies-ro">
+      <div class="filter-bar">
+        <select id="f-asm-ro-region" onchange="renderAssembliesRO()"><option value="">All regions</option><option value="CANPR">Canada Prairies</option><option value="CANPC">Canada Pacific</option><option value="CANON">Canada Ontario</option><option value="USE">US East</option><option value="USC">US Central</option><option value="USPC">US Pacific</option><option value="CARIB">Caribbean (CAR)</option></select>
+        <select id="f-asm-ro-country" onchange="renderAssembliesRO()"><option value="">All countries</option><option value="CAN">CAN</option><option value="USA">USA</option><option value="ATG">Antigua</option><option value="BRB">Barbados</option><option value="DMA">Dominica</option><option value="GRN">Grenada</option><option value="GUY">Guyana</option><option value="TTO">Trinidad</option><option value="VCT">St. Vincent</option></select>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Assemblies</span></div>
+        <div style="padding:0"><table>
+          <thead><tr>
+            <th>Assembly</th><th>Region</th><th>Country</th><th style="text-align:center">Visits</th><th>Last visited</th>
+          </tr></thead>
+          <tbody id="assemblies-ro-tbody"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ASSEMBLY DETAIL READ-ONLY -->
+    <div class="panel" id="panel-assembly-detail-ro">
+      <div style="margin-bottom:1rem">
+        <button class="btn btn-sm" onclick="showPanel('assemblies-ro')">&#8592; Back to Assemblies</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+        <!-- LEFT -->
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <span class="card-title" id="asm-ro-name"></span>
+                <div id="asm-ro-badge" style="margin-top:4px"></div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="metrics-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:0">
+                <div class="metric-card"><div class="metric-label">Visits</div><div class="metric-value" id="asm-ro-stat-visits">0</div></div>
+                <div class="metric-card"><div class="metric-label">Last visit</div><div class="metric-value" style="font-size:14px" id="asm-ro-stat-last">—</div></div>
+                <div class="metric-card"><div class="metric-label">Contacts</div><div class="metric-value" id="asm-ro-stat-contacts">0</div></div>
+              </div>
+            </div>
+          </div>
+          <!-- Address -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">Church Address</span></div>
+            <div class="card-body"><div id="asm-ro-addr" style="font-size:13px;color:var(--text-muted)">No address on file.</div></div>
+          </div>
+          <!-- Contacts -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">Contacts</span></div>
+            <div id="asm-ro-contacts" style="padding:.75rem 1.25rem"></div>
+          </div>
+        </div>
+        <!-- RIGHT -->
+        <div>
+          <!-- Visit history -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">Visit history</span></div>
+            <div style="padding:0"><table><thead><tr><th>Date</th><th>Ministers</th></tr></thead><tbody id="asm-ro-history-tbody"></tbody></table></div>
+          </div>
+          <!-- Scheduled visits -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">Scheduled visits</span></div>
+            <div style="padding:0"><table><thead><tr><th>Weekend</th><th>Ministers</th><th>Status</th></tr></thead><tbody id="asm-ro-sched-tbody"></tbody></table></div>
+          </div>
+          <!-- Church reports -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Church Reports</span>
+              <button class="btn btn-sm btn-primary" onclick="openChurchReportWrite(currentAsmNameRO)">+ New report</button>
+            </div>
+            <div id="asm-ro-report-form" style="display:none;padding:1.25rem;border-bottom:1px solid var(--border);background:var(--gray)">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+                <div class="form-group"><label class="form-label">Date of visit</label><input type="date" id="rpt-ro-date"></div>
+                <div class="form-group"><label class="form-label">Written by</label><select id="rpt-ro-author"><option value="">Select minister...</option></select></div>
+              </div>
+              <div class="form-group"><label class="form-label">General observations</label><textarea id="rpt-ro-observations" style="min-height:80px" placeholder="Assembly condition, attendance, spiritual state..."></textarea></div>
+              <div class="form-group"><label class="form-label">Prayer points &amp; follow-up</label><textarea id="rpt-ro-prayer" style="min-height:70px" placeholder="Specific prayer needs, action items..."></textarea></div>
+              <div class="form-group"><label class="form-label">Accommodation &amp; travel notes <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label><textarea id="rpt-ro-travel" style="min-height:52px" placeholder="Where ministers stayed, directions, parking..."></textarea></div>
+              <div style="display:flex;gap:8px"><button class="btn btn-primary" onclick="saveReportRO()">Save report</button><button class="btn" onclick="toggleReportFormRO()">Cancel</button></div>
+            </div>
+            <div id="asm-ro-reports-list" style="padding:.75rem 1.25rem"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- AVAILABILITY GRID -->
     <div class="panel" id="panel-avail-grid">
       <div class="card">
@@ -992,14 +1032,51 @@ textarea{min-height:80px;resize:vertical}
 
     <!-- CHURCH REPORTS -->
     <div class="panel" id="panel-church-reports">
-      <div class="cr-cta" style="background:linear-gradient(135deg,var(--navy-dark) 0%,var(--blue) 100%);border-radius:14px;padding:1.5rem 2rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem">
-        <div>
-          <div style="font-family:Arial,sans-serif;font-size:20px;color:#fff;margin-bottom:6px">Writing a visit report?</div>
-          <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.5">Select the assembly you visited, then click Write Report. The form opens alongside the church's full history.</div>
+
+      <!-- Write Report CTA -->
+      <div class="cr-cta" style="background:linear-gradient(135deg,var(--navy-dark) 0%,var(--blue) 100%);border-radius:14px;padding:1.5rem 2rem;margin-bottom:1.5rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap">
+          <div>
+            <div style="font-family:Arial,sans-serif;font-size:20px;color:#fff;margin-bottom:6px">Writing a visit report?</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.5">Fill out the form below. Your report will be reviewed by an admin before it appears on the assembly page.</div>
+          </div>
+          <button onclick="toggleCRWriteForm()" id="cr-write-toggle-btn" style="background:#fff;color:var(--navy-dark);border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">+ Write a Report</button>
         </div>
-        <div class="cr-cta-controls" style="display:flex;flex-direction:column;gap:8px;flex-shrink:0;min-width:220px">
-          <select id="cr-write-assembly" style="font-size:13px;padding:9px 12px;border-radius:8px;border:none;width:100%"><option value="">1. Select assembly...</option></select>
-          <button onclick="gotoWriteReport()" style="background:#fff;color:var(--navy-dark);border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:Arial,sans-serif;width:100%">2. Write Report &#8594;</button>
+        <!-- Inline form (hidden by default) -->
+        <div id="cr-write-form" style="display:none;margin-top:1.25rem;background:rgba(255,255,255,.08);border-radius:10px;padding:1.25rem">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:10px">
+            <div class="form-group">
+              <label class="form-label" style="color:rgba(255,255,255,.8)">Assembly visited *</label>
+              <select id="cr-write-assembly" style="font-size:13px;padding:9px 12px;border-radius:8px;border:none;width:100%"><option value="">Select assembly...</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="color:rgba(255,255,255,.8)">Written by *</label>
+              <select id="cr-write-author" style="font-size:13px;padding:9px 12px;border-radius:8px;border:none;width:100%"><option value="">Select your name...</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="color:rgba(255,255,255,.8)">Date of visit *</label>
+              <input type="date" id="cr-write-date" style="font-size:13px;padding:9px 12px;border-radius:8px;border:none;width:100%">
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:rgba(255,255,255,.9);line-height:1.6">
+            <strong>Note:</strong> Reports are shared with fellow ministers — please include anything that would be useful for those visiting this assembly. For highly sensitive matters, contact a Travelling Elder directly.
+          </div>
+          <div class="form-group" style="margin-bottom:10px">
+            <label class="form-label" style="color:rgba(255,255,255,.8)">General observations *</label>
+            <textarea id="cr-write-observations" style="width:100%;font-size:13px;padding:9px 12px;border-radius:8px;border:none;min-height:80px;resize:vertical" placeholder="Assembly condition, attendance, spiritual state, encouragements or concerns..."></textarea>
+          </div>
+          <div class="form-group" style="margin-bottom:10px">
+            <label class="form-label" style="color:rgba(255,255,255,.8)">Prayer points &amp; follow-up</label>
+            <textarea id="cr-write-prayer" style="width:100%;font-size:13px;padding:9px 12px;border-radius:8px;border:none;min-height:60px;resize:vertical" placeholder="Specific prayer needs, action items..."></textarea>
+          </div>
+          <div class="form-group" style="margin-bottom:14px">
+            <label class="form-label" style="color:rgba(255,255,255,.8)">Accommodation &amp; travel notes <span style="opacity:.7">(optional)</span></label>
+            <textarea id="cr-write-travel" style="width:100%;font-size:13px;padding:9px 12px;border-radius:8px;border:none;min-height:50px;resize:vertical" placeholder="Where you stayed, directions, parking..."></textarea>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button onclick="submitCRReport()" style="background:#fff;color:var(--navy-dark);border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer">Submit for Review</button>
+            <button onclick="toggleCRWriteForm()" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:10px 16px;font-size:13px;cursor:pointer">Cancel</button>
+          </div>
         </div>
       </div>
       <div class="metrics-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.5rem">
@@ -1378,9 +1455,9 @@ textarea{min-height:80px;resize:vertical}
     <!-- CALENDAR -->
     <div class="panel" id="panel-calendar">
       <div class="card">
-        <div class="card-header">
-          <span class="card-title">2026 Schedule</span>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <div class="card-header" style="flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1">
+            <span class="card-title" id="lcs-year-title">2026 Schedule</span>
             <select id="cal-year" onchange="renderCalendar()" style="font-size:12px;padding:4px 8px;width:auto">
               <option value="2026">2026</option>
               <option value="2027">2027</option>
@@ -1389,15 +1466,16 @@ textarea{min-height:80px;resize:vertical}
               <option value="2030">2030</option>
             </select>
             <select id="cal-view" onchange="renderCalendar()" style="font-size:12px;padding:4px 8px;width:auto">
+              <option value="bulletin" selected>Yearly Overview</option>
               <option value="assembly">Assembly Visit</option>
               <option value="camps">Camp</option>
-              <option value="bulletin">Yearly Overview</option>
               <option value="itinerary">Minister Itinerary</option>
             </select>
             <select id="cal-minister" onchange="renderCalendar()" style="font-size:12px;padding:4px 8px;width:auto">
               <option value="">All ministers</option>
             </select>
           </div>
+        </div>
         </div>
         <div id="cal-body" style="padding:0"></div>
       </div>
@@ -1666,55 +1744,7 @@ textarea{min-height:80px;resize:vertical}
 
     <!-- REPORT A CONFLICT -->
     <div class="panel" id="panel-report-conflict">
-      <div style="max-width:580px">
-        <div id="rc-submitted-banner" style="display:none;background:#D4EDDA;border:1px solid #98D4A3;border-radius:10px;padding:14px 18px;margin-bottom:1.25rem;align-items:center;gap:10px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#1A5C24" stroke-width="2" style="width:20px;height:20px;flex-shrink:0"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          <div>
-            <div style="font-weight:600;color:#1A5C24;font-size:14px">Conflict report submitted</div>
-            <div style="font-size:12px;color:#1A5C24;opacity:.8">Your admin has been notified and will follow up with you.</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Report a Scheduling Conflict</span></div>
-          <div style="padding:1.25rem">
-            <div class="form-group" style="margin-bottom:1rem">
-              <label class="form-label">Your name</label>
-              <select id="rc-minister" onchange="rcDetectConflicts()"><option value="">Select your name...</option></select>
-            </div>
-            <!-- Detected conflicts quick-select -->
-            <div id="rc-detected" style="display:none;margin-bottom:1rem">
-              <div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">&#9888; Conflicts found on your schedule — tap to pre-fill</div>
-              <div id="rc-detected-list" style="display:flex;flex-direction:column;gap:6px"></div>
-              <div style="border-top:1px solid var(--border);margin:14px 0"></div>
-              <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Or fill in manually below</div>
-            </div>
-            <div class="form-group" style="margin-bottom:1rem">
-              <label class="form-label">Weekend</label>
-              <select id="rc-weekend"><option value="">Select weekend...</option></select>
-            </div>
-            <div class="form-group" style="margin-bottom:1rem">
-              <label class="form-label">Assembly / Camp</label>
-              <input type="text" id="rc-assembly" placeholder="e.g. Rosetown SK or Summer Camp 2026">
-            </div>
-            <div class="form-group" style="margin-bottom:1rem">
-              <label class="form-label">What is the conflict?</label>
-              <select id="rc-type" style="margin-bottom:8px">
-                <option value="double-booked">I am double-booked that weekend</option>
-                <option value="unavailable">I am unavailable that weekend</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-            <div class="form-group" style="margin-bottom:1.5rem">
-              <label class="form-label">Additional notes</label>
-              <textarea id="rc-notes" placeholder="Any details that will help the admin resolve this..." style="min-height:80px"></textarea>
-            </div>
-            <div style="display:flex;gap:8px">
-              <button class="btn" style="flex:1" onclick="clearConflictReport()">Clear</button>
-              <button class="btn btn-primary" style="flex:2" onclick="submitConflictReport()">Submit Report</button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div style="max-width:580px" id="rc-root"></div>
     </div>
 
     <!-- LOCAL CHURCH SCHEDULE -->
@@ -1803,6 +1833,7 @@ textarea{min-height:80px;resize:vertical}
               <option value="upcoming">Upcoming</option>
               <option value="done">Completed</option>
             </select>
+            <button class="btn btn-primary btn-sm" onclick="openCampForm(-1)">+ Add Camp</button>
           </div>
         </div>
         <div id="camps-list" style="padding:0"></div>
@@ -1925,7 +1956,166 @@ var SCHEDULE = [
   {assembly:"Winkler MB",         fri:"2026-11-27",m1:"",   m2:"Darrell Smith", m3:"Dennis Aarrestad",note:"",visited:false}
 ];
 
-var VISIT_HISTORY = [];
+var VISIT_HISTORY = [
+  // Regina SK
+  {assembly:'Regina SK', fri:'2025-11-01', ministers:['Jeff Olson','Darren Olson'], notes:'Good visit. Assembly is healthy and engaged.'},
+  {assembly:'Regina SK', fri:'2025-04-12', ministers:['Brian Hannigan','Dennis Aarrestad'], notes:'Easter conference. Well attended.'},
+  {assembly:'Regina SK', fri:'2024-10-05', ministers:['Terry Zimmer','Wayne Peters'], notes:'Fall visit. Prayer focus on local outreach.'},
+  {assembly:'Regina SK', fri:'2024-03-09', ministers:['Darren Olson','Jeff Olson'], notes:'Spring visit. Assembly in good order.'},
+
+  // Rosetown SK
+  {assembly:'Rosetown SK', fri:'2025-09-13', ministers:['Dennis Aarrestad'], notes:'Small but committed assembly. Encouraging visit.'},
+  {assembly:'Rosetown SK', fri:'2024-11-02', ministers:['Brian Hannigan','PJ Mathew'], notes:'Good fellowship. Assembly praying for growth.'},
+  {assembly:'Rosetown SK', fri:'2024-04-06', ministers:['Wayne Peters'], notes:'Solo visit. Assembly appreciated the ministry.'},
+
+  // Charlotte NC
+  {assembly:'Charlotte NC', fri:'2025-10-18', ministers:['Bill Chinnis','David Luff'], notes:'Growing assembly. Strong young people.'},
+  {assembly:'Charlotte NC', fri:'2025-03-08', ministers:['Bill Chinnis','Terry Zimmer'], notes:'Spring visit. Ministry from Acts 2.'},
+  {assembly:'Charlotte NC', fri:'2024-10-19', ministers:['David Luff'], notes:'Good visit. Around 48 present.'},
+  {assembly:'Charlotte NC', fri:'2024-03-02', ministers:['Bill Chinnis','Nick Snoke'], notes:'Encouraging visit. New families attending.'},
+
+  // Grand Junction CO
+  {assembly:'Grand Junction CO', fri:'2025-08-16', ministers:['Jeff Olson'], notes:'Home assembly. Local visit.'},
+  {assembly:'Grand Junction CO', fri:'2024-08-17', ministers:['Jeff Olson','Andy Snoke'], notes:'Summer visit. Good attendance.'},
+  {assembly:'Grand Junction CO', fri:'2023-10-07', ministers:['Jeff Olson'], notes:'Fall visit.'},
+
+  // Victoria BC
+  {assembly:'Victoria BC', fri:'2025-06-07', ministers:['Terry Zimmer','David Luff'], notes:'Encouraging visit. Assembly stabilizing after leadership transition.'},
+  {assembly:'Victoria BC', fri:'2024-06-08', ministers:['Nick Snoke','Wayne Peters'], notes:'Good visit. Strong prayer meeting Saturday night.'},
+  {assembly:'Victoria BC', fri:'2023-09-09', ministers:['Terry Zimmer'], notes:'Solo visit. Ministry from Isaiah 40.'},
+
+  // Kingsport TN
+  {assembly:'Kingsport TN', fri:'2025-03-15', ministers:['David Luff','Wayne Peters'], notes:'Precious visit. Strong prayer culture.'},
+  {assembly:'Kingsport TN', fri:'2024-09-07', ministers:['David Luff'], notes:'Good visit. Gospel outreach bearing fruit.'},
+  {assembly:'Kingsport TN', fri:'2023-03-11', ministers:['Terry Zimmer','David Luff'], notes:'Spring visit. Ministry on faith.'},
+
+  // Calgary AB
+  {assembly:'Calgary AB', fri:'2025-07-05', ministers:['Darrell Smith','Dennis Aarrestad'], notes:'Summer visit. Good attendance.'},
+  {assembly:'Calgary AB', fri:'2024-11-09', ministers:['Trevor Sundbo','Brian Hannigan'], notes:'Fall visit. Assembly in good health.'},
+  {assembly:'Calgary AB', fri:'2024-06-01', ministers:['Darren Olson','Darrell Smith'], notes:'Spring visit.'},
+  {assembly:'Calgary AB', fri:'2023-11-04', ministers:['Dennis Aarrestad','Wayne Peters'], notes:'Good visit. Growing assembly.'},
+
+  // Saskatoon SK
+  {assembly:'Saskatoon SK', fri:'2025-10-04', ministers:['Brian Hannigan','Darren Olson'], notes:'Strong visit. Assembly very engaged.'},
+  {assembly:'Saskatoon SK', fri:'2025-02-01', ministers:['Trevor Sundbo','PJ Mathew'], notes:'Winter visit. Good fellowship.'},
+  {assembly:'Saskatoon SK', fri:'2024-09-28', ministers:['Darren Olson','Wayne Peters'], notes:'Fall visit.'},
+
+  // Winnipeg MB
+  {assembly:'Winnipeg MB', fri:'2025-11-29', ministers:['Wayne Peters','Bill Chinnis'], notes:'Good visit. Assembly praying for community outreach.'},
+  {assembly:'Winnipeg MB', fri:'2025-04-05', ministers:['Terry Zimmer','Brian Hannigan'], notes:'Spring visit. New family attending.'},
+  {assembly:'Winnipeg MB', fri:'2024-11-02', ministers:['Darren Olson','Wayne Peters'], notes:'Encouraging visit.'},
+
+  // Vancouver BC
+  {assembly:'Vancouver BC', fri:'2025-09-06', ministers:['Darrell Smith','Andy Snoke'], notes:'Good visit. Assembly growing steadily.'},
+  {assembly:'Vancouver BC', fri:'2025-03-01', ministers:['David Luff','Nick Snoke'], notes:'Spring visit. Ministry from John 15.'},
+  {assembly:'Vancouver BC', fri:'2024-09-14', ministers:['Darrell Smith','Dennis Aarrestad'], notes:'Fall visit. Strong young people.'},
+
+  // Brooklyn NY
+  {assembly:'Brooklyn NY', fri:'2025-10-11', ministers:['PJ Mathew','Darren Olson'], notes:'Good visit. Diverse and vibrant assembly.'},
+  {assembly:'Brooklyn NY', fri:'2025-04-19', ministers:['Jeff Olson','PJ Mathew'], notes:'Spring visit.'},
+  {assembly:'Brooklyn NY', fri:'2024-10-05', ministers:['Darren Olson','Kelvin Martin'], notes:'Fall visit. New families present.'},
+
+  // Edmonton AB
+  {assembly:'Edmonton AB', fri:'2025-08-23', ministers:['Darrell Smith','Terry Zimmer'], notes:'Good visit. Assembly stable.'},
+  {assembly:'Edmonton AB', fri:'2024-08-17', ministers:['Dennis Aarrestad','Brian Hannigan'], notes:'Summer visit.'},
+  {assembly:'Edmonton AB', fri:'2023-11-11', ministers:['Darren Olson','Wayne Peters'], notes:'Fall visit.'},
+
+  // Denton TX
+  {assembly:'Denton TX', fri:'2025-11-15', ministers:['Terry Zimmer','Jeff Olson'], notes:'Good visit. Assembly well led.'},
+  {assembly:'Denton TX', fri:'2024-11-09', ministers:['PJ Mathew','Trevor Sundbo'], notes:'Fall visit.'},
+
+  // Penticton BC
+  {assembly:'Penticton BC', fri:'2025-09-13', ministers:['Jeff Olson','David Luff'], notes:'Lovely visit. Beautiful assembly.'},
+  {assembly:'Penticton BC', fri:'2024-09-07', ministers:['Nick Snoke','Wayne Peters'], notes:'Fall visit.'},
+
+  // High Point NC
+  {assembly:'High Point NC', fri:'2025-04-26', ministers:['Bill Chinnis','Nat Swaan'], notes:'Good visit. Assembly encouraged.'},
+  {assembly:'High Point NC', fri:'2024-04-27', ministers:['Darrell Smith','Bill Chinnis'], notes:'Spring visit.'},
+
+  // Bapaume SK
+  {assembly:'Bapaume SK', fri:'2025-07-19', ministers:['Brian Hannigan','Wayne Peters'], notes:'Good visit. Small but faithful assembly.'},
+  {assembly:'Bapaume SK', fri:'2024-07-20', ministers:['Darren Olson','Brian Hannigan'], notes:'Summer visit.'},
+
+  // Prince Albert SK
+  {assembly:'Prince Albert SK', fri:'2025-04-19', ministers:['Brian Hannigan','Darren Olson'], notes:'Good visit.'},
+  {assembly:'Prince Albert SK', fri:'2024-04-20', ministers:['Wayne Peters','Dennis Aarrestad'], notes:'Spring visit.'},
+
+  // Toronto ON
+  {assembly:'Toronto ON', fri:'2025-09-27', ministers:['Dennis Aarrestad','Jeff Olson'], notes:'Good visit. Active assembly.'},
+  {assembly:'Toronto ON', fri:'2024-09-28', ministers:['PJ Mathew','Kelvin Martin'], notes:'Fall visit.'},
+
+  // Stratford ON
+  {assembly:'Stratford ON', fri:'2025-09-27', ministers:['Kelvin Martin','Bill Chinnis'], notes:'Encouraging visit.'},
+  {assembly:'Stratford ON', fri:'2024-09-21', ministers:['PJ Mathew','Trevor Sundbo'], notes:'Fall visit.'},
+
+  // Poynette WI
+  {assembly:'Poynette WI', fri:'2025-05-17', ministers:['Kelvin Martin','Andy Snoke'], notes:'Good visit.'},
+  {assembly:'Poynette WI', fri:'2024-05-18', ministers:['David Luff','Bill Chinnis'], notes:'Spring visit.'},
+
+  // Sidney/Carberry MB
+  {assembly:'Sidney/Carberry MB', fri:'2025-03-15', ministers:['Wayne Peters','Nick Snoke'], notes:'Good visit. Rural assembly faithful.'},
+  {assembly:'Sidney/Carberry MB', fri:'2024-03-09', ministers:['Kelvin Martin','Wayne Peters'], notes:'Spring visit.'},
+
+  // Peoria IL
+  {assembly:'Peoria IL', fri:'2025-05-03', ministers:['Wayne Peters','Nick Snoke'], notes:'Good visit.'},
+  {assembly:'Peoria IL', fri:'2024-05-04', ministers:['Darrell Smith','David Luff'], notes:'Spring visit.'},
+
+  // Winkler MB
+  {assembly:'Winkler MB', fri:'2025-11-29', ministers:['Darrell Smith','Dennis Aarrestad'], notes:'Good visit. Faithful assembly.'},
+  {assembly:'Winkler MB', fri:'2024-11-30', ministers:['Brian Hannigan','Nat Swaan'], notes:'Fall visit.'},
+
+  // Minden NE
+  {assembly:'Minden NE', fri:'2025-08-30', ministers:['Darren Olson','Terry Zimmer'], notes:'Good visit.'},
+  {assembly:'Minden NE', fri:'2024-08-31', ministers:['Jeff Olson','Wayne Peters'], notes:'Summer visit.'},
+
+  // Clearwater FL
+  {assembly:'Clearwater FL', fri:'2025-08-23', ministers:['Darren Olson'], notes:'Solo visit. Assembly doing well.'},
+  {assembly:'Clearwater FL', fri:'2024-08-24', ministers:['Wayne Peters','Bill Chinnis'], notes:'Summer visit.'},
+
+  // Minneapolis MN
+  {assembly:'Minneapolis MN', fri:'2025-10-04', ministers:['Kelvin Martin','Nat Swaan'], notes:'Good visit.'},
+  {assembly:'Minneapolis MN', fri:'2024-10-05', ministers:['Dennis Aarrestad','Trevor Sundbo'], notes:'Fall visit.'},
+
+  // Easton MD
+  {assembly:'Easton MD', fri:'2025-11-08', ministers:['Nat Swaan','Nick Snoke'], notes:'Good visit. Quiet but faithful assembly.'},
+  {assembly:'Easton MD', fri:'2024-11-02', ministers:['Dennis Aarrestad','Nat Swaan'], notes:'Fall visit.'},
+
+  // Lynchburg VA
+  {assembly:'Lynchburg VA', fri:'2025-11-08', ministers:['PJ Mathew','Terry Zimmer'], notes:'Encouraging visit.'},
+  {assembly:'Lynchburg VA', fri:'2024-11-09', ministers:['David Luff','PJ Mathew'], notes:'Fall visit.'},
+
+  // Checotah OK
+  {assembly:'Checotah OK', fri:'2025-11-15', ministers:['Trevor Sundbo'], notes:'Solo visit. Small assembly.'},
+  {assembly:'Checotah OK', fri:'2024-11-09', ministers:['Andy Snoke','Trevor Sundbo'], notes:'Fall visit.'},
+
+  // Payette ID
+  {assembly:'Payette ID', fri:'2025-05-17', ministers:['Trevor Sundbo','Brian Hannigan'], notes:'Good visit.'},
+  {assembly:'Payette ID', fri:'2024-05-18', ministers:['Nick Snoke','Kelvin Martin'], notes:'Spring visit.'},
+
+  // Portland OR
+  {assembly:'Portland OR', fri:'2025-06-21', ministers:['Jeff Olson','Terry Zimmer'], notes:'Good visit.'},
+  {assembly:'Portland OR', fri:'2024-06-15', ministers:['PJ Mathew','Trevor Sundbo'], notes:'Summer visit.'},
+
+  // St. Louis MO
+  {assembly:'St. Louis MO', fri:'2025-09-06', ministers:['Darrell Smith'], notes:'Solo visit.'},
+  {assembly:'St. Louis MO', fri:'2024-09-07', ministers:['Wayne Peters','Darrell Smith'], notes:'Fall visit.'},
+
+  // Geneva/Genoa IL
+  {assembly:'Geneva/Genoa IL', fri:'2025-08-30', ministers:['David Luff','Jeff Olson'], notes:'Good visit.'},
+  {assembly:'Geneva/Genoa IL', fri:'2024-08-31', ministers:['Kelvin Martin','David Luff'], notes:'Summer visit.'},
+
+  // Park Valley SK
+  {assembly:'Park Valley SK', fri:'2025-10-04', ministers:['Darren Olson','Nick Snoke'], notes:'Good visit. Pioneer assembly.'},
+  {assembly:'Park Valley SK', fri:'2024-10-05', ministers:['Brian Hannigan','Darren Olson'], notes:'Fall visit.'},
+
+  // North Battleford SK
+  {assembly:'North Battleford SK', fri:'2025-08-02', ministers:['Brian Hannigan'], notes:'Visit following summer camp.'},
+  {assembly:'North Battleford SK', fri:'2024-08-03', ministers:['Darren Olson','Brian Hannigan'], notes:'Summer visit.'},
+
+  // Devlin ON
+  {assembly:'Devlin ON', fri:'2025-09-13', ministers:['Kelvin Martin','Andy Snoke'], notes:'Good visit. Small faithful assembly.'},
+  {assembly:'Devlin ON', fri:'2024-09-14', ministers:['Nat Swaan','Trevor Sundbo'], notes:'Fall visit.'},
+];
 var AVAILABILITY = {};
 var ASSEMBLY_CONTACTS = {};
 
@@ -2240,7 +2430,24 @@ var ASSEMBLY_CONTACTS = {};
     ];
   }
 })();
-var ASSEMBLY_ADDRESS  = {};
+var ASSEMBLY_ADDRESS  = {
+  'Regina SK': {street:'1234 Albert Street', city:'Regina', province:'Saskatchewan', postal:'S4R 2N7', country:'Canada', phone:'306-522-4111', email:'regina@example.ca', website:''},
+  'Rosetown SK': {street:'204 Third Avenue West', city:'Rosetown', province:'Saskatchewan', postal:'S0L 2V0', country:'Canada', phone:'306-882-2200', email:'', website:''},
+  'North Battleford SK': {street:'1600 100th Street', city:'North Battleford', province:'Saskatchewan', postal:'S9A 0V8', country:'Canada', phone:'306-445-2222', email:'nbsk@globalmissionsinc.org', website:''},
+  'Calgary AB': {street:'4823 Richmond Road SW', city:'Calgary', province:'Alberta', postal:'T3E 4P7', country:'Canada', phone:'403-246-8800', email:'calgary@example.ca', website:''},
+  'Edmonton AB': {street:'10940 Saskatchewan Drive', city:'Edmonton', province:'Alberta', postal:'T6E 4S1', country:'Canada', phone:'780-433-5500', email:'edmonton@example.ca', website:''},
+  'Vancouver BC': {street:'2195 West 44th Avenue', city:'Vancouver', province:'British Columbia', postal:'V6M 2C8', country:'Canada', phone:'604-266-3300', email:'vancouver@example.ca', website:''},
+  'Victoria BC': {street:'845 Blanshard Street', city:'Victoria', province:'British Columbia', postal:'V8W 2H3', country:'Canada', phone:'250-383-7700', email:'victoria@example.ca', website:''},
+  'Winnipeg MB': {street:'1143 Main Street', city:'Winnipeg', province:'Manitoba', postal:'R2W 3S6', country:'Canada', phone:'204-586-4400', email:'winnipeg@example.ca', website:''},
+  'Saskatoon SK': {street:'715 Avenue H North', city:'Saskatoon', province:'Saskatchewan', postal:'S7L 1X2', country:'Canada', phone:'306-664-7100', email:'saskatoon@example.ca', website:''},
+  'Charlotte NC': {street:'4100 Providence Road', city:'Charlotte', province:'North Carolina', postal:'28211', country:'USA', phone:'704-366-2200', email:'charlotte@example.com', website:''},
+  'Kingsport TN': {street:'220 East Stone Drive', city:'Kingsport', province:'Tennessee', postal:'37660', country:'USA', phone:'423-246-9000', email:'kingsport@example.com', website:''},
+  'Grand Junction CO': {street:'2875 Patterson Road', city:'Grand Junction', province:'Colorado', postal:'81505', country:'USA', phone:'970-241-3300', email:'grandjunction@example.com', website:''},
+  'Poynette WI': {street:'N3247 County Road CS', city:'Poynette', province:'Wisconsin', postal:'53955', country:'USA', phone:'608-635-4400', email:'poynette@example.com', website:''},
+  'Denton TX': {street:'1400 West Oak Street', city:'Denton', province:'Texas', postal:'76201', country:'USA', phone:'940-387-5500', email:'denton@example.com', website:''},
+  'Georgetown GUY': {street:'41 Laluni Street, Queenstown', city:'Georgetown', province:'', postal:'', country:'Guyana', phone:'592-225-6600', email:'georgetown@example.gy', website:''},
+  'St. George GRN': {street:'Lucas Street, St. Georges', city:'St. George', province:'', postal:'', country:'Grenada', phone:'473-440-2200', email:'grenada@example.gd', website:''},
+};
 
 // Seed assembly addresses and meeting times
 (function(){
@@ -2288,7 +2495,100 @@ var ASSEMBLY_ADDRESS  = {};
 
 
 
-var ASSEMBLY_REPORTS  = {};
+var ASSEMBLY_REPORTS  = {
+  'Brooklyn NY': [
+    {date:'2025-10-11',author:'PJ Mathew',
+     observations:'A vibrant and diverse assembly in Brooklyn. Around 42 present including several visitors from the Haitian and Caribbean community. PJ ministered from Romans 8 on life in the Spirit. The open meeting was participatory and warm. The assembly is growing and the elders are doing excellent work.',
+     prayer:'Pray for the outreach into the Haitian community — two families have begun attending regularly. Also for a young brother, Marcus, who is seeking baptism.',
+     travel:'Flew into JFK. Assembly hall is in Flatbush — easy subway access. Stayed with Brother Williams who is an excellent host.'},
+    {date:'2025-04-19',author:'Jeff Olson',
+     observations:'Spring visit to Brooklyn. Attendance was approximately 38. Ministry from John 6 on the bread of life was well received. The assembly has a strong prayer meeting culture and a genuine love for one another.',
+     prayer:'Pray for the families in the assembly navigating the high cost of living in New York. Several young couples are considering relocating.',
+     travel:'Flew into LaGuardia. Stayed at a nearby hotel — the assembly offered hospitality but the evening was late.'}
+  ],
+  'Saskatoon SK': [
+    {date:'2025-10-04',author:'Brian Hannigan',
+     observations:'Good visit to Saskatoon. Around 55 in attendance — one of the larger assemblies in the prairie region. Brian ministered on the Psalms. The breaking of bread was reverent and the open meeting active. The assembly has strong eldership.',
+     prayer:'Pray for two young men who have recently shown interest in the gospel. Also for the assembly as they consider expanding their meeting hall.',
+     travel:'Short drive from North Battleford. Stayed with the Martinson family.'},
+    {date:'2025-02-01',author:'Trevor Sundbo',
+     observations:'Winter visit. Good attendance despite cold weather. Ministry from Hebrews on the priesthood of Christ. The assembly responded well.',
+     prayer:'Pray for the young families who are the backbone of this assembly. Several are navigating difficult work situations.',
+     travel:'Drove up from the south. Roads were good. Stayed with elders.'}
+  ],
+  'Winnipeg MB': [
+    {date:'2025-11-29',author:'Wayne Peters',
+     observations:'Good visit to Winnipeg. Around 48 present. Wayne ministered from Philippians 4 on contentment and peace. The assembly is stable and the saints are encouraging one another well.',
+     prayer:'Pray for a neighbourhood Bible study the assembly has started — drawing in several interested families. Also for a young family who recently lost a child.',
+     travel:'Drove from Portage La Prairie. Hall is well located in the North End.'}
+  ],
+  'Edmonton AB': [
+    {date:'2025-08-23',author:'Darrell Smith',
+     observations:'Summer visit to Edmonton. Good attendance of around 44. Ministry from Isaiah 40 on the greatness of God. The assembly has recovered well from some difficult years and is now in a healthy place spiritually.',
+     prayer:'Pray for the ongoing work among the Indigenous community in the area that some of the saints are involved in. Also for the eldership as they navigate some pastoral situations.',
+     travel:'Flew into Edmonton International. Assembly is in the south side — easy access.'}
+  ],
+  'Minneapolis MN': [
+    {date:'2025-10-04',author:'Kelvin Martin',
+     observations:'Encouraging visit to Minneapolis. Around 36 present. Kelvin ministered on Acts 2 and the establishment of the early church. The assembly has a good mix of ages and genuine fellowship.',
+     prayer:'Pray for two families who have recently moved away. Also for a young couple preparing for marriage who are both in the assembly.',
+     travel:'Drove from the south. Stayed with one of the elders — very warm welcome.'}
+  ],
+  'Calgary AB': [
+    {date:'2025-07-05',author:'Darrell Smith',
+     observations:'Good summer visit to Calgary. One of the larger Canadian assemblies with around 60 present. Ministry from 1 Corinthians 12 on the body of Christ. The assembly has multiple elders and is well organized.',
+     prayer:'Pray for the growth in the young peoples group — very active and spiritually hungry. Also for the assembly as they consider starting a daughter work in the south suburbs.',
+     travel:'Drove from North Battleford. Stayed with the Bettcher family who are excellent hosts.'},
+    {date:'2024-11-09',author:'Trevor Sundbo',
+     observations:'Fall visit to Calgary. Good attendance. Ministry on the Psalms of ascent. The assembly is in good health.',
+     prayer:'Pray for the ongoing outreach in the city. Several contacts have been made through workplace witness.',
+     travel:'Drove from Edmonton. Easy access to the hall.'}
+  ],
+  'Regina SK': [
+    {date:'2025-11-02',author:'Jeff Olson',
+     observations:'The assembly met at the usual hall on Albert Street. Attendance was strong — approximately 40 in the morning meeting with several visitors present. The saints are in good spiritual health. Brother Olson spoke on Hebrews 11 and there was a warm response. The breaking of bread was reverent and meaningful.',
+     prayer:'Continue to pray for the Hendricks family who are going through a difficult health situation. The assembly is also praying for a young man James who has been attending regularly but has not yet confessed faith.',
+     travel:'Stayed with the Martinson family — excellent hosts. Hall is easy to find on Albert Street near the intersection of 13th Avenue.'},
+    {date:'2025-04-13',author:'Brian Hannigan',
+     observations:'Easter weekend meeting was well attended. Several families from out of town joined for the conference. The assembly continues to show maturity and spiritual depth. Brian spoke on the resurrection and its implications for daily life. Good discussion afterward.',
+     prayer:'Pray for Sister Margaret who lost her husband in January. The assembly has rallied around her well but she continues to need support.',
+     travel:'Drove up from North Battleford — about 2.5 hours. Parking behind the hall.'}
+  ],
+  'Rosetown SK': [
+    {date:'2025-09-14',author:'Dennis Aarrestad',
+     observations:'Smaller assembly but very committed. About 22 in attendance including children. Dennis shared from John 15 on abiding. The meeting was warm and participatory — several brothers contributed in the open meeting. The assembly is stable and the elders are actively shepherding.',
+     prayer:'They are believing for two young couples to recommit to regular attendance. Also praying for a nearby family who expressed interest in the gospel.',
+     travel:'Short drive from Park Valley. Stayed overnight at the assembly elder home. Simple but welcoming.'}
+  ],
+  'Charlotte NC': [
+    {date:'2025-10-19',author:'Bill Chinnis',
+     observations:'The Charlotte assembly continues to grow steadily. Attendance was 55 in the morning breaking of bread — the largest it has been in several years. Several new families have been gathering. Bill ministered from Acts 2 on the foundation of the early church. A very encouraging visit.',
+     prayer:'Pray for the building project — they are hoping to expand the hall to accommodate growth. Also praying for two families who recently moved away.',
+     travel:'Stayed at the Chinnis home. Hall is located on Providence Road — easy access from the interstate.'},
+    {date:'2024-10-20',author:'David Luff',
+     observations:'Good visit to Charlotte. The assembly was encouraged by the ministry from Philippians 4. Around 48 present. The young people are engaged and asking good questions. A healthy assembly.',
+     prayer:'Continued prayer for the outreach effort on Sunday evenings which has seen some fruit this year.',
+     travel:'Flew into Charlotte Douglas — about 20 minutes to the hall.'}
+  ],
+  'Grand Junction CO': [
+    {date:'2025-08-17',author:'Jeff Olson',
+     observations:'Home assembly visit — Jeff ministered to approximately 30 saints. The assembly is steady though facing the typical challenges of a mid-sized western assembly. Good participation in the open meeting. Jeff spoke on stewardship and the assembly responded well.',
+     prayer:'Two young men showing interest in baptism. Pray for clarity and conviction. Also praying for a couple dealing with marriage difficulties.',
+     travel:'Local visit — no accommodation required.'}
+  ],
+  'Victoria BC': [
+    {date:'2025-06-08',author:'Terry Zimmer',
+     observations:'Beautiful Lords Day in Victoria. The assembly meets in a heritage building near the waterfront. About 35 present with a good mix of age groups. Terry brought ministry from Isaiah 40 on the greatness of God - timely and well received. The assembly has been through some transitions in leadership and is stabilizing well.',
+     prayer:'Pray for the new elder who was recently commended — he is young but showing good development. Also pray for several young families navigating the high cost of living in Victoria.',
+     travel:'Flew into Victoria International. Ferry option also available from Vancouver. Stayed at the assembly guesthouse on Blanshard Street.'}
+  ],
+  'Kingsport TN': [
+    {date:'2025-03-16',author:'David Luff',
+     observations:'A precious visit to the Kingsport assembly. David has a longstanding relationship here and the saints received him warmly. Ministry from 2 Corinthians 4 on the treasure in earthen vessels. About 28 in attendance. The assembly has a strong prayer culture.',
+     prayer:'Pray for the gospel outreach — they have been holding a neighbourhood Bible study that is drawing interest. Also for a teenager in the assembly facing significant family challenges at home.',
+     travel:'About 3 hours drive from Charlotte. Stayed with the assembly elder — comfortable and welcoming.'}
+  ]
+};
 var currentAsmName = null;
 var asmSortCol = 'name'; var asmSortDir = 1;
 var reportSortDir = -1; var reportYearFilter = 'all';
@@ -2436,10 +2736,16 @@ function buildAvailGrid(containerId, weekends) {
     if (!months[mon]) { months[mon]=[]; monthOrder.push(mon); }
     months[mon].push(weekends[i]);
   }
+  var fullMonthMap = {'Jan':'January','Feb':'February','Mar':'March','Apr':'April','May':'May',
+    'Jun':'June','Jul':'July','Aug':'August','Sep':'September','Oct':'October','Nov':'November','Dec':'December'};
+  // Get year from first weekend
+  var gridYear = weekends.length ? weekends[0].year || new Date(weekends[0].fri+'T12:00:00').getFullYear() : new Date().getFullYear();
   for (var mi=0;mi<monthOrder.length;mi++) {
     var mon = monthOrder[mi];
     var grp = document.createElement('div'); grp.className='month-group';
-    var title = document.createElement('div'); title.className='month-title'; title.textContent=mon;
+    var title = document.createElement('div'); title.className='month-title';
+    title.style.fontWeight='700';
+    title.textContent=(fullMonthMap[mon]||mon)+' '+gridYear;
     var grid = document.createElement('div'); grid.className='checkbox-grid';
     grp.appendChild(title); grp.appendChild(grid);
     var wks = months[mon];
@@ -2488,6 +2794,7 @@ function _detectConflictsBase() {
   var byDate = {};
   for (var i=0;i<SCHEDULE.length;i++) {
     var s=SCHEDULE[i];
+    if (s.cancelled) continue;
     if (!byDate[s.fri]) byDate[s.fri]=[];
     byDate[s.fri].push(s);
   }
@@ -2513,91 +2820,91 @@ function detectConflicts() { return _detectConflictsBase(); }
 
 // ── Dashboard ─────────────────────────────────────────────
 function renderDashboard() {
-  var visited=0; for(var i=0;i<SCHEDULE.length;i++){if(SCHEDULE[i].visited)visited++;}
-  var conflicts=detectConflicts();
-  conflicts.sort(function(a,b){return a.minister.localeCompare(b.minister);});
-  document.getElementById('m-conflicts').textContent=conflicts.length||'✓';
-  if(!conflicts.length){
-    document.getElementById('m-conflicts').style.color='var(--green)';
-    var icon=document.getElementById('dash-conflict-icon');
-    if(icon){icon.style.background='#EAF3DE';icon.style.color='#1A5C24';}
+  // Date line
+  var dl = document.getElementById('dash-date-line');
+  if (dl) {
+    var now = new Date();
+    dl.textContent = now.toLocaleDateString('en-CA', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
   }
-  // Update roster counts live
+
+  var allWk=WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var today=new Date().toISOString().split('T')[0];
+
+  // Stats
   var asmEl=document.getElementById('m-assemblies'); if(asmEl) asmEl.textContent=ASSEMBLIES.filter(function(a){return !a.archived;}).length;
   var minEl=document.getElementById('m-ministers'); if(minEl) minEl.textContent=MINISTERS.length;
+  var upcoming=SCHEDULE.filter(function(s){return s.fri>=today&&!s.cancelled&&!s.visited;});
+  var upEl=document.getElementById('dash-stat-upcoming'); if(upEl) upEl.textContent=upcoming.length;
 
-  var today=new Date().toISOString().split('T')[0];
-  var upcoming=[];
-  for(var i=0;i<SCHEDULE.length;i++){
-    if(SCHEDULE[i].fri>=today&&!SCHEDULE[i].cancelled&&!SCHEDULE[i].visited) upcoming.push(SCHEDULE[i]);
-  }
-  var upcomingEl=document.getElementById('dash-stat-upcoming'); if(upcomingEl) upcomingEl.textContent=upcoming.length;
-
-  upcoming=[];
-  for(var i=0;i<SCHEDULE.length;i++){
-    if(SCHEDULE[i].fri>=today) upcoming.push(SCHEDULE[i]);
-  }
-  upcoming.sort(function(a,b){return a.fri.localeCompare(b.fri);});
-  // Show next 8 non-cancelled, but also show any cancelled in the same window
-  var nonCancelled=upcoming.filter(function(s){return !s.cancelled;}).slice(0,8);
-  var lastFri=nonCancelled.length?nonCancelled[nonCancelled.length-1].fri:'9999';
-  var display=upcoming.filter(function(s){return s.fri<=lastFri;});
-  var tbody=document.getElementById('upcoming-tbody'); tbody.innerHTML='';
-  for(var i=0;i<display.length;i++){
-    var s=display[i];
-    var schedIdx=SCHEDULE.indexOf(s);
-    var wk=null;
-    var allWk=WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
-    for(var w=0;w<allWk.length;w++){if(allWk[w].fri===s.fri){wk=allWk[w];break;}}
-    var asm=null;for(var a=0;a<ASSEMBLIES.length;a++){if(ASSEMBLIES[a].name===s.assembly){asm=ASSEMBLIES[a];break;}}
-    var statusBadge=s.cancelled
-      ?'<span class="badge badge-cancelled">Cancelled</span>'
-      :s.visited
-        ?'<span class="badge badge-visited">Visited</span>'
-        :'<span class="badge badge-upcoming">Upcoming</span>';
-    var tr=document.createElement('tr');
-    tr.style.cursor='pointer';
-    tr.style.opacity=s.cancelled?'0.5':'1';
-    (function(idx){tr.onclick=function(){openDashEdit(idx);};})(schedIdx);
-    tr.innerHTML='<td>'+(wk?wk.label:s.fri)+'</td>'
-      +'<td><strong>'+s.assembly+'</strong></td>'
-      +'<td>'+(asm?regionBadge(asm.region):'')+'</td>'
-      +'<td style="font-size:12px;color:var(--text-muted)">'+[s.m1,s.m2,s.m3,s.m4].filter(Boolean).join(', ')+'</td>'
-      +'<td>'+statusBadge+'</td>'
-      +'<td style="text-align:right"><span style="font-size:11px;color:var(--blue)">Edit →</span></td>';
-    tbody.appendChild(tr);
-  }
-
-  var cb=document.getElementById('dashboard-conflicts');
-  var conflictsCard=document.getElementById('dash-conflicts-card');
-  if(!conflicts.length){
-    if(conflictsCard) conflictsCard.style.display='none';
-    if(cb) cb.innerHTML='<div style="padding:1rem;color:var(--text-muted);font-size:13px">No conflicts detected.</div>';
-  } else {
-    if(conflictsCard) conflictsCard.style.display='';
-    var allWk=WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
-    var html='<div style="padding:1.25rem">'
-      +'<div style="font-size:13px;color:var(--text-muted);margin-bottom:10px">'+conflicts.length+' conflict'+(conflicts.length!==1?'s':'')+' — click any to open that minister and resolve.</div>';
-    for(var i=0;i<conflicts.length;i++){
-      var c=conflicts[i];
-      var wk=null;for(var w=0;w<allWk.length;w++){if(allWk[w].fri===c.fri){wk=allWk[w];break;}}
-      var isCamp=!!c._campConflict;
-      var desc = isCamp
-        ? '⛺ At camp during '+c.assemblies[0]+' visit'
-        : c.assemblies.join(' & ');
-      html+='<div style="background:var(--red-light);border:1px solid #F09595;border-radius:10px;margin-bottom:8px;'
-        +'padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px" '
-        +'onclick="openMinisterFromDashboard(\''+c.minister+'\')">'
-        +'<span style="color:var(--red);font-size:16px">⚠</span>'
-        +'<div style="flex:1;min-width:0">'
-        +'<div style="font-size:13px;font-weight:600;color:var(--red)">'+c.minister+'</div>'
-        +'<div style="font-size:12px;color:var(--text-muted)">'+(wk?wk.label:c.fri)+' — '+desc+'</div>'
-        +'</div>'
-        +'<span style="font-size:11px;color:var(--red);font-weight:500;white-space:nowrap">Open →</span>'
+  // ── 1. Conflicts ──────────────────────────────────────────
+  var conflicts = detectConflicts().filter(function(c){ return !c._campConflict; });
+  conflicts.sort(function(a,b){return a.minister.localeCompare(b.minister);});
+  var cfEl = document.getElementById('m-conflicts'); if(cfEl) cfEl.textContent = conflicts.length || '✓';
+  var conflictsCard = document.getElementById('dash-conflicts-card');
+  var conflictsBody = document.getElementById('dashboard-conflicts');
+  if (conflicts.length && conflictsCard && conflictsBody) {
+    conflictsCard.style.display = '';
+    var html = '';
+    conflicts.forEach(function(c) {
+      var wk=null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===c.fri){wk=allWk[w];break;}}
+      var dateLabel = wk ? wk.label+', '+c.fri.substring(0,4) : c.fri;
+      var desc = c._campConflict ? '\u26fa Camp conflict' : c.assemblies.join(' & ');
+      html += '<div onclick="showPanel(\'schedule-conflicts\')" style="display:flex;align-items:center;gap:10px;padding:10px 1.25rem;border-bottom:1px solid var(--border);cursor:pointer" onmouseover="this.style.background=\'var(--red-light)\'" onmouseout="this.style.background=\'\'">'
+        +'<span style="color:var(--red);font-size:15px;flex-shrink:0">\u26a0</span>'
+        +'<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--red)">'+c.minister+'</div>'
+        +'<div style="font-size:11px;color:var(--text-muted)">'+dateLabel+' \u2014 '+desc+'</div></div>'
+        +'<span style="font-size:11px;color:var(--blue)">Resolve \u2192</span>'
         +'</div>';
-    }
-    html+='</div>';
-    cb.innerHTML=html;
+    });
+    conflictsBody.innerHTML = html;
+  } else if (conflictsCard) {
+    conflictsCard.style.display = 'none';
+  }
+
+  // ── 2. Pending requests ───────────────────────────────────
+  var pending = PROPOSALS.filter(function(p){ return p.status==='Pending' && (p._source==='minister-request'||p._source==='conflict-report'||p._source==='church-report'); });
+  var pendingCard = document.getElementById('dash-pending-card');
+  var pendingBody = document.getElementById('dash-pending-body');
+  if (pending.length && pendingCard && pendingBody) {
+    pendingCard.style.display = '';
+    var html2 = '';
+    pending.forEach(function(p) {
+      var icon = p._source==='church-report' ? '\ud83d\udcc4' : p._source==='conflict-report' ? '\u26a0' : '\u2708';
+      var label = p._source==='church-report' ? 'Church Report' : p._source==='conflict-report' ? 'Conflict Report' : 'Travel Request';
+      html2 += '<div onclick="showPanel(\'pending-requests\')" style="display:flex;align-items:center;gap:10px;padding:10px 1.25rem;border-bottom:1px solid var(--border);cursor:pointer" onmouseover="this.style.background=\'#FFFBEA\'" onmouseout="this.style.background=\'\'">'
+        +'<span style="font-size:15px;flex-shrink:0">'+icon+'</span>'
+        +'<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--navy-dark)">'+p.minister+'</div>'
+        +'<div style="font-size:11px;color:var(--text-muted)">'+label+(p.assembly?' \u2014 '+p.assembly:'')+'</div></div>'
+        +'<span style="font-size:11px;color:var(--green)">Review \u2192</span>'
+        +'</div>';
+    });
+    pendingBody.innerHTML = html2;
+  } else if (pendingCard) {
+    pendingCard.style.display = 'none';
+  }
+
+  // ── 3. Unassigned visits ──────────────────────────────────
+  var unassigned = SCHEDULE.filter(function(s){ return s.fri>=today && !s.cancelled && !s.visited && !s.m1 && !s.m2; });
+  unassigned.sort(function(a,b){return a.fri.localeCompare(b.fri);});
+  var unassignedCard = document.getElementById('dash-unassigned-card');
+  var unassignedBody = document.getElementById('dash-unassigned-body');
+  if (unassigned.length && unassignedCard && unassignedBody) {
+    unassignedCard.style.display = '';
+    var html3 = '';
+    unassigned.slice(0, 5).forEach(function(s) {
+      var wk=null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===s.fri){wk=allWk[w];break;}}
+      var dateLabel = wk ? wk.label+', '+s.fri.substring(0,4) : s.fri;
+      html3 += '<div onclick="showPanel(\'avail-grid\')" style="display:flex;align-items:center;gap:10px;padding:10px 1.25rem;border-bottom:1px solid var(--border);cursor:pointer" onmouseover="this.style.background=\'var(--amber-light)\'" onmouseout="this.style.background=\'\'">'
+        +'<span style="color:var(--amber);font-size:15px;flex-shrink:0">\ud83d\udcc5</span>'
+        +'<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--navy-dark)">'+s.assembly+'</div>'
+        +'<div style="font-size:11px;color:var(--text-muted)">'+dateLabel+' \u2014 No minister assigned</div></div>'
+        +'<span style="font-size:11px;color:#5B1A8B">Assign \u2192</span>'
+        +'</div>';
+    });
+    if (unassigned.length > 5) html3 += '<div style="padding:8px 1.25rem;font-size:11px;color:var(--text-muted)">+'+(unassigned.length-5)+' more \u2014 <span style=\"color:var(--blue);cursor:pointer\" onclick=\"showPanel(\'schedule-conflicts\')\">Open Scheduling Grid</span></div>';
+    unassignedBody.innerHTML = html3;
+  } else if (unassignedCard) {
+    unassignedCard.style.display = 'none';
   }
 }
 
@@ -4064,6 +4371,184 @@ function saveAssemblyForm() {
   renderDashboard();
 }
 
+// ── Read-Only Assemblies ──────────────────────────────────
+var currentAsmNameRO = '';
+
+function renderAssembliesRO() {
+  var regionF = document.getElementById('f-asm-ro-region').value;
+  var countryF = document.getElementById('f-asm-ro-country').value;
+  var asms = ASSEMBLIES.filter(function(a){
+    if(a.archived) return false;
+    return(!regionF||a.region===regionF)&&(!countryF||a.country===countryF);
+  }).slice().sort(function(a,b){return a.name.localeCompare(b.name);});
+  var tbody = document.getElementById('assemblies-ro-tbody');
+  if(!tbody) return;
+  var html = '';
+  asms.forEach(function(a) {
+    var visits = VISIT_HISTORY.filter(function(h){return h.assembly===a.name;});
+    var lastVisit = visits.length ? fmtDate(visits.slice().sort(function(x,y){return y.fri.localeCompare(x.fri);})[0].fri) : '\u2014';
+    html += '<tr style="cursor:pointer" onclick="openAssemblyDetailRO(\''+a.name.replace(/'/g,"\\'")+'\')">'
+      + '<td style="font-weight:500">'+a.name+'</td>'
+      + '<td>'+regionBadge(a.region)+'</td>'
+      + '<td>'+a.country+'</td>'
+      + '<td style="text-align:center">'+visits.length+'</td>'
+      + '<td>'+lastVisit+'</td>'
+      + '</tr>';
+  });
+  tbody.innerHTML = html || '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:1rem">No assemblies found.</td></tr>';
+}
+
+function openAssemblyDetailRO(asmName) {
+  currentAsmNameRO = asmName;
+  var asm = null; for(var i=0;i<ASSEMBLIES.length;i++){if(ASSEMBLIES[i].name===asmName){asm=ASSEMBLIES[i];break;}}
+  if(!asm) return;
+
+  document.getElementById('page-title').textContent = asmName;
+  document.getElementById('asm-ro-name').textContent = asmName;
+  document.getElementById('asm-ro-badge').innerHTML = regionBadge(asm.region);
+
+  var visits = VISIT_HISTORY.filter(function(h){return h.assembly===asmName;});
+  document.getElementById('asm-ro-stat-visits').textContent = visits.length;
+  document.getElementById('asm-ro-stat-last').textContent = visits.length ? fmtDate(visits.slice().sort(function(a,b){return b.fri.localeCompare(a.fri);})[0].fri) : '\u2014';
+  document.getElementById('asm-ro-stat-contacts').textContent = (ASSEMBLY_CONTACTS[asmName]||[]).length;
+
+  // Address
+  var addr = ASSEMBLY_ADDRESS[asmName];
+  var addrEl = document.getElementById('asm-ro-addr');
+  if(addr && (addr.street||addr.city)) {
+    var countryName = addr.country==='CAN'?'Canada':addr.country==='USA'?'USA':addr.country||'';
+    var provName = addr.province||addr.prov||'';
+    var queryParts=[addr.street,addr.city,provName,addr.postal,countryName].filter(Boolean);
+    var mapsUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(queryParts.join(', '));
+    addrEl.innerHTML = queryParts.join(', ')
+      + (addr.phone ? '<br><span style="color:var(--text-muted)">'+addr.phone+'</span>' : '')
+      + (addr.email ? '<br><a href="mailto:'+addr.email+'" style="color:var(--blue)">'+addr.email+'</a>' : '')
+      + (addr.website ? '<br><a href="'+addr.website+'" target="_blank" style="color:var(--blue)">'+addr.website+'</a>' : '')
+      + '<br><a href="'+mapsUrl+'" target="_blank" rel="noopener" style="font-size:12px;color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;gap:5px;margin-top:8px">'
+      + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Open in Google Maps</a>';
+  } else {
+    addrEl.textContent = 'No address on file.';
+  }
+
+  // Contacts
+  var contacts = ASSEMBLY_CONTACTS[asmName] || [];
+  var contactsEl = document.getElementById('asm-ro-contacts');
+  if(contacts.length) {
+    contactsEl.innerHTML = contacts.map(function(c){
+      return '<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">'
+        + '<div style="font-weight:500">'+c.name+(c.role?' <span style="font-size:11px;color:var(--text-muted)">'+c.role+'</span>':'')+'</div>'
+        + (c.phone?'<div style="color:var(--text-muted)">'+c.phone+'</div>':'')
+        + (c.email?'<div><a href="mailto:'+c.email+'" style="color:var(--blue)">'+c.email+'</a></div>':'')
+        + '</div>';
+    }).join('');
+  } else {
+    contactsEl.innerHTML = '<div style="color:var(--text-muted);font-size:13px">No contacts on file.</div>';
+  }
+
+  // Visit history
+  var hTbody = document.getElementById('asm-ro-history-tbody');
+  var allWkH = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var hHtml = '';
+  visits.slice().sort(function(a,b){return b.fri.localeCompare(a.fri);}).forEach(function(v){
+    var wk=null; for(var w=0;w<allWkH.length;w++){if(allWkH[w].fri===v.fri){wk=allWkH[w];break;}}
+    hHtml += '<tr><td style="font-size:12px">'+fmtDate(v.fri)+'</td><td style="font-size:12px">'+v.ministers.join(', ')+'</td></tr>';
+  });
+  hTbody.innerHTML = hHtml || '<tr><td colspan="2" style="text-align:center;color:var(--text-muted);padding:.75rem">No visit history.</td></tr>';
+
+  // Scheduled visits
+  var sTbody = document.getElementById('asm-ro-sched-tbody');
+  var sched = SCHEDULE.filter(function(s){return s.assembly===asmName;}).slice().sort(function(a,b){return a.fri.localeCompare(b.fri);});
+  var sHtml = '';
+  sched.forEach(function(s){
+    var wk=null; for(var w=0;w<allWkH.length;w++){if(allWkH[w].fri===s.fri){wk=allWkH[w];break;}}
+    var mins = [s.m1,s.m2,s.m3,s.m4].filter(Boolean).join(', ');
+    var status = s.cancelled ? '<span style="color:var(--red);font-size:11px">Cancelled</span>' : s.visited ? '<span style="color:var(--green);font-size:11px">Visited</span>' : '<span style="color:var(--blue);font-size:11px">Upcoming</span>';
+    sHtml += '<tr style="background:'+(s.visited?'var(--green-light)':s.cancelled?'var(--gray)':'')+'"><td style="font-size:12px">'+(wk?wk.label+' '+s.fri.substring(0,4):s.fri)+'</td><td style="font-size:12px">'+mins+'</td><td>'+status+'</td></tr>';
+  });
+  sTbody.innerHTML = sHtml || '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:.75rem">No visits scheduled.</td></tr>';
+
+  // Reports
+  renderReportsRO();
+
+  // Populate report author dropdown
+  refreshMinisterDropdownsRO();
+
+  // Switch panel
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('panel-assembly-detail-ro').classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  var navItems = document.querySelectorAll('.nav-item');
+  for(var i=0;i<navItems.length;i++){
+    var oc=navItems[i].getAttribute('onclick');
+    if(oc&&oc.indexOf("'assemblies-ro'")>=0){navItems[i].classList.add('active');break;}
+  }
+}
+
+function renderReportsRO() {
+  var el = document.getElementById('asm-ro-reports-list');
+  if(!el) return;
+  var reports = (ASSEMBLY_REPORTS[currentAsmNameRO]||[]).slice().sort(function(a,b){return b.date.localeCompare(a.date);});
+  if(!reports.length){ el.innerHTML='<div style="color:var(--text-muted);font-size:13px">No reports yet.</div>'; return; }
+  el.innerHTML = reports.map(function(r){
+    return '<div style="padding:10px 0;border-bottom:1px solid var(--border)">'
+      + '<div style="font-size:12px;color:var(--text-muted);margin-bottom:3px">'+fmtDate(r.date)+' &nbsp;·&nbsp; '+r.author+'</div>'
+      + (r.observations?'<div style="font-size:13px;margin-bottom:4px">'+r.observations+'</div>':'')
+      + (r.prayer?'<div style="font-size:12px;color:var(--text-muted);font-style:italic">'+r.prayer+'</div>':'')
+      + '</div>';
+  }).join('');
+}
+
+function refreshMinisterDropdownsRO() {
+  var sel = document.getElementById('rpt-ro-author');
+  if(!sel) return;
+  sel.innerHTML = '<option value="">Select minister...</option>';
+  MINISTERS.slice().sort(function(a,b){return a.name.localeCompare(b.name);}).forEach(function(m){
+    var o=document.createElement('option'); o.value=m.name; o.textContent=m.name; sel.appendChild(o);
+  });
+}
+
+function toggleReportFormRO() {
+  var f = document.getElementById('asm-ro-report-form');
+  var isOpen = f.style.display !== 'none';
+  if(isOpen){ f.style.display='none'; }
+  else {
+    document.getElementById('rpt-ro-date').value='';
+    document.getElementById('rpt-ro-author').value='';
+    document.getElementById('rpt-ro-observations').value='';
+    document.getElementById('rpt-ro-prayer').value='';
+    document.getElementById('rpt-ro-travel').value='';
+    f.style.display='block';
+    f.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+}
+
+function saveReportRO() {
+  var date=document.getElementById('rpt-ro-date').value;
+  var author=document.getElementById('rpt-ro-author').value;
+  var obs=document.getElementById('rpt-ro-observations').value.trim();
+  var prayer=document.getElementById('rpt-ro-prayer').value.trim();
+  var travel=document.getElementById('rpt-ro-travel').value.trim();
+  if(!date){showToast('Please enter a date');return;}
+  if(!author){showToast('Please select your name');return;}
+  if(!obs&&!prayer){showToast('Please add some observations');return;}
+  PROPOSALS.unshift({
+    id: Date.now(),
+    submitted: new Date().toISOString().split('T')[0],
+    _source: 'church-report',
+    minister: author,
+    assembly: currentAsmNameRO,
+    date: date,
+    observations: obs,
+    prayer: prayer,
+    travel: travel,
+    status: 'Pending',
+    typeLabel: 'Church Report'
+  });
+  updateRequestsBadge();
+  toggleReportFormRO();
+  showToast('Report submitted for admin review');
+}
+
 function renderAssemblies() {
   var regionF=document.getElementById('f-asm-region').value;
   var countryF=document.getElementById('f-asm-country').value;
@@ -4170,15 +4655,15 @@ function openAssemblyDetail(asmName) {
   // Populate weekend dropdown with scheduled visits for this assembly
   var wkSel=document.getElementById('rpt-weekend');
   wkSel.innerHTML='<option value="">Select weekend to mark as visited...</option>';
+  var allWkRpt=WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
   var asmSchedule=SCHEDULE.filter(function(s){return s.assembly===asmName;}).slice().sort(function(a,b){return a.fri.localeCompare(b.fri);});
   for(var i=0;i<asmSchedule.length;i++){
     var s=asmSchedule[i];
     var wk=null;
-    for(var w=0;w<WK2026.length;w++){if(WK2026[w].fri===s.fri){wk=WK2026[w];break;}}
-    if(!wk)for(var w=0;w<WK2027.length;w++){if(WK2027[w].fri===s.fri){wk=WK2027[w];break;}}
+    for(var w=0;w<allWkRpt.length;w++){if(allWkRpt[w].fri===s.fri){wk=allWkRpt[w];break;}}
     var o=document.createElement('option');
     o.value=s.fri;
-    o.textContent=(wk?wk.label:s.fri)+(s.visited?' (already visited)':'');
+    o.textContent=(wk?wk.label+' '+s.fri.substring(0,4):s.fri)+(s.visited?' (already visited)':'');
     wkSel.appendChild(o);
   }
 
@@ -4209,9 +4694,10 @@ function renderAddressView() {
   if(a.country)html+='<div style="font-size:13px">'+(a.country==='CAN'?'Canada':a.country==='USA'?'USA':a.country)+'</div>';
   if(a.meeting)html+='<div style="font-size:12px;color:var(--text-muted);margin-top:6px">\ud83d\udd50 Sunday '+a.meeting+'</div>';
   // Google Maps link
-  var queryParts=[a.street,a.city,a.prov,a.postal,a.country].filter(Boolean);
+  var countryNameA = a.country==='CAN'?'Canada':a.country==='USA'?'USA':a.country||'';
+  var queryParts=[a.street,a.city,a.prov,a.postal,countryNameA].filter(Boolean);
   if(queryParts.length){
-    var mapsUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(queryParts.join(' '));
+    var mapsUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(queryParts.join(', '));
     html+='<div style="margin-top:10px"><a href="'+mapsUrl+'" target="_blank" rel="noopener" style="font-size:12px;color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;gap:5px">'
       +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>'
       +'Open in Google Maps</a></div>';
@@ -4332,7 +4818,7 @@ function renderAsmHistory() {
   }
   for(var i=0;i<visits.length;i++){
     var h=visits[i];
-    var hasNotes=h.note||h.visitNote||h.subDetail;
+    var hasNotes=h.note||h.visitNote||h.subDetail||h.notes;
     var tr=document.createElement('tr');
     if(hasNotes){tr.style.cursor='pointer';(function(idx){tr.onclick=function(){openVisitModal(idx);};})(i);}
     tr.innerHTML='<td>'+fmtDate(h.fri)+'</td>'
@@ -4385,6 +4871,7 @@ function renderAsmSched() {
 }
 
 function openSchedEdit(idx) {
+  if (!adminUnlocked) return;
   var s=SCHEDULE[idx];if(!s)return;
   document.getElementById('sched-edit-idx').value=idx;
   var mnames=MINISTERS.map(function(m){return m.name;});
@@ -4643,18 +5130,22 @@ function getAllReports() {
 function initChurchReportFilters() {
   var mSel=document.getElementById('cr-filter-minister');
   if(mSel&&mSel.options.length===1){
-    for(var i=0;i<MINISTERS.length;i++){var o=document.createElement('option');o.value=MINISTERS[i].name;o.textContent=MINISTERS[i].name;mSel.appendChild(o);}
+    var sortedM=MINISTERS.slice().sort(function(a,b){return a.name.localeCompare(b.name);});
+    for(var i=0;i<sortedM.length;i++){var o=document.createElement('option');o.value=sortedM[i].name;o.textContent=sortedM[i].name;mSel.appendChild(o);}
   }
+  var sortedA=ASSEMBLIES.slice().sort(function(a,b){return a.name.localeCompare(b.name);});
   var aSel=document.getElementById('cr-filter-assembly');
   if(aSel&&aSel.options.length===1){
-    var sortedA=ASSEMBLIES.slice().sort(function(a,b){return a.name.localeCompare(b.name);});
     for(var i=0;i<sortedA.length;i++){var o=document.createElement('option');o.value=sortedA[i].name;o.textContent=sortedA[i].name;aSel.appendChild(o);}
+  }
+  var wSel=document.getElementById('cr-write-assembly');
+  if(wSel&&wSel.options.length===1){
+    for(var i=0;i<sortedA.length;i++){var o=document.createElement('option');o.value=sortedA[i].name;o.textContent=sortedA[i].name;wSel.appendChild(o);}
   }
 }
 
 function renderChurchReports() {
   initChurchReportFilters();
-  closeCrExpanded();
   var mF=document.getElementById('cr-filter-minister').value;
   var aF=document.getElementById('cr-filter-assembly').value;
   var reports=getAllReports();
@@ -4690,54 +5181,138 @@ function renderChurchReports() {
     tbody.appendChild(tr);return;
   }
   window._crReports=reports;
+  window._crOpenIdx=window._crOpenIdx||null;
   for(var i=0;i<reports.length;i++){
     var r=reports[i];
-    var preview=r.observations?r.observations.substring(0,80)+(r.observations.length>80?'\u2026':'\u2026'):'--';
-    var tr=document.createElement('tr');tr.style.cursor='pointer';
-    (function(idx){tr.onclick=function(){expandCrReport(idx);};})(i);
+    var isOpen=(window._crOpenIdx===i);
+    var preview=r.observations?r.observations.substring(0,80)+(r.observations.length>80?'\u2026':''):'--';
+    var tr=document.createElement('tr');
+    tr.style.cursor='pointer';
+    tr.style.background=isOpen?'var(--blue-light)':'';
+    (function(idx){tr.onclick=function(){toggleCrAccordion(idx);};})(i);
     tr.innerHTML='<td style="white-space:nowrap"><strong>'+fmtDate(r.date)+'</strong></td>'
       +'<td><strong>'+r.assembly+'</strong></td>'
       +'<td>'+regionBadge(r.region)+'</td>'
       +'<td style="font-size:12px">'+(r.author||'\u2014')+'</td>'
-      +'<td style="font-size:12px;color:var(--text-muted);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+preview+'</td>'
-      +'<td style="text-align:right"><span style="font-size:11px;color:var(--blue)">\u25b8 Read</span></td>';
+      +'<td style="font-size:12px;color:var(--text-muted);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(isOpen?'':preview)+'</td>'
+      +'<td style="text-align:right"><span style="font-size:11px;color:var(--blue)">'+(isOpen?'&#8963; Close':'&#8965; Read')+'</span></td>';
     tbody.appendChild(tr);
+
+    if(isOpen){
+      var expandTr=document.createElement('tr');
+      expandTr.style.background='var(--blue-light)';
+      var body='';
+      if(r.observations)body+='<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">General Observations</div><div style="font-size:13px;line-height:1.7;white-space:pre-wrap;color:var(--navy-dark)">'+r.observations+'</div></div>';
+      if(r.prayer)body+='<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Prayer Points &amp; Follow-up</div><div style="font-size:13px;line-height:1.7;white-space:pre-wrap;color:var(--amber);font-style:italic">'+r.prayer+'</div></div>';
+      if(r.travel)body+='<div><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Accommodation &amp; Travel</div><div style="font-size:13px;line-height:1.7;white-space:pre-wrap;color:var(--text-muted)">'+r.travel+'</div></div>';
+      expandTr.innerHTML='<td colspan="6" style="padding:14px 1.25rem 1.25rem;border-bottom:2px solid var(--blue)">'
+        + body
+        + '<div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(0,0,0,.08)">'
+        + '<button class="btn btn-sm btn-primary" onclick="openAssemblyDetailRO(\''+r.assembly.replace(/'/g,"\\'")+'\')" style="font-size:11px">Open assembly page</button>'
+        + '</div></td>';
+      tbody.appendChild(expandTr);
+    }
   }
 }
 
+function toggleCrAccordion(idx) {
+  window._crOpenIdx = (window._crOpenIdx === idx) ? null : idx;
+  renderChurchReports();
+}
+
 function sortChurchReports(col) {
+  window._crOpenIdx = null;
   if(crSortCol===col)crSortDir*=-1;else{crSortCol=col;crSortDir=col==='date'?-1:1;}
   renderChurchReports();
 }
 
 function expandCrReport(idx) {
-  var r=(window._crReports||[])[idx];if(!r)return;
-  crExpandedAsm=r.assembly;
-  document.getElementById('cr-expanded-title').textContent=r.assembly+' \u2014 '+fmtDate(r.date);
-  document.getElementById('cr-expanded-meta').textContent='Written by '+(r.author||'Unknown')+' \u00b7 '+r.region;
-  var body='';
-  if(r.observations)body+='<div style="margin-bottom:16px"><div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">General observations</div><div style="font-size:13px;line-height:1.7;white-space:pre-wrap">'+r.observations+'</div></div>';
-  if(r.prayer)body+='<div style="margin-bottom:16px"><div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Prayer points &amp; follow-up</div><div style="font-size:13px;line-height:1.7;color:var(--amber);font-style:italic;white-space:pre-wrap">'+r.prayer+'</div></div>';
-  if(r.travel)body+='<div><div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Accommodation &amp; travel notes</div><div style="font-size:13px;line-height:1.7;white-space:pre-wrap">'+r.travel+'</div></div>';
-  document.getElementById('cr-expanded-body').innerHTML=body||'<span style="color:var(--text-muted)">No content recorded.</span>';
-  var el=document.getElementById('cr-expanded');
-  el.style.display='block';
-  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+  toggleCrAccordion(idx);
 }
 
 function closeCrExpanded(){document.getElementById('cr-expanded').style.display='none';crExpandedAsm=null;}
 
 function gotoAssemblyFromReport(){if(crExpandedAsm)openAssemblyDetail(crExpandedAsm);}
 
-function gotoWriteReport() {
-  var asm=document.getElementById('cr-write-assembly').value;
-  if(!asm){showToast('Please select an assembly first');return;}
-  openAssemblyDetail(asm);
+function openChurchReportWrite(asmName) {
+  showPanel('church-reports');
+  // Pre-select the assembly in the write form
   setTimeout(function(){
-    var form=document.getElementById('asm-report-form');
-    if(form&&form.style.display==='none')toggleReportForm();
-    if(form)form.scrollIntoView({behavior:'smooth',block:'center'});
-  },150);
+    var form = document.getElementById('cr-write-form');
+    var btn = document.getElementById('cr-write-toggle-btn');
+    if (form && form.style.display === 'none') toggleCRWriteForm();
+    if (asmName) {
+      var sel = document.getElementById('cr-write-assembly');
+      if (sel) sel.value = asmName;
+    }
+    if (form) form.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }, 100);
+}
+
+function toggleCRWriteForm() {
+  var form = document.getElementById('cr-write-form');
+  var btn = document.getElementById('cr-write-toggle-btn');
+  var isOpen = form.style.display !== 'none';
+  if (isOpen) {
+    form.style.display = 'none';
+    btn.textContent = '+ Write a Report';
+  } else {
+    // Populate dropdowns
+    var asmSel = document.getElementById('cr-write-assembly');
+    if (asmSel && asmSel.options.length <= 1) {
+      ASSEMBLIES.slice().sort(function(a,b){return a.name.localeCompare(b.name);}).forEach(function(a){
+        var o=document.createElement('option'); o.value=a.name; o.textContent=a.name; asmSel.appendChild(o);
+      });
+    }
+    var authSel = document.getElementById('cr-write-author');
+    if (authSel && authSel.options.length <= 1) {
+      MINISTERS.slice().sort(function(a,b){return a.name.localeCompare(b.name);}).forEach(function(m){
+        var o=document.createElement('option'); o.value=m.name; o.textContent=m.name; authSel.appendChild(o);
+      });
+    }
+    // Clear fields
+    document.getElementById('cr-write-date').value = '';
+    document.getElementById('cr-write-observations').value = '';
+    document.getElementById('cr-write-prayer').value = '';
+    document.getElementById('cr-write-travel').value = '';
+    form.style.display = 'block';
+    btn.textContent = '✕ Cancel';
+    form.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+}
+
+function submitCRReport() {
+  var asm = document.getElementById('cr-write-assembly').value;
+  var author = document.getElementById('cr-write-author').value;
+  var date = document.getElementById('cr-write-date').value;
+  var obs = document.getElementById('cr-write-observations').value.trim();
+  var prayer = document.getElementById('cr-write-prayer').value.trim();
+  var travel = document.getElementById('cr-write-travel').value.trim();
+  if (!asm) { showToast('Please select an assembly'); return; }
+  if (!author) { showToast('Please select your name'); return; }
+  if (!date) { showToast('Please enter the date of visit'); return; }
+  if (!obs) { showToast('Please add your observations'); return; }
+
+  PROPOSALS.unshift({
+    id: Date.now(),
+    submitted: new Date().toISOString().split('T')[0],
+    _source: 'church-report',
+    minister: author,
+    assembly: asm,
+    date: date,
+    observations: obs,
+    prayer: prayer,
+    travel: travel,
+    status: 'Pending',
+    typeLabel: 'Church Report'
+  });
+  updateRequestsBadge();
+  showToast('Report submitted for admin review');
+  toggleCRWriteForm();
+}
+
+function gotoWriteReport() {
+  toggleCRWriteForm();
 }
 
 // ── Visit History page ────────────────────────────────────
@@ -4821,9 +5396,18 @@ function showPanel(id) {
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
   document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
   document.getElementById('panel-'+id).classList.add('active');
+  window.scrollTo(0,0);
+  document.body.scrollTop=0;
+  document.documentElement.scrollTop=0;
+  var main=document.querySelector('.main');
+  if(main)main.scrollTop=0;
+  var cont=document.querySelector('.content');
+  if(cont)cont.scrollTop=0;
   var navMap={
-    'dashboard':'Dashboard','schedule':'Schedule','avail-grid':'Scheduling Grid',
-    'conflicts':'Conflicts','ministers':'Ministries','assemblies':'Assemblies',
+    'dashboard':'Dashboard','schedule':'Schedule','avail-grid':'Grid',
+    'conflicts':'Conflicts','ministers':'Ministries','assemblies':'Assemblies (Admin)',
+    'assemblies-ro':'Assemblies','assembly-detail-ro':'Assembly',
+    'map':'Map',
     'assembly-detail':'Assembly Detail','history':'Visit History',
     'church-reports':'Church Reports','proposals':'Travel Proposal','calendar':'Calendar','travel-request':'Travel Request',
     'budget':'Travel Budget','form-availability':'Availability Form',
@@ -4844,7 +5428,11 @@ function showPanel(id) {
   if(id==='proposals')renderProposals();
   if(id==='conflicts')renderConflicts();
   if(id==='ministers')renderMinisters();
-  if(id==='assemblies')renderAssemblies();
+  if(id==='assemblies'){renderAssemblies();updateSchedLock();}
+  if(id==='assembly-detail'){refreshMinisterDropdowns();updateSchedLock();}
+  if(id==='assemblies-ro')renderAssembliesRO();
+  if(id==='map')initGMIMap();
+  if(id==='assembly-detail-ro')refreshMinisterDropdownsRO();
   if(id==='church-reports')renderChurchReports();
   if(id==='history')renderHistory();
   if(id==='calendar'){initCalendarSelects();renderCalendar();}
@@ -4852,7 +5440,12 @@ function showPanel(id) {
   if(id==='form-availability'){refreshMinisterDropdowns();renderAvailYearGrid();}
   if(id==='schedule-conflicts')renderScheduleConflicts();
   if(id==='pending-requests')renderPendingRequests();
-  if(id==='report-conflict')initConflictReportForm();
+  if(id==='report-conflict'){
+    initConflictReportForm();
+  } else {
+    var c=document.querySelector('.content');
+    c.style.cssText='';
+  }
   if(id==='schedule')refreshMinisterDropdowns();
   if(id==='travel-request')initTravelRequest();
 }
@@ -5893,6 +6486,13 @@ function switchScheduleYear(year) {
 }
 
 function updateSchedLock() {
+  document.querySelectorAll('.admin-only').forEach(function(el){
+    el.style.display = adminUnlocked ? '' : 'none';
+  });
+  // Also disable click on scheduled visit rows when locked
+  document.querySelectorAll('#asm-sched-tbody tr').forEach(function(tr){
+    tr.style.cursor = adminUnlocked ? 'pointer' : 'default';
+  });
   var locked = document.getElementById('sched-locked-view');
   var unlocked = document.getElementById('sched-unlocked-view');
   if (!locked||!unlocked) return;
@@ -6090,11 +6690,37 @@ function distKm(m1name, asmName) {
 
 function tripCost(ministerName, assemblyName, s) {
   var cfg = getBudgetSettings();
-  var km = distKm(ministerName, assemblyName);
-  var distDisplay = cfg.unit==='km' ? km : km/1.60934;
   var mCountry='CAN';
   for(var i=0;i<MINISTERS.length;i++){if(MINISTERS[i].name===ministerName){mCountry=MINISTERS[i].country;break;}}
   var tripCurrency = mCountry==='CAN'?'CAD':'USD';
+  var fxRate = (tripCurrency==='CAD' && cfg.currency==='USD') ? cfg.fx : (tripCurrency==='USD' && cfg.currency==='CAD') ? 1/cfg.fx : 1;
+
+  // Check for an approved proposal for this exact trip — use its numbers verbatim
+  var approvedProposal = null;
+  for(var pi=0;pi<PROPOSALS.length;pi++){
+    var pr=PROPOSALS[pi];
+    if(pr.status==='Approved' && pr._source==='minister-request' && pr.propType==='assembly'
+       && pr.minister===ministerName && pr.assembly===assemblyName && pr.weekend===s.fri && pr.budget){
+      approvedProposal=pr; break;
+    }
+  }
+  if(approvedProposal){
+    var pb=approvedProposal.budget;
+    var transport=(pb.transport||0)*fxRate;
+    var accommodation=(pb.hotel||0)*fxRate;
+    var mealsCost=(pb.meals||0)*fxRate;
+    var total=(pb.total||0)*fxRate;
+    var km=distKm(ministerName,assemblyName);
+    return {transport:transport, accommodation:accommodation, meals:mealsCost,
+            hospitality:0, total:total, mode:approvedProposal.mode||'drive',
+            km:km, distDisplay:pb.dist||0, tripDist:pb.dist||0,
+            tripNights:pb.nights||0, tripDays:pb.days||0,
+            isLocal:false, tripCurrency:tripCurrency, flightCost:pb.transport||0,
+            _fromProposal:true};
+  }
+
+  var km = distKm(ministerName, assemblyName);
+  var distDisplay = cfg.unit==='km' ? km : km/1.60934;
   var key = getTripKey(ministerName, s.fri, assemblyName);
   var override = TRIP_OVERRIDES[key] || {};
   var isLocal = distDisplay <= cfg.local;
@@ -6117,7 +6743,6 @@ function tripCost(ministerName, assemblyName, s) {
   var total = totalLocal;
   if (tripCurrency==='CAD' && cfg.currency==='USD') total = totalLocal * cfg.fx;
   if (tripCurrency==='USD' && cfg.currency==='CAD') total = totalLocal / cfg.fx;
-  var fxRate = (tripCurrency==='CAD' && cfg.currency==='USD') ? cfg.fx : (tripCurrency==='USD' && cfg.currency==='CAD') ? 1/cfg.fx : 1;
   var transportDisp = transport * fxRate;
   var accommodationDisp = accommodation * fxRate;
   var mealsCostDisp = mealsCost * fxRate;
@@ -6167,7 +6792,7 @@ function renderBudget() {
   });
 
   // Empty state — prompt to generate
-  if (!visits.length && !approvedRequests.length && !campVisits.length) {
+  if (!visits.length && !campVisits.length) {
     var emptyHtml = '<div style="padding:2rem 1.25rem;text-align:center;color:var(--text-muted)">'
       + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:40px;height:40px;margin-bottom:12px;opacity:.3;display:block;margin-left:auto;margin-right:auto"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'
       + '<div style="font-weight:600;margin-bottom:6px">No schedule data for '+cfg.year+'</div>'
@@ -6217,40 +6842,6 @@ function renderBudget() {
     }
   }
 
-  // Process approved travel requests (not already in SCHEDULE)
-  for (var ri=0;ri<approvedRequests.length;ri++) {
-    var p = approvedRequests[ri];
-    var alreadyInSchedule = false;
-    for(var si=0;si<visits.length;si++){
-      var slots2 = [visits[si].m1,visits[si].m2,visits[si].m3,visits[si].m4].filter(Boolean);
-      if(visits[si].assembly===p.assembly && visits[si].fri===p.weekend && slots2.indexOf(p.minister)>=0){ alreadyInSchedule=true; break; }
-    }
-    if(alreadyInSchedule) continue;
-    var fakeRow = {fri:p.weekend, assembly:p.assembly};
-    var tc = tripCost(p.minister, p.assembly, fakeRow);
-    totalCost += tc.total;
-    if(tc.mode==='drive') driveCost+=tc.total; else flyCost+=tc.total;
-    var mCountry='CAN';
-    for(var i=0;i<MINISTERS.length;i++){if(MINISTERS[i].name===p.minister){mCountry=MINISTERS[i].country;break;}}
-    if(mCountry==='CAN') canCost+=tc.total; else usCost+=tc.total;
-    if(!ministerData[p.minister]) ministerData[p.minister]={total:0,trips:[],drives:0,flies:0};
-    ministerData[p.minister].total+=tc.total;
-    if(tc.mode==='drive')ministerData[p.minister].drives++;else ministerData[p.minister].flies++;
-    ministerData[p.minister].trips.push({assembly:p.assembly,fri:p.weekend,mode:tc.mode,
-      dist:tc.distDisplay,transport:tc.transport,accommodation:tc.accommodation,
-      meals:tc.meals,hospitality:tc.hospitality,total:tc.total,
-      isLocal:tc.isLocal,tripCurrency:tc.tripCurrency,currency:cfg.currency,_approved:true});
-    if(!assemblyData[p.assembly]) assemblyData[p.assembly]={total:0,visits:0,ministers:[]};
-    assemblyData[p.assembly].total+=tc.total;
-    assemblyData[p.assembly].visits++;
-    if(assemblyData[p.assembly].ministers.indexOf(p.minister)<0) assemblyData[p.assembly].ministers.push(p.minister);
-  }
-
-  // Ensure ALL ministers appear in table even with 0 trips
-  MINISTERS.forEach(function(m){
-    if(!ministerData[m.name]) ministerData[m.name]={total:0,trips:[],drives:0,flies:0};
-  });
-
   // Process camp assignments for this year
   for(var ki=0;ki<campVisits.length;ki++){
     var cv = campVisits[ki];
@@ -6291,9 +6882,7 @@ function renderBudget() {
 
   // ── Summary metrics ───────────────────────────────────────
   var sym = cfg.currency;
-  var totalVisits = visits.length + approvedRequests.filter(function(p){
-    return !visits.some(function(s){ return s.assembly===p.assembly && s.fri===p.weekend && [s.m1,s.m2,s.m3,s.m4].indexOf(p.minister)>=0; });
-  }).length;
+  var totalVisits = visits.length;
   document.getElementById('bgt-metrics').innerHTML =
     '<div class="metric-card"><div class="metric-label">Total estimated cost</div><div class="metric-value" style="font-size:22px">'+fmtCurrency(totalCost,sym)+'</div><div class="metric-sub">'+cfg.year+' program</div></div>'
     +'<div class="metric-card"><div class="metric-label">Driving cost</div><div class="metric-value" style="font-size:22px">'+fmtCurrency(driveCost,sym)+'</div><div class="metric-sub">'+Math.round(driveCost/Math.max(totalCost,1)*100)+'% of total</div></div>'
@@ -6363,7 +6952,7 @@ function renderBudget() {
         +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right">'
         +(isFly
           ?'<input type="number" value="'+(override.flightCost||'')+'" placeholder="Enter $" data-mn="'+mn+'" data-fri="'+t.fri+'" data-asm="'+t.assembly+'" data-field="flightCost" style="'+iStyle+'" oninput="budgetFieldChange(this)">'
-          :'<span style="font-size:12px;color:var(--text-muted)">'+Math.round(t.tripDist||0)+' '+cfg.unit+'</span>')
+          :'<div style="display:flex;align-items:center;gap:4px;justify-content:flex-end"><input type="number" value="'+Math.round(t.tripDist||0)+'" data-mn="'+mn+'" data-fri="'+t.fri+'" data-asm="'+t.assembly+'" data-field="distance" style="'+iStyle+';width:60px" oninput="budgetFieldChange(this)"><span style="font-size:11px;color:var(--text-muted)">'+cfg.unit+'</span></div>')
         +'</td>'
         +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right;font-size:12px">'+fmtCurrency(t.transport,sym)+'</td>'
         +'<td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right;font-size:12px">'+(t.isLocal?'&mdash;':fmtCurrency(t.accommodation,sym))+'</td>'
@@ -6907,7 +7496,9 @@ function renderAssemblyVisitView(year, yearStr, ministerF) {
         + '<td style="padding:8px 1.25rem">'
         + e.ministers.map(function(m){
             var isConflict = e.conflicts.indexOf(m) >= 0;
-            return '<div style="font-size:12px;'+(isConflict?'color:var(--red);font-weight:600':'color:var(--text-muted)')+'">'+m+(isConflict?' ⚠':'')+'</div>';
+            return '<div style="font-size:12px;line-height:1.8;'+(isConflict?'color:var(--red);font-weight:700':'color:var(--text-muted)')+'">'+m
+              +(isConflict?' ⚠ <button onclick="calReportConflict(\''+m+'\',\''+e.date+'\',\''+e.assembly+'\')" style="font-size:10px;background:var(--red-light);border:1px solid #F09595;color:var(--red);padding:1px 8px;border-radius:3px;cursor:pointer;font-weight:600;margin-left:4px">Report</button>':'')
+              +'</div>';
           }).join('')
         + '</td></tr>';
     });
@@ -6916,9 +7507,26 @@ function renderAssemblyVisitView(year, yearStr, ministerF) {
   return html || '<div style="padding:1.25rem;color:var(--text-muted)">No assembly visits scheduled.</div>';
 }
 
+function calReportConflict(ministerName, fri, assembly) {
+  showPanel('report-conflict');
+  // Wait for panel to render then pre-fill
+  setTimeout(function(){
+    var mSel = document.getElementById('rc-minister');
+    if (mSel) {
+      mSel.value = ministerName;
+      rcDetectConflicts();
+      // Also pre-fill the form directly
+      setTimeout(function(){
+        rcPrefill(fri, assembly);
+      }, 100);
+    }
+  }, 150);
+}
+
 function renderCampsCalView(year, yearStr, ministerF) {
   var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   var html = '';
+  var campIdx = 0;
   for (var mo = 0; mo < 12; mo++) {
     var moStr = String(mo + 1).padStart(2, '0');
     var moKey = yearStr + '-' + moStr;
@@ -6930,23 +7538,46 @@ function renderCampsCalView(year, yearStr, ministerF) {
       var sd = new Date(c.start+'T12:00:00'); var ed = new Date(c.end+'T12:00:00');
       var mns = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       var label = mns[sd.getMonth()]+' '+sd.getDate()+'\u2013'+mns[ed.getMonth()]+' '+ed.getDate();
-      return { date:c.start, dateLabel:label, name:c.name, location:c.location||'', ministers:campMins };
+      // Build Google Maps link
+      var mapsUrl = c.location ? 'https://maps.google.com/?q='+encodeURIComponent(c.location) : '';
+      return { date:c.start, dateLabel:label, name:c.name, location:c.location||'',
+               ministers:campMins, airport:c.airport||'', contact:c.contact||'',
+               notes:c.notes||'', mapsUrl:mapsUrl };
     }).filter(Boolean);
     if (!entries.length) continue;
     entries.sort(function(a,b){return a.date.localeCompare(b.date);});
     html += '<div>'
-      + '<div style="background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 1.25rem;letter-spacing:.03em">'+months[mo]+' '+year+'</div>'
-      + '<table style="width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed">'
-      + '<colgroup><col style="width:180px"><col style="width:130px"><col style="width:auto"><col style="width:auto"></colgroup>';
+      + '<div style="background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 1.25rem;letter-spacing:.03em">'+months[mo]+' '+year+'</div>';
     entries.forEach(function(e) {
-      html += '<tr style="border-bottom:1px solid var(--border);background:#EEEDFE;vertical-align:top">'
-        + '<td style="padding:8px 1.25rem;font-weight:600">'+e.name+(e.date?' '+e.date.substring(0,4):'')+'</td>'
-        + '<td style="padding:8px 4px;color:var(--text-muted);font-size:12px">'+e.dateLabel+'</td>'
-        + '<td style="padding:8px 4px;color:var(--text-muted);font-size:12px">'+e.location+'</td>'
-        + '<td style="padding:8px 1.25rem">'+e.ministers.map(function(m){return '<div style="font-size:12px;color:var(--text-muted)">'+m+'</div>';}).join('')+'</td>'
-        + '</tr>';
+      var uid = 'camp-cal-'+campIdx++;
+      html += '<div style="border-bottom:1px solid var(--border)">'
+        // Main row — clickable to expand
+        + '<div onclick="(function(el){var d=document.getElementById(\''+uid+'\');var a=el.querySelector(\'.camp-arr\');if(d.style.display===\'none\'||!d.style.display){d.style.display=\'block\';a.style.transform=\'rotate(180deg)\'}else{d.style.display=\'none\';a.style.transform=\'\'}})(this)" '
+        + 'style="display:grid;grid-template-columns:200px 120px 1fr 24px;align-items:center;padding:10px 1.25rem;background:#EEEDFE;cursor:pointer;gap:8px">'
+        + '<div style="font-weight:600;color:var(--navy-dark);font-size:13px">'+e.name+(e.date?' '+e.date.substring(0,4):'')+'</div>'
+        + '<div style="color:var(--text-muted);font-size:12px">'+e.dateLabel+'</div>'
+        + '<div style="font-size:12px;color:var(--text-muted)">'+e.ministers.join(' · ')+'</div>'
+        + '<svg class="camp-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;transition:transform .2s;color:var(--text-muted)"><polyline points="6 9 12 15 18 9"/></svg>'
+        + '</div>'
+        // Expanded detail panel
+        + '<div id="'+uid+'" style="display:none;background:#F8F7FF;border-top:1px solid #D4D0F5;padding:14px 1.25rem">'
+        + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px 24px">'
+        + (e.location ? '<div><div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Location</div>'
+          + '<div style="font-size:13px;color:var(--navy-dark)">' + e.location
+          + (e.mapsUrl ? ' <a href="'+e.mapsUrl+'" target="_blank" style="font-size:11px;color:var(--blue);margin-left:6px;text-decoration:none">&#x1F4CD; Map</a>' : '')
+          + '</div></div>' : '')
+        + (e.airport ? '<div><div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Nearest Airport</div>'
+          + '<div style="font-size:13px;color:var(--navy-dark)">'+e.airport+'</div></div>' : '')
+        + (e.contact ? '<div><div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Contact</div>'
+          + '<div style="font-size:13px;color:var(--navy-dark)">'+e.contact+'</div></div>' : '')
+        + (e.ministers.length ? '<div><div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Ministers</div>'
+          + '<div style="font-size:13px;color:var(--navy-dark)">'+e.ministers.join(', ')+'</div></div>' : '')
+        + '</div>'
+        + (e.notes ? '<div style="margin-top:10px;font-size:12px;color:var(--text-muted);font-style:italic;border-top:1px solid #D4D0F5;padding-top:8px">'+e.notes+'</div>' : '')
+        + '</div>'
+        + '</div>';
     });
-    html += '</table></div>';
+    html += '</div>';
   }
   return html || '<div style="padding:1.25rem;color:var(--text-muted)">No camps scheduled.</div>';
 }
@@ -6954,6 +7585,21 @@ function renderCampsCalView(year, yearStr, ministerF) {
 function renderBulletinView(year, yearStr, ministerF) {
   var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+
+  // Build conflict map
+  var byFri = {};
+  SCHEDULE.forEach(function(s) {
+    if (s.cancelled) return;
+    if (!byFri[s.fri]) byFri[s.fri] = [];
+    [s.m1,s.m2,s.m3,s.m4].filter(Boolean).forEach(function(m){ byFri[s.fri].push(m); });
+  });
+  var conflictMap = {};
+  Object.keys(byFri).forEach(function(fri) {
+    var seen = {}, dups = {};
+    byFri[fri].forEach(function(m){ if(seen[m]) dups[m]=true; else seen[m]=true; });
+    conflictMap[fri] = dups;
+  });
+
   var html = '';
 
   for (var mo = 0; mo < 12; mo++) {
@@ -6967,7 +7613,8 @@ function renderBulletinView(year, yearStr, ministerF) {
       var mins = [s.m1,s.m2,s.m3,s.m4].filter(Boolean);
       if (ministerF && mins.indexOf(ministerF) < 0) return;
       var wk = null; for (var w=0;w<allWk.length;w++){if(allWk[w].fri===s.fri){wk=allWk[w];break;}}
-      entries.push({ type:'visit', date:s.fri, dateLabel: wk ? 'Fri '+wk.label.replace(/\s+\d+/,'') : s.fri, assembly:s.assembly, ministers:mins });
+      var conflictedMins = mins.filter(function(m){ return conflictMap[s.fri] && conflictMap[s.fri][m]; });
+      entries.push({ type:'visit', date:s.fri, dateLabel: wk ? wk.label : s.fri, assembly:s.assembly, ministers:mins, conflictedMins:conflictedMins });
     });
 
     CAMPS.filter(function(c){
@@ -6978,7 +7625,7 @@ function renderBulletinView(year, yearStr, ministerF) {
       var sd = new Date(c.start+'T12:00:00'); var ed = new Date(c.end+'T12:00:00');
       var mns = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       var label = mns[sd.getMonth()]+' '+sd.getDate()+'\u2013'+mns[ed.getMonth()]+' '+ed.getDate();
-      entries.push({ type:'camp', date:c.start, dateLabel:label, assembly:c.name, location:c.location, ministers:campMins });
+      entries.push({ type:'camp', date:c.start, dateLabel:label, assembly:c.name, location:c.location, ministers:campMins, conflictedMins:[] });
     });
 
     if (!entries.length) continue;
@@ -6991,16 +7638,20 @@ function renderBulletinView(year, yearStr, ministerF) {
 
     entries.forEach(function(e) {
       var isCamp = e.type === 'camp';
-      var bg = isCamp ? 'background:#EEEDFE' : '';
+      var hasConflict = e.conflictedMins && e.conflictedMins.length > 0;
+      var rowBg = hasConflict ? 'background:var(--red-light)' : isCamp ? 'background:#EEEDFE' : '';
       var badge = isCamp
         ? '<span style="font-size:10px;background:#EEEDFE;color:#3C3489;border:1px solid #AFA9EC;padding:1px 7px;border-radius:3px;font-weight:700">Camp</span>'
         : '<span style="font-size:10px;background:var(--blue-light);color:var(--navy);border:1px solid #85B7EB;padding:1px 7px;border-radius:3px;font-weight:700">Assembly Visit</span>';
 
       var ministersHtml = e.ministers.map(function(m){
-        return '<div style="font-size:12px;color:var(--text-muted);line-height:1.7">'+m+'</div>';
+        var isConflict = e.conflictedMins && e.conflictedMins.indexOf(m) >= 0;
+        return '<div style="font-size:12px;line-height:1.8;'+(isConflict?'color:var(--red);font-weight:700':'color:var(--text-muted)')+'">'+m
+          + (isConflict ? ' ⚠ <button onclick="calReportConflict(\''+m+'\',\''+e.date+'\',\''+e.assembly+'\')" style="font-size:10px;background:var(--red-light);border:1px solid #F09595;color:var(--red);padding:1px 8px;border-radius:3px;cursor:pointer;font-weight:600;margin-left:4px">Report</button>' : '')
+          + '</div>';
       }).join('');
 
-      html += '<tr style="border-bottom:1px solid var(--border);'+bg+';vertical-align:top">'
+      html += '<tr style="border-bottom:1px solid var(--border);'+rowBg+';vertical-align:top">'
         + '<td style="padding:9px 1.25rem;font-size:12px;color:var(--text-muted);white-space:nowrap;vertical-align:middle">'+e.dateLabel+'</td>'
         + '<td style="padding:9px 8px;vertical-align:middle">'+badge+'</td>'
         + '<td style="padding:9px 8px;font-weight:500;vertical-align:middle">'+e.assembly+(e.location?'<div style="font-size:11px;color:var(--text-muted);font-weight:400">'+e.location+'</div>':'')+'</td>'
@@ -7091,6 +7742,7 @@ function renderItineraryView(year, yearStr, ministerF) {
         + '<div>'
         +   '<div style="font-size:13px;font-weight:500;color:'+(e.conflict?'var(--red)':'var(--navy-dark)')+'">'+e.assembly+(e.conflict?' ⚠ Double-booked':'')+'</div>'
         +   (e.location ? '<div style="font-size:11px;color:var(--text-muted)">'+e.location+'</div>' : '')
+        +   (e.conflict ? '<button onclick="calReportConflict(\''+m.name+'\',\''+e.date+'\',\''+e.assembly+'\')" style="margin-top:4px;font-size:11px;background:var(--red-light);border:1px solid #F09595;color:var(--red);padding:3px 10px;border-radius:4px;cursor:pointer;font-weight:600">Report this conflict</button>' : '')
         + '</div>'
         + '</div>';
     });
@@ -7268,10 +7920,15 @@ function propUpdateBudget() {
 
   var distEl=document.getElementById('prop-distance');
   var distVal=parseFloat(distEl.value);
-  if(isNaN(distVal)||distVal<=0){document.getElementById('prop-budget-preview').style.display='none';return;}
+  if(isNaN(distVal)) distVal=0;
 
-  var nights=parseFloat(document.getElementById('prop-nights').value)||2;
-  var days=parseFloat(document.getElementById('prop-days').value)||3;
+  var nights=document.getElementById('prop-nights').value;
+  nights = nights===''?0:parseFloat(nights);
+  if(isNaN(nights)) nights=0;
+
+  var days=document.getElementById('prop-days').value;
+  days = days===''?0:parseFloat(days);
+  if(isNaN(days)) days=0;
 
   var mCountry2='CAN';
   for(var j=0;j<MINISTERS.length;j++){if(MINISTERS[j].name===mname){mCountry2=MINISTERS[j].country;break;}}
@@ -7366,7 +8023,28 @@ function submitProposal() {
   var spouse=document.getElementById('prop-spouse').value==='yes';
   if(!mname||!asmName||!weekend){showToast('Please fill in minister, assembly and weekend');return;}
   if(!purpose){showToast('Please select a purpose for the visit');return;}
-  var budget=window._propBudget||{total:0,currency:'CAD'};
+
+  // Read budget directly from form fields — never use cached _propBudget
+  var mCountry3='CAN';
+  for(var j=0;j<MINISTERS.length;j++){if(MINISTERS[j].name===mname){mCountry3=MINISTERS[j].country;break;}}
+  var budgetCur = mCountry3==='CAN'?'CAD':'USD';
+  var submitDist = parseFloat(document.getElementById('prop-distance').value); if(isNaN(submitDist)) submitDist=0;
+  var submitNights = document.getElementById('prop-nights').value; submitNights = submitNights===''?0:parseFloat(submitNights); if(isNaN(submitNights)) submitNights=0;
+  var submitDays = document.getElementById('prop-days').value; submitDays = submitDays===''?0:parseFloat(submitDays); if(isNaN(submitDays)) submitDays=0;
+  var submitUnit = (document.getElementById('prop-unit')||{value:'km'}).value||'km';
+  var submitMileage = mCountry3==='CAN'?0.55:0.65;
+  var submitHotelRate = mCountry3==='CAN'?130:110;
+  var submitMealRate = mCountry3==='CAN'?65:55;
+  var submitTransport = mode==='fly' ? submitDist : submitDist * submitMileage * 2;
+  var submitHotel = submitNights * submitHotelRate;
+  var submitMeals = submitDays * submitMealRate;
+  var submitTotal = submitTransport + submitHotel + submitMeals;
+  var budget = {
+    transport: submitTransport, hotel: submitHotel, meals: submitMeals,
+    total: submitTotal, currency: budgetCur, mode: mode,
+    dist: submitDist, unit: submitUnit, nights: submitNights, days: submitDays,
+    mileage: submitMileage, hotelRate: submitHotelRate, mealRate: submitMealRate
+  };
   var wkLabel=weekend;
   var allWk=WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
   for(var i=0;i<allWk.length;i++){if(allWk[i].fri===weekend){wkLabel=allWk[i].label+' ('+allWk[i].year+')';break;}}
@@ -7545,30 +8223,6 @@ function updateProposalStatus(id, status) {
             note:'Approved proposal',visited:false,cancelled:false,suggested:false
           };
           SCHEDULE.push(entry);
-        }
-        // Write proposal budget values into TRIP_OVERRIDES so Travel Budget uses real numbers
-        if(p.budget){
-          var tripKey=getTripKey(p.minister,p.weekend,p.assembly);
-          if(!TRIP_OVERRIDES[tripKey]) TRIP_OVERRIDES[tripKey]={};
-          TRIP_OVERRIDES[tripKey].mode = p.mode||'drive';
-          if(p.mode==='fly'){
-            TRIP_OVERRIDES[tripKey].flightCost = p.budget.transport||0;
-          } else {
-            // Store distance in the same unit as the budget page uses
-            var propDist = p.budget.dist||0;
-            // If proposal was in miles, convert to km for storage (budget page uses km internally)
-            TRIP_OVERRIDES[tripKey].distance = p.budget.unit==='mi' ? Math.round(propDist*1.60934) : Math.round(propDist);
-          }
-          TRIP_OVERRIDES[tripKey].nights = p.budget.nights||0;
-          TRIP_OVERRIDES[tripKey].days   = p.budget.days||0;
-          // Also set for plurality minister if present
-          if(p.plurality){
-            var plurKey=getTripKey(p.plurality,p.weekend,p.assembly);
-            if(!TRIP_OVERRIDES[plurKey]) TRIP_OVERRIDES[plurKey]={};
-            TRIP_OVERRIDES[plurKey].mode   = TRIP_OVERRIDES[tripKey].mode;
-            TRIP_OVERRIDES[plurKey].nights = TRIP_OVERRIDES[tripKey].nights;
-            TRIP_OVERRIDES[plurKey].days   = TRIP_OVERRIDES[tripKey].days;
-          }
         }
         renderSchedule(activeScheduleYear);
         renderDashboard();
@@ -7786,6 +8440,10 @@ function renderCamps() {
       + (ministerBadges ? '<div style="margin-bottom:6px">'+ministerBadges+'</div>' : '<div style="font-size:12px;color:var(--text-muted);font-style:italic;margin-bottom:6px">No ministers assigned</div>')
       + (camp.notes ? '<div style="font-size:11px;color:var(--text-muted);font-style:italic;margin-bottom:4px">'+camp.notes+'</div>' : '')
       + (camp.contact ? '<div style="font-size:11px;color:var(--blue)">📧 '+camp.contact+'</div>' : '')
+      + '<div style="display:flex;gap:6px;margin-top:8px">'
+      + '<button class="btn btn-sm btn-primary" onclick="openCampForm('+realIdx+')">Edit</button>'
+      + '<button class="btn btn-sm" onclick="if(confirm(\'Delete this camp?\'))deleteCamp('+realIdx+')" style="color:var(--red);border-color:var(--red-light)">Delete</button>'
+      + '</div>'
       + '</div>'
       + '</div></div>';
   }
@@ -8167,7 +8825,7 @@ function sendQuillEmail() {
 function updateRequestsBadge() {
   var badge = document.getElementById('nav-requests-badge');
   if (!badge) return;
-  var pending = PROPOSALS.filter(function(p){ return p.status === 'Pending' && (p._source === 'minister-request' || p._source === 'conflict-report'); });
+  var pending = PROPOSALS.filter(function(p){ return p.status === 'Pending' && (p._source === 'minister-request' || p._source === 'conflict-report' || p._source === 'church-report'); });
   if (pending.length) { badge.textContent = pending.length; badge.style.display = 'inline'; }
   else { badge.style.display = 'none'; }
 }
@@ -8178,8 +8836,8 @@ function renderPendingRequests() {
   var resolved = document.getElementById('ptr-resolved');
   if (!body) return;
 
-  var pending = PROPOSALS.filter(function(p){ return p.status === 'Pending' && (p._source === 'minister-request' || p._source === 'conflict-report'); });
-  var done = PROPOSALS.filter(function(p){ return p.status !== 'Pending' && (p._source === 'minister-request' || p._source === 'conflict-report'); });
+  var pending = PROPOSALS.filter(function(p){ return p.status === 'Pending' && (p._source === 'minister-request' || p._source === 'conflict-report' || p._source === 'church-report'); });
+  var done = PROPOSALS.filter(function(p){ return p.status !== 'Pending' && (p._source === 'minister-request' || p._source === 'conflict-report' || p._source === 'church-report'); });
   var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
   var mnames = MINISTERS.map(function(m){return m.name;}).sort();
 
@@ -8190,8 +8848,34 @@ function renderPendingRequests() {
     pending.forEach(function(p, pi) {
       var pidx = PROPOSALS.indexOf(p);
       var isConflictReport = p._source === 'conflict-report';
+      var isChurchReport = p._source === 'church-report';
 
-      if (isConflictReport) {
+      if (isChurchReport) {
+        html += '<div style="border-bottom:1px solid var(--border);padding:1.25rem">'
+          + '<div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap">'
+          + '<div style="flex:1;min-width:220px">'
+          + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">'
+          + '<span style="background:var(--blue-light);color:var(--navy);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">&#128196; Church Report</span>'
+          + '<span style="font-weight:600;color:var(--navy-dark);font-size:14px">' + p.minister + '</span>'
+          + '</div>'
+          + '<div style="font-size:13px;color:var(--navy-dark);font-weight:500;margin-bottom:2px">' + p.assembly + '</div>'
+          + '<div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Visit date: ' + fmtDate(p.date) + ' &nbsp;·&nbsp; Submitted: ' + p.submitted + '</div>'
+          // Editable fields
+          + '<div style="margin-bottom:10px"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">General Observations</div>'
+          + '<textarea id="ptr-obs-'+pidx+'" style="width:100%;font-size:13px;padding:10px 12px;border:1px solid var(--border);border-radius:6px;min-height:80px;resize:vertical;line-height:1.6">' + (p.observations||'') + '</textarea></div>'
+          + (p.prayer !== undefined ? '<div style="margin-bottom:10px"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Prayer Points &amp; Follow-up</div>'
+          + '<textarea id="ptr-prayer-'+pidx+'" style="width:100%;font-size:13px;padding:10px 12px;border:1px solid var(--border);border-radius:6px;min-height:60px;resize:vertical;line-height:1.6">' + (p.prayer||'') + '</textarea></div>' : '')
+          + (p.travel ? '<div style="margin-bottom:10px"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Accommodation &amp; Travel</div>'
+          + '<textarea id="ptr-travel-'+pidx+'" style="width:100%;font-size:13px;padding:10px 12px;border:1px solid var(--border);border-radius:6px;min-height:50px;resize:vertical;line-height:1.6">' + (p.travel||'') + '</textarea></div>' : '')
+          + '<div style="font-size:11px;color:var(--text-muted);font-style:italic">You may edit the report above before approving. Changes will be reflected in the published version.</div>'
+          + '</div>'
+          + '<div style="display:flex;flex-direction:column;gap:8px;min-width:180px">'
+          + '<button onclick="approveChurchReport('+pidx+')" class="btn btn-primary btn-sm" style="width:100%">&#10003; Approve &amp; Publish</button>'
+          + '<button onclick="rejectChurchReport('+pidx+')" class="btn btn-sm" style="width:100%;background:var(--red);color:#fff;border:none">&#10005; Reject</button>'
+          + '</div>'
+          + '</div></div>';
+
+      } else if (isConflictReport) {
         // Conflict report card
         html += '<div style="border-bottom:1px solid var(--border);padding:1.25rem;display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap">'
           + '<div style="flex:1;min-width:220px">'
@@ -8474,6 +9158,21 @@ function detectAllConflicts() {
       conflicts.push({ fri:fri, minister:minister, rows:involved });
     });
   });
+
+  // Add camp–assembly conflicts
+  var campConflicts = detectCampConflicts();
+  for (var ci=0; ci<campConflicts.length; ci++) {
+    var cc = campConflicts[ci];
+    // Avoid duplicates
+    var dup = false;
+    for (var j=0; j<conflicts.length; j++) {
+      if (conflicts[j]._campConflict && conflicts[j].minister===cc.minister && conflicts[j].fri===cc.fri) { dup=true; break; }
+    }
+    if (!dup) {
+      conflicts.push({ fri:cc.fri, minister:cc.minister, rows:[], assemblies:[cc.assembly], _campConflict:true, campName:cc.camp });
+    }
+  }
+
   return conflicts;
 }
 
@@ -8522,10 +9221,13 @@ function renderScheduleConflicts() {
 
   var html = '';
 
+  var schedConflicts = conflicts.filter(function(c){ return !c._campConflict; });
+  var campConflicts  = conflicts.filter(function(c){ return  c._campConflict; });
+
   // ── Double-bookings ──
-  if (conflicts.length) {
-    html += '<div style="background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 1.25rem;letter-spacing:.03em">Double-bookings &mdash; ' + conflicts.length + ' conflict' + (conflicts.length!==1?'s':'') + '</div>';
-    conflicts.forEach(function(c, ci) {
+  if (schedConflicts.length) {
+    html += '<div style="background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 1.25rem;letter-spacing:.03em">Double-bookings &mdash; ' + schedConflicts.length + ' conflict' + (schedConflicts.length!==1?'s':'') + '</div>';
+    schedConflicts.forEach(function(c, ci) {
       var wk = null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===c.fri){wk=allWk[w];break;}}
       var dateLabel = wk ? wk.label + ' ' + c.fri.substring(0,4) : c.fri;
       html += '<div style="border-bottom:1px solid var(--border);padding:1.25rem">'
@@ -8543,10 +9245,55 @@ function renderScheduleConflicts() {
           + '<div style="font-size:14px;font-weight:600;color:var(--navy-dark);margin-bottom:4px">' + row.assembly + '</div>'
           + (asm ? '<div style="margin-bottom:8px">' + regionBadge(asm.region) + '</div>' : '')
           + (otherMins.length ? '<div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Also assigned: ' + otherMins.join(', ') + '</div>' : '<div style="margin-bottom:10px"></div>')
-          + '<button onclick="resolveConflict('+ci+','+ri+','+row.idx+')" class="btn btn-sm" style="background:var(--red);color:#fff;border:none">Remove ' + c.minister + ' from this visit</button>'
+          + '<button onclick="resolveConflict(\''+c.minister.replace(/'/g,"\\'")+'\',' + ri + ',' + row.idx + ')" class="btn btn-sm" style="background:var(--red);color:#fff;border:none">Remove ' + c.minister + ' from this visit</button>'
           + '</div>';
       });
       html += '</div></div>';
+    });
+  }
+
+  // ── Camp–Assembly conflicts ──
+  if (campConflicts.length) {
+    html += '<div style="background:#5B1A8B;color:#fff;font-size:12px;font-weight:600;padding:8px 1.25rem;letter-spacing:.03em">&#9978; Camp &amp; Assembly Conflicts &mdash; ' + campConflicts.length + ' conflict' + (campConflicts.length!==1?'s':'') + '</div>';
+    campConflicts.forEach(function(c) {
+      var wk = null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===c.fri){wk=allWk[w];break;}}
+      var dateLabel = wk ? wk.label + ' ' + c.fri.substring(0,4) : c.fri;
+      // Find the schedule row to get remove button
+      var schedIdx = -1; var schedSlot = '';
+      for(var si=0;si<SCHEDULE.length;si++){
+        var sc=SCHEDULE[si];
+        if(sc.fri===c.fri && sc.assembly===(c.assemblies&&c.assemblies[0])){
+          schedIdx=si;
+          if(sc.m1===c.minister) schedSlot='m1';
+          else if(sc.m2===c.minister) schedSlot='m2';
+          else if(sc.m3===c.minister) schedSlot='m3';
+          else if(sc.m4===c.minister) schedSlot='m4';
+          break;
+        }
+      }
+      html += '<div style="border-bottom:1px solid var(--border);padding:1.25rem;display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap">'
+        + '<div style="flex:1;min-width:220px">'
+        + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">'
+        + '<span style="background:#EDE9FE;color:#5B1A8B;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">&#9978; Camp Conflict</span>'
+        + '<span style="font-weight:600;color:var(--navy-dark);font-size:14px">' + c.minister + '</span>'
+        + '<span style="font-size:12px;color:var(--text-muted)">' + dateLabel + '</span>'
+        + '</div>'
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+        + '<div style="background:#EDE9FE;border:1px solid #C4B5FD;border-radius:10px;padding:12px">'
+        + '<div style="font-size:10px;font-weight:700;color:#5B1A8B;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">&#9978; Camp</div>'
+        + '<div style="font-size:13px;font-weight:600;color:var(--navy-dark)">' + c.campName + '</div>'
+        + '</div>'
+        + '<div style="background:var(--red-light);border:1px solid #F09595;border-radius:10px;padding:12px">'
+        + '<div style="font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">&#127730; Assembly Visit</div>'
+        + '<div style="font-size:13px;font-weight:600;color:var(--navy-dark)">' + (c.assemblies&&c.assemblies[0]||'Unknown') + '</div>'
+        + '</div>'
+        + '</div>'
+        + '</div>'
+        + '<div style="display:flex;flex-direction:column;gap:8px;min-width:200px">'
+        + (schedIdx>=0 ? '<button onclick="resolveConflict(\''+c.minister.replace(/'/g,"\\'")+'\',0,'+schedIdx+')" class="btn btn-sm" style="background:var(--red);color:#fff;border:none">Remove from assembly visit</button>' : '')
+        + '<button onclick="showPanel(\'camps\')" class="btn btn-sm">Edit camp assignments &#8594;</button>'
+        + '</div>'
+        + '</div>';
     });
   }
 
@@ -8587,31 +9334,26 @@ function renderScheduleConflicts() {
   body.innerHTML = html;
 }
 
-function resolveConflict(ci, ri, schedIdx) {
-  var conflicts = detectAllConflicts();
-  var c = conflicts[ci];
-  if (!c) { showToast('Conflict no longer exists'); renderScheduleConflicts(); return; }
+function resolveConflict(ministerName, ri, schedIdx) {
   var s = SCHEDULE[schedIdx];
-  if (!s) return;
+  if (!s) { showToast('Schedule row not found'); return; }
   var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
   var wk = null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===s.fri){wk=allWk[w];break;}}
-  var dateLabel = wk ? wk.label + ' ' + s.fri.substring(0,4) : s.fri;
-  var conflictMinister = c.minister;
+  var dateLabel = wk ? wk.label + ', ' + s.fri.substring(0,4) : s.fri;
   var slots = ['m1','m2','m3','m4'];
   var slot = null;
-  for(var si=0;si<slots.length;si++){if(s[slots[si]]===conflictMinister){slot=slots[si];break;}}
-  if (!slot) { showToast('Could not find minister in schedule row'); return; }
+  for(var si=0;si<slots.length;si++){if(s[slots[si]]===ministerName){slot=slots[si];break;}}
+  if (!slot) { showToast('Could not find ' + ministerName + ' in this schedule row'); return; }
   var oldAssembly = s.assembly;
   s[slot] = '';
   renderSchedule(activeScheduleYear);
   renderDashboard();
   renderMinisters();
   renderAssemblies();
-  if (typeof renderCamps === 'function') renderCamps();
   renderScheduleConflicts();
-  showToast(conflictMinister + ' removed from ' + oldAssembly);
+  showToast(ministerName + ' removed from ' + oldAssembly);
   setTimeout(function(){
-    openQuillModal(conflictMinister, oldAssembly, dateLabel, '', dateLabel);
+    openQuillModal(ministerName, oldAssembly, dateLabel, '', dateLabel);
   }, 400);
 }
 
@@ -8644,32 +9386,58 @@ function addMinisterToVisit(schedIdx, slot, selId) {
 var CONFLICT_REPORTS = [];
 
 function initConflictReportForm() {
-  var mSel = document.getElementById('rc-minister');
-  if (mSel && mSel.options.length <= 1) {
-    MINISTERS.slice().sort(function(a,b){return a.name.localeCompare(b.name);}).forEach(function(m){
-      var o = document.createElement('option');
-      o.value = m.name; o.textContent = m.name;
-      mSel.appendChild(o);
-    });
-  }
-  var wkSel = document.getElementById('rc-weekend');
-  if (wkSel && wkSel.options.length <= 1) {
-    var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
-    allWk.forEach(function(wk){
-      var o = document.createElement('option');
-      o.value = wk.fri; o.textContent = wk.label + ' ' + wk.year;
-      wkSel.appendChild(o);
-    });
-  }
+  var root = document.getElementById('rc-root');
+  if (!root) return;
+
+  var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+  var mOptions = MINISTERS.slice().sort(function(a,b){return a.name.localeCompare(b.name);})
+    .map(function(m){return '<option value="'+m.name+'">'+m.name+'</option>';}).join('');
+  var wkOptions = allWk.map(function(wk){
+    return '<option value="'+wk.fri+'">'+wk.label+' '+wk.year+'</option>';
+  }).join('');
+
+  root.innerHTML =
+    '<div class="card">'
+    + '<div class="card-header"><span class="card-title">Report a Scheduling Conflict</span></div>'
+    + '<div style="padding:1.25rem">'
+    + '<div class="form-group" style="margin-bottom:1rem">'
+    + '<label class="form-label">Your name</label>'
+    + '<select id="rc-minister" onchange="rcDetectConflicts()"><option value="">Select your name...</option>'+mOptions+'</select>'
+    + '</div>'
+    + '<div id="rc-detected" style="margin-bottom:1rem"></div>'
+    + '<div class="form-group" style="margin-bottom:1rem">'
+    + '<label class="form-label">Weekend</label>'
+    + '<select id="rc-weekend"><option value="">Select weekend...</option>'+wkOptions+'</select>'
+    + '</div>'
+    + '<div class="form-group" style="margin-bottom:1rem">'
+    + '<label class="form-label">Assembly / Camp</label>'
+    + '<input type="text" id="rc-assembly" placeholder="e.g. Rosetown SK or Summer Camp 2026">'
+    + '</div>'
+    + '<div class="form-group" style="margin-bottom:1rem">'
+    + '<label class="form-label">What is the conflict?</label>'
+    + '<select id="rc-type">'
+    + '<option value="double-booked">I am double-booked that weekend</option>'
+    + '<option value="unavailable">I am unavailable that weekend</option>'
+    + '<option value="other">Other</option>'
+    + '</select>'
+    + '</div>'
+    + '<div class="form-group" style="margin-bottom:1.5rem">'
+    + '<label class="form-label">Additional notes</label>'
+    + '<textarea id="rc-notes" placeholder="Any details that will help the admin resolve this..." style="min-height:80px"></textarea>'
+    + '</div>'
+    + '<div style="display:flex;gap:8px">'
+    + '<button class="btn" style="flex:1" onclick="clearConflictReport()">Clear</button>'
+    + '<button class="btn btn-primary" style="flex:2" onclick="submitConflictReport()">Submit Report</button>'
+    + '</div>'
+    + '</div></div>';
 }
 
 function rcDetectConflicts() {
   var minister = document.getElementById('rc-minister').value;
   var detectedEl = document.getElementById('rc-detected');
-  var listEl = document.getElementById('rc-detected-list');
-  if (!minister || !detectedEl || !listEl) return;
+  if (!detectedEl) return;
+  if (!minister) { detectedEl.innerHTML = ''; return; }
 
-  // Find weekends where this minister appears more than once in SCHEDULE
   var byFri = {};
   SCHEDULE.forEach(function(s) {
     if (s.cancelled) return;
@@ -8681,30 +9449,26 @@ function rcDetectConflicts() {
 
   var conflicts = [];
   Object.keys(byFri).sort().forEach(function(fri) {
-    if (byFri[fri].length > 1) {
-      conflicts.push({ fri: fri, assemblies: byFri[fri] });
-    }
+    if (byFri[fri].length > 1) conflicts.push({ fri: fri, assemblies: byFri[fri] });
   });
 
+  if (!conflicts.length) { detectedEl.innerHTML = ''; return; }
+
   var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
-
-  if (!conflicts.length) {
-    detectedEl.style.display = 'none';
-    return;
-  }
-
-  detectedEl.style.display = 'block';
-  listEl.innerHTML = conflicts.map(function(c) {
+  var html = '<div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">&#9888; Conflicts found — tap to pre-fill</div>'
+    + '<div style="display:flex;flex-direction:column;gap:6px">';
+  conflicts.forEach(function(c) {
     var wk = null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===c.fri){wk=allWk[w];break;}}
     var label = wk ? wk.label + ' ' + c.fri.substring(0,4) : c.fri;
-    var asmText = c.assemblies.join(' &amp; ');
     var asmJoined = c.assemblies.join(' & ');
-    return '<button onclick="rcPrefill(\''+c.fri+'\',\''+asmJoined.replace(/'/g,"\\'")+'\')" style="text-align:left;background:var(--red-light);border:1px solid #F09595;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13px;width:100%">'
+    html += '<button onclick="rcPrefill(\''+c.fri+'\',\''+asmJoined.replace(/'/g,"\\'")+'\')" style="text-align:left;background:var(--red-light);border:1px solid #F09595;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13px;width:100%">'
       + '<div style="font-weight:600;color:var(--red);margin-bottom:2px">&#9888; ' + label + '</div>'
-      + '<div style="font-size:12px;color:var(--navy-dark)">Double-booked: ' + asmText + '</div>'
-      + '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">Tap to pre-fill the form below &#8595;</div>'
+      + '<div style="font-size:12px;color:var(--navy-dark)">Double-booked: ' + c.assemblies.join(' &amp; ') + '</div>'
+      + '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">Tap to pre-fill &#8595;</div>'
       + '</button>';
-  }).join('');
+  });
+  html += '</div><hr style="border:none;border-top:1px solid var(--border);margin:14px 0"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Or fill in manually below</div>';
+  detectedEl.innerHTML = html;
 }
 
 function rcPrefill(fri, assembly) {
@@ -8714,14 +9478,22 @@ function rcPrefill(fri, assembly) {
   var notesEl = document.getElementById('rc-notes');
   var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
   var wk = null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===fri){wk=allWk[w];break;}}
-  var dateLabel = wk ? wk.label + ' ' + fri.substring(0,4) : fri;
+  var dateLabel = wk ? wk.label + ', ' + fri.substring(0,4) : fri;
+
+  // Find ALL assemblies this minister is booked at on this weekend
+  var minister = document.getElementById('rc-minister') ? document.getElementById('rc-minister').value : '';
+  var bookedAt = [];
+  SCHEDULE.forEach(function(s){
+    if(s.fri===fri && [s.m1,s.m2,s.m3,s.m4].indexOf(minister)>=0) bookedAt.push(s.assembly);
+  });
+  var asmText = bookedAt.length > 1 ? bookedAt.join(' and ') : assembly;
+
   if (wkSel) wkSel.value = fri;
-  if (asmEl) asmEl.value = assembly;
+  if (asmEl) asmEl.value = asmText;
   if (typeEl) typeEl.value = 'double-booked';
   if (notesEl && !notesEl.value) {
-    notesEl.value = 'I am scheduled for both ' + assembly + ' on the weekend of ' + dateLabel + '. Please advise which assignment to keep.';
+    notesEl.value = 'I am scheduled for both ' + asmText + ' on the weekend of ' + dateLabel + '. Please advise which assignment to keep.';
   }
-  // Highlight the form fields briefly
   if (asmEl) { asmEl.style.borderColor = 'var(--red)'; setTimeout(function(){ asmEl.style.borderColor = ''; }, 2000); }
   if (wkSel) { wkSel.style.borderColor = 'var(--red)'; setTimeout(function(){ wkSel.style.borderColor = ''; }, 2000); }
   var notesSection = document.getElementById('rc-notes');
@@ -8736,37 +9508,59 @@ function submitConflictReport() {
   var notes = document.getElementById('rc-notes').value.trim();
   if (!minister) { showToast('Please select your name'); return; }
   if (!weekend) { showToast('Please select a weekend'); return; }
-  var allWk = WK2026.concat(WK2027).concat(WK2028);
+  var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
   var wk = null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===weekend){wk=allWk[w];break;}}
   var typeLabels = {'double-booked':'Double-booked','unavailable':'Unavailable','other':'Other'};
-  var report = {
-    id: Date.now(),
-    submitted: new Date().toISOString().split('T')[0],
-    minister: minister,
-    weekend: weekend,
-    weekendLabel: wk ? wk.label + ' ' + wk.year : weekend,
-    assembly: assembly,
-    type: type,
-    typeLabel: typeLabels[type] || type,
-    notes: notes,
-    status: 'Pending',
-    _source: 'conflict-report'
-  };
-  PROPOSALS.unshift(report);
+  PROPOSALS.unshift({
+    id:Date.now(), submitted:new Date().toISOString().split('T')[0],
+    minister:minister, weekend:weekend,
+    weekendLabel:wk?wk.label+' '+wk.year:weekend,
+    assembly:assembly, type:type, typeLabel:typeLabels[type]||type,
+    notes:notes, status:'Pending', _source:'conflict-report'
+  });
   updateRequestsBadge();
-  var banner = document.getElementById('rc-submitted-banner');
-  if (banner) banner.style.display = 'flex';
   showToast('Conflict report submitted');
+  var root = document.getElementById('rc-root');
+  if (root) root.innerHTML = '<div style="background:#D4EDDA;border:1px solid #98D4A3;border-radius:10px;padding:18px;display:flex;align-items:center;gap:12px">'
+    +'<svg viewBox="0 0 24 24" fill="none" stroke="#1A5C24" stroke-width="2" style="width:24px;height:24px;flex-shrink:0"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+    +'<div><div style="font-weight:600;color:#1A5C24;font-size:14px">Conflict report submitted</div>'
+    +'<div style="font-size:12px;color:#1A5C24;opacity:.8;margin-top:2px">Your admin has been notified and will follow up with you.</div></div></div>'
+    +'<div style="margin-top:12px"><button class="btn" onclick="initConflictReportForm()">Submit another</button></div>';
 }
 
 function clearConflictReport() {
-  document.getElementById('rc-minister').value = '';
-  document.getElementById('rc-weekend').value = '';
-  document.getElementById('rc-assembly').value = '';
-  document.getElementById('rc-notes').value = '';
-  document.getElementById('rc-type').value = 'double-booked';
-  var banner = document.getElementById('rc-submitted-banner');
-  if (banner) banner.style.display = 'none';
+  initConflictReportForm();
+}
+
+function approveChurchReport(pidx) {
+  var p = PROPOSALS[pidx];
+  if (!p || p._source !== 'church-report') return;
+  // Read edited values from textareas
+  var obsEl = document.getElementById('ptr-obs-'+pidx);
+  var prayerEl = document.getElementById('ptr-prayer-'+pidx);
+  var travelEl = document.getElementById('ptr-travel-'+pidx);
+  if (!ASSEMBLY_REPORTS[p.assembly]) ASSEMBLY_REPORTS[p.assembly] = [];
+  ASSEMBLY_REPORTS[p.assembly].unshift({
+    date: p.date,
+    author: p.minister,
+    observations: obsEl ? obsEl.value.trim() : (p.observations||''),
+    prayer: prayerEl ? prayerEl.value.trim() : (p.prayer||''),
+    travel: travelEl ? travelEl.value.trim() : (p.travel||'')
+  });
+  p.status = 'Approved';
+  updateRequestsBadge();
+  renderPendingRequests();
+  renderChurchReports();
+  showToast('Report approved and published to ' + p.assembly);
+}
+
+function rejectChurchReport(pidx) {
+  var p = PROPOSALS[pidx];
+  if (!p) return;
+  p.status = 'Rejected';
+  updateRequestsBadge();
+  renderPendingRequests();
+  showToast('Report rejected');
 }
 
 function dismissConflictReport(pidx) {
@@ -9387,8 +10181,7 @@ function dashMarkVisited(schedIdx) {
 // ── Patch renderDashboard upcoming table to add region data + mark-visited ──
 var _origRenderDashboardMain = renderDashboard;
 renderDashboard = function() {
-  _origRenderDashboardBase();
-  renderDashboardExtras();
+  _origRenderDashboardMain();
   var tbody = document.getElementById('upcoming-tbody');
   if (!tbody) return;
   var rows = tbody.querySelectorAll('tr');
@@ -9421,6 +10214,218 @@ renderDashboard = function() {
 // Initial render of extras
 renderDashboardExtras();
 renderActivityFeed();
+
+// ── GMI Map (Leaflet) ─────────────────────────────────────
+var _gmiMap = null;
+var _gmiMarkers = [];
+var _gmiFilter = 'all';
+
+// Assembly coordinates — lat/lng
+var ASSEMBLY_COORDS = {
+  'Bapaume SK':        [52.717, -107.883],
+  'Calgary AB':        [51.045, -114.057],
+  'Devlin ON':         [48.583, -83.550],
+  'Edmonton AB':       [53.546, -113.494],
+  'North Battleford SK':[52.786,-108.297],
+  'Park Valley SK':    [52.833, -109.350],
+  'Prince Albert SK':  [53.203, -105.753],
+  'Regina SK':         [50.450, -104.618],
+  'Rosetown SK':       [51.550, -107.983],
+  'Saskatoon SK':      [52.133, -106.667],
+  'Sidney/Carberry MB':[49.867, -99.350],
+  'Winnipeg MB':       [49.895, -97.138],
+  'Winkler MB':        [49.183, -97.933],
+  'Penticton BC':      [49.500, -119.583],
+  'Vancouver BC':      [49.246, -123.116],
+  'Victoria BC':       [48.428, -123.365],
+  'Stratford ON':      [43.370, -80.982],
+  'Toronto ON':        [43.651, -79.347],
+  'Brooklyn NY':       [40.678, -73.944],
+  'Charlotte NC':      [35.227, -80.843],
+  'Clearwater FL':     [27.966, -82.800],
+  'Easton MD':         [38.774, -76.076],
+  'Geneva/Genoa IL':   [41.883, -88.300],
+  'High Point NC':     [35.955, -80.005],
+  'Kingsport TN':      [36.548, -82.562],
+  'Lynchburg VA':      [37.414, -79.142],
+  'Peoria IL':         [40.694, -89.589],
+  'Poynette WI':       [43.383, -89.400],
+  'St. Louis MO':      [38.627, -90.197],
+  'Checotah OK':       [35.471, -95.523],
+  'Denton TX':         [33.215, -97.133],
+  'Grand Junction CO': [39.064, -108.551],
+  'Minneapolis MN':    [44.979, -93.265],
+  'Minden NE':         [40.500, -98.950],
+  'Lincoln NE':        [40.813, -96.702],
+  'Payette ID':        [44.083, -116.933],
+  'Portland OR':       [45.523, -122.676],
+  'Campden Park':      [13.150, -61.183],
+  'Cassava Alley':     [10.517, -61.383],
+  'Hopevale':          [12.183, -61.667],
+  'Loubiere':          [15.267, -61.383],
+  'Sea View Farm':     [17.133, -61.833],
+  'Spooner\'s Hill':   [13.100, -59.617],
+  'Georgetown GUY':    [6.800,  -58.167],
+};
+
+// Camp coordinates from CAMPS data
+function getCampCoords(camp) {
+  if (!camp.location) return null;
+  var known = {
+    'North Battleford': [52.786, -108.297],
+    'Sophia, NC':       [35.690, -79.890],
+    'Oregon, IL':       [41.999, -89.329],
+    'Loon Lake, WA':    [48.033, -117.583],
+    'Garden City, UT':  [41.933, -111.400],
+    'Calgary, AB':      [51.045, -114.057],
+    'New Hamburg, ON':  [43.383, -80.700],
+    'Ninette, MB':      [49.383, -99.667],
+    'Omaha, NE':        [41.257, -95.938],
+    'Park Valley, SK':  [52.833, -109.350],
+    'Ideal, Guyana':    [6.500,  -58.400],
+    'Georgetown, Guyana':[6.800, -58.167],
+    'Port Kaituma, Guyana':[7.717,-59.867],
+    'Maburumba, Guyana':[6.300, -58.700],
+    'St George, Grenada':[12.056,-61.750],
+    'St Vincent':       [13.253, -61.197],
+    'Kerala, India':    [10.850, 76.271],
+    'Mangalore':        [12.866, 74.842],
+    'Ghana':            [7.946,  -1.023],
+  };
+  for (var key in known) {
+    if (camp.location.indexOf(key) >= 0) return known[key];
+  }
+  return null;
+}
+
+function initGMIMap() {
+  // Small delay to ensure panel is visible before initializing map
+  setTimeout(function(){ buildMap(); }, 50);
+}
+
+function buildMap() {
+  var container = document.getElementById('gmi-map');
+  if (!container || typeof L === 'undefined') return;
+
+  // Destroy existing map
+  if (_gmiMap) { _gmiMap.remove(); _gmiMap = null; }
+
+  _gmiMap = L.map('gmi-map', {zoomControl:true}).setView([40, -80], 3);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>',
+    maxZoom: 18
+  }).addTo(_gmiMap);
+
+  _gmiMarkers = [];
+  renderMapPins();
+}
+
+function renderMapPins() {
+  if (!_gmiMap || typeof L === 'undefined') return;
+
+  // Clear existing markers
+  _gmiMarkers.forEach(function(m){ _gmiMap.removeLayer(m); });
+  _gmiMarkers = [];
+
+  var today = new Date().toISOString().split('T')[0];
+
+  // Assembly pins
+  if (_gmiFilter !== 'camps') {
+    ASSEMBLIES.forEach(function(asm) {
+      if (asm.archived) return;
+      var coords = ASSEMBLY_COORDS[asm.name];
+      if (!coords) return;
+
+      // Find next visit
+      var nextVisit = null;
+      for (var i=0; i<SCHEDULE.length; i++) {
+        var s = SCHEDULE[i];
+        if (s.assembly === asm.name && s.fri >= today && !s.cancelled && !s.visited) {
+          if (!nextVisit || s.fri < nextVisit.fri) nextVisit = s;
+        }
+      }
+      var lastVisit = VISIT_HISTORY.filter(function(h){return h.assembly===asm.name;}).sort(function(a,b){return b.fri.localeCompare(a.fri);})[0];
+
+      var regionColors = {
+        'CANPR':'#1A5C24','CANPC':'#0C447C','CANON':'#633806',
+        'USE':'#7B0000','USC':'#185FA5','USPC':'#5B1A8B','CARIB':'#B45309'
+      };
+      var color = regionColors[asm.region] || '#2E5EA3';
+
+      var icon = L.divIcon({
+        className: '',
+        html: '<div style="width:14px;height:14px;border-radius:50%;background:'+color+';border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>',
+        iconSize: [14,14],
+        iconAnchor: [7,7]
+      });
+
+      var allWk = WK2026.concat(WK2027).concat(WK2028).concat(WK2029).concat(WK2030);
+      var nextLabel = '—';
+      if (nextVisit) {
+        var wk = null; for(var w=0;w<allWk.length;w++){if(allWk[w].fri===nextVisit.fri){wk=allWk[w];break;}}
+        var mins = [nextVisit.m1,nextVisit.m2,nextVisit.m3,nextVisit.m4].filter(Boolean).join(', ');
+        nextLabel = (wk?wk.label:nextVisit.fri) + '<br><span style="color:var(--text-muted)">' + mins + '</span>';
+      }
+
+      var popup = '<div style="font-size:13px;min-width:160px">'
+        + '<div style="font-weight:700;color:'+color+';margin-bottom:4px">'+asm.name+'</div>'
+        + '<div style="font-size:11px;color:#666;margin-bottom:6px">'+regionBadge(asm.region)+'</div>'
+        + (lastVisit ? '<div style="font-size:11px;margin-bottom:3px"><strong>Last visit:</strong> '+fmtDate(lastVisit.fri)+'</div>' : '')
+        + '<div style="font-size:11px"><strong>Next visit:</strong> '+nextLabel+'</div>'
+        + '<div style="margin-top:8px"><a href="#" onclick="openAssemblyDetailRO(\''+asm.name.replace(/'/g,"\\'")+'\')" style="font-size:11px;color:#2E5EA3">Open assembly →</a></div>'
+        + '</div>';
+
+      var marker = L.marker(coords, {icon:icon}).addTo(_gmiMap).bindPopup(popup);
+      _gmiMarkers.push(marker);
+    });
+  }
+
+  // Camp pins
+  if (_gmiFilter !== 'assemblies') {
+    var seenCamps = {};
+    CAMPS.filter(function(c){ return c.start && c.start.startsWith('2026'); }).forEach(function(camp) {
+      if (seenCamps[camp.name]) return;
+      seenCamps[camp.name] = true;
+      var coords = getCampCoords(camp);
+      if (!coords) return;
+
+      var icon = L.divIcon({
+        className: '',
+        html: '<div style="width:16px;height:16px;border-radius:3px;background:#5B1A8B;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);transform:rotate(45deg)"></div>',
+        iconSize: [16,16],
+        iconAnchor: [8,8]
+      });
+
+      var sd = new Date(camp.start+'T12:00:00'), ed = new Date(camp.end+'T12:00:00');
+      var mns = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var dateLabel = mns[sd.getMonth()]+' '+sd.getDate()+' – '+mns[ed.getMonth()]+' '+ed.getDate()+', '+camp.start.substring(0,4);
+      var mins = (camp.ministers||[]).join(', ') || 'No ministers assigned';
+
+      var popup = '<div style="font-size:13px;min-width:180px">'
+        + '<div style="font-weight:700;color:#5B1A8B;margin-bottom:4px">⛺ '+camp.name+'</div>'
+        + '<div style="font-size:11px;color:#666;margin-bottom:6px">📅 '+dateLabel+'</div>'
+        + (camp.location ? '<div style="font-size:11px;margin-bottom:4px">📍 '+camp.location+'</div>' : '')
+        + '<div style="font-size:11px">'+mins+'</div>'
+        + '</div>';
+
+      var marker = L.marker(coords, {icon:icon}).addTo(_gmiMap).bindPopup(popup);
+      _gmiMarkers.push(marker);
+    });
+  }
+}
+
+function setMapFilter(filter) {
+  _gmiFilter = filter;
+  ['all','assemblies','camps'].forEach(function(f) {
+    var btn = document.getElementById('map-tab-'+f);
+    if (!btn) return;
+    btn.style.background = f===filter ? 'var(--navy)' : 'var(--white)';
+    btn.style.color = f===filter ? '#fff' : 'var(--text-muted)';
+    btn.style.fontWeight = f===filter ? '600' : '500';
+  });
+  renderMapPins();
+}
 </script>
 
 <!-- Activity Log Modal -->
