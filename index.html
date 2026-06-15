@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='42' rx='22' ry='17' fill='%23FFCF00'/%3E%3Cellipse cx='32' cy='26' rx='10' ry='12' fill='%23FFCF00'/%3E%3Cellipse cx='40' cy='18' rx='14' ry='12' fill='%23FFCF00'/%3E%3Cellipse cx='52' cy='21' rx='7' ry='4' fill='%23FF8C00'/%3E%3Cline x1='45' y1='21' x2='59' y2='21' stroke='%23E07800' stroke-width='1'/%3E%3Ccircle cx='44' cy='14' r='3' fill='%231A1A1A'/%3E%3Ccircle cx='45' cy='13' r='1' fill='%23fff'/%3E%3Crect x='35' y='10' width='11' height='7' rx='3.5' fill='%231A1A1A'/%3E%3Crect x='36' y='11' width='9' height='5' rx='2.5' fill='%232255AA' opacity='.85'/%3E%3Crect x='47' y='10' width='11' height='7' rx='3.5' fill='%231A1A1A'/%3E%3Crect x='48' y='11' width='9' height='5' rx='2.5' fill='%232255AA' opacity='.85'/%3E%3Cline x1='46' y1='13.5' x2='47' y2='13.5' stroke='%231A1A1A' stroke-width='1.5'/%3E%3Cellipse cx='32' cy='57' rx='26' ry='4' fill='%23AAD4F5' opacity='.5'/%3E%3C/svg%3E">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <link rel="shortcut icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
 
 <style>
@@ -1040,8 +1041,14 @@ textarea{min-height:80px;resize:vertical}
             <div style="font-family:Arial,sans-serif;font-size:20px;color:#fff;margin-bottom:6px">Writing a visit report?</div>
             <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.5">Fill out the form below. Your report will be reviewed by an admin before it appears on the assembly page.</div>
           </div>
-          <button onclick="toggleCRWriteForm()" id="cr-write-toggle-btn" style="background:#fff;color:var(--navy-dark);border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">+ Write a Report</button>
+          <div class="cr-cta-controls" style="display:flex;gap:8px;flex-wrap:wrap;min-width:200px">
+            <button onclick="toggleCRWriteForm()" id="cr-write-toggle-btn" style="background:#fff;color:var(--navy-dark);border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">+ Write a Report</button>
+            <button onclick="triggerCRDocUpload()" id="cr-upload-btn" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:10px 16px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap">⬆ Upload Word Doc</button>
+            <input type="file" id="cr-doc-input" accept=".docx" style="display:none" onchange="handleCRDocUpload(event)">
+          </div>
         </div>
+        <!-- Upload status banner -->
+        <div id="cr-upload-status" style="display:none;margin-top:1rem;padding:12px 16px;border-radius:8px;font-size:13px"></div>
         <!-- Inline form (hidden by default) -->
         <div id="cr-write-form" style="display:none;margin-top:1.25rem;background:rgba(255,255,255,.08);border-radius:10px;padding:1.25rem">
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:10px">
@@ -5247,6 +5254,211 @@ function openChurchReportWrite(asmName) {
     }
     if (form) form.scrollIntoView({behavior:'smooth', block:'nearest'});
   }, 100);
+}
+
+// ── Church Report: Word doc upload ────────────────────────
+function triggerCRDocUpload() {
+  var input = document.getElementById('cr-doc-input');
+  if (input) { input.value = ''; input.click(); }
+}
+
+function handleCRDocUpload(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  if (!file.name.toLowerCase().endsWith('.docx')) {
+    showCRUploadStatus('error', 'Please upload a .docx file (Word document).');
+    return;
+  }
+  showCRUploadStatus('loading', 'Reading ' + file.name + '…');
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    mammoth.extractRawText({ arrayBuffer: e.target.result })
+      .then(function(result) { parseCRDocText(result.value, file.name); })
+      .catch(function() { showCRUploadStatus('error', 'Could not read the file. Make sure it is a valid .docx document.'); });
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function parseCRDocText(text, filename) {
+  // Normalise line endings
+  var lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+
+  function extractField(labels) {
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i].trim();
+      for (var j = 0; j < labels.length; j++) {
+        var prefix = labels[j] + ':';
+        if (line.toLowerCase().startsWith(prefix.toLowerCase())) {
+          return line.substring(prefix.length).trim();
+        }
+      }
+    }
+    return '';
+  }
+
+  // Hint strings baked into the template — strip these if they appear as content
+  var HINTS = [
+    'required — assembly condition, attendance, spiritual state, encouragements or concerns',
+    'required — assembly condition, attendance, spiritual state, encouragements or concerns',
+    'required - assembly condition, attendance, spiritual state, encouragements or concerns',
+    'optional — where you stayed, directions, parking',
+    'optional — where you stayed, directions, parking',
+    'optional - where you stayed, directions, parking',
+    'optional'
+  ];
+
+  function isHint(str) {
+    var s = str.toLowerCase().trim();
+    for (var h = 0; h < HINTS.length; h++) {
+      if (s === HINTS[h] || s.indexOf(HINTS[h]) === 0) return true;
+    }
+    return false;
+  }
+
+  function extractBlock(labels) {
+    // Find the label line, then collect all lines until the next label or end
+    var knownLabels = [
+      'assembly','church','visited','written by','author','minister','name',
+      'date','visit date','date of visit','observations','general observations',
+      'notes','prayer','prayer points','follow-up','prayer points & follow-up',
+      'accommodation','travel','accommodation & travel','accommodation & travel notes'
+    ];
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i].trim();
+      for (var j = 0; j < labels.length; j++) {
+        if (line.toLowerCase().startsWith(labels[j].toLowerCase() + ':')) {
+          // Inline value on same line
+          var inline = line.substring(labels[j].length + 1).trim();
+          var block = (inline && !isHint(inline)) ? [inline] : [];
+          // Collect subsequent lines
+          for (var k = i + 1; k < lines.length; k++) {
+            var next = lines[k].trim();
+            if (!next) continue;
+            // Stop if next line looks like a new label
+            var isLabel = false;
+            for (var l = 0; l < knownLabels.length; l++) {
+              if (next.toLowerCase().startsWith(knownLabels[l] + ':')) { isLabel = true; break; }
+            }
+            if (isLabel) break;
+            // Skip hint/placeholder lines
+            if (isHint(next)) continue;
+            block.push(next);
+          }
+          return block.join('\n').trim();
+        }
+      }
+    }
+    return '';
+  }
+
+  var assembly    = extractField(['Assembly','Church','Assembly Visited','Church Visited']);
+  var author      = extractField(['Written By','Author','Minister','Name','Written by']);
+  var date        = extractField(['Date','Visit Date','Date of Visit']);
+  var observations= extractBlock(['General Observations','Observations','General Notes','Notes']);
+  var prayer      = extractBlock(['Prayer Points & Follow-up','Prayer Points and Follow-up','Prayer Points','Follow-up','Prayer & Follow-up']);
+  var travel      = extractBlock(['Accommodation & Travel Notes','Accommodation and Travel Notes','Accommodation & Travel','Travel Notes','Accommodation']);
+
+  // Normalise date to yyyy-mm-dd if possible
+  if (date) {
+    var parsed = new Date(date);
+    if (!isNaN(parsed.getTime())) {
+      date = parsed.toISOString().split('T')[0];
+    }
+  }
+
+  // Validate required fields
+  var missing = [];
+  if (!assembly)     missing.push('Assembly');
+  if (!author)       missing.push('Written By');
+  if (!date)         missing.push('Date');
+  if (!observations) missing.push('General Observations');
+
+  if (missing.length) {
+    showCRUploadStatus('warn',
+      'The document was read, but these required fields were missing or unrecognised: <strong>' +
+      missing.join(', ') + '</strong>. Check the template format and try again. ' +
+      '<a href="#" onclick="downloadCRTemplate();return false;" style="color:inherit;font-weight:600;text-decoration:underline">Download template</a>');
+    return;
+  }
+
+  // Match assembly — exact first, then starts-with, then contains (e.g. "Saskatoon" -> "Saskatoon SK")
+  var asmLower = assembly.toLowerCase();
+  var asmMatch = ASSEMBLIES.find(function(a){ return a.name.toLowerCase() === asmLower; })
+               || ASSEMBLIES.find(function(a){ return a.name.toLowerCase().indexOf(asmLower) === 0; })
+               || ASSEMBLIES.find(function(a){ return a.name.toLowerCase().indexOf(asmLower) !== -1; });
+  // Match minister — exact first, then starts-with, then contains (handles partial names)
+  var minLower = author.toLowerCase();
+  var minMatch = MINISTERS.find(function(m){ return m.name.toLowerCase() === minLower; })
+               || MINISTERS.find(function(m){ return m.name.toLowerCase().indexOf(minLower) === 0; })
+               || MINISTERS.find(function(m){ return m.name.toLowerCase().indexOf(minLower) !== -1; });
+
+  var warnings = [];
+  if (!asmMatch) warnings.push('Assembly "<strong>' + assembly + '</strong>" not found in system — please verify.');
+  if (!minMatch) warnings.push('Minister "<strong>' + author + '</strong>" not found in system — please verify.');
+
+  // Submit directly
+  PROPOSALS.unshift({
+    id: Date.now(),
+    submitted: new Date().toISOString().split('T')[0],
+    _source: 'church-report',
+    minister: minMatch ? minMatch.name : author,
+    assembly: asmMatch ? asmMatch.name : assembly,
+    date: date,
+    observations: observations,
+    prayer: prayer,
+    travel: travel,
+    status: 'Pending',
+    typeLabel: 'Church Report'
+  });
+  updateRequestsBadge();
+  renderChurchReports();
+
+  if (warnings.length) {
+    showCRUploadStatus('warn',
+      '✓ Report submitted for admin review, but please note:<br>' + warnings.join('<br>'));
+  } else {
+    showCRUploadStatus('success',
+      '✓ Report from <strong>' + (minMatch ? minMatch.name : author) + '</strong> for <strong>' +
+      (asmMatch ? asmMatch.name : assembly) + '</strong> submitted for admin review.');
+  }
+}
+
+function showCRUploadStatus(type, html) {
+  var el = document.getElementById('cr-upload-status');
+  if (!el) return;
+  var styles = {
+    success: 'background:#D4EDDA;border:1px solid #98D4A3;color:#1A5C24',
+    error:   'background:#FDDEDE;border:1px solid #E8A0A0;color:#7B0000',
+    warn:    'background:#FFF3CD;border:1px solid #EF9F27;color:#633806',
+    loading: 'background:var(--blue-light);border:1px solid #85B7EB;color:var(--navy)'
+  };
+  el.style.cssText = 'display:block;padding:12px 16px;border-radius:8px;font-size:13px;line-height:1.6;' + (styles[type] || styles.loading);
+  el.innerHTML = html;
+}
+
+function downloadCRTemplate() {
+  var content = [
+    'CHURCH VISIT REPORT',
+    '',
+    'Assembly: ',
+    'Written By: ',
+    'Date: ',
+    '',
+    'General Observations:',
+    '',
+    '',
+    'Prayer Points & Follow-up:',
+    '',
+    '',
+    'Accommodation & Travel Notes:',
+    '',
+  ].join('\n');
+  // Create a plain-text .txt for simplicity (ministers can paste into Word)
+  var blob = new Blob([content], {type:'text/plain'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'Church_Visit_Report_Template.txt';
+  a.click();
 }
 
 function toggleCRWriteForm() {
